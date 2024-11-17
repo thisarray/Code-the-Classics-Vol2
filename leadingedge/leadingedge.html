@@ -2939,6 +2939,92 @@ Vecta3D.prototype.toString = function () {
   return `[${ this.x }, ${ this.y }, ${ this.z }]`;
 }
 
+// For a better frame rate, try width/height of 640x480, or even lower
+WIDTH = 960;
+HEIGHT = 540;
+
+TITLE = "Leading Edge";
+
+// Set to True improve frame rate by turning off scenery, drawing unfilled polygons and changing the draw distance
+const PERFORMANCE_MODE = false;
+
+const SHOW_SCENERY = !PERFORMANCE_MODE;
+const SHOW_TRACKSIDE = !PERFORMANCE_MODE;
+const SHOW_RUMBLE_STRIPS = !PERFORMANCE_MODE;
+const SHOW_YELLOW_LINES = !PERFORMANCE_MODE;
+const OUTLINE_W = PERFORMANCE_MODE ? 1 : 0;                   // Change to 1 for unfilled polygons, which are a bit faster to draw
+const VIEW_DISTANCE = PERFORMANCE_MODE ? 150 : 200;           // This is in units of number of track pieces, try 60 for a better frame rate, try 2000 for a bad frame rate but impressive draw distance
+
+const CLIPPING_PLANE = -0.25;          // too close to 0 = frame rate issues (drawing huge polygons which are mostly off-screen), too far = stuff just in front of camera not being drawn
+const CLIPPING_PLANE_CARS = -0.08;     // bring closer to zero to fix occasional flickering of CPU cars when very close to the camera, at the potential cost of frame rate
+const MAX_SCENERY_SCALED_WIDTH = WIDTH * 2;    // When scaling scenery based on distance from camera, don't try to draw anything that would be scaled to wider than this
+const MAX_CAR_SCALED_WIDTH = WIDTH * 1;        // As above but for cars
+
+// Constants for track
+const SPACING = 1;
+const TRACK_W = 3000;
+const HALF_STRIPE_W = 25;
+const HALF_RUMBLE_STRIP_W = 250;
+const HALF_YELLOW_LINE_W = 80;
+const YELLOW_LINE_DISTANCE_FROM_EDGE = 150;
+const TRACK_COLOUR = [35, 96, 198];
+const TRACKSIDE_COLOUR_1 = [0, 77, 180];
+const TRACKSIDE_COLOUR_2 = [50, 77, 170];
+const STRIPE_COLOUR = [70, 192, 255];
+const YELLOW_LINE_COL = [0, 161, 88];    // Yes, it's actually green, not yellow. It looks yellow because it's night.
+const RUMBLE_COLOUR_1 = [0, 116, 255];
+const RUMBLE_COLOUR_2 = [0, 58, 135];
+const SECTION_VERY_SHORT = 25;
+const SECTION_SHORT = 50;
+const SECTION_MEDIUM = 100;
+const SECTION_LONG = 200;
+const LAMP_X = Math.floor(TRACK_W / 2) + 300;
+const BILLBOARD_X = Math.floor(TRACK_W / 2) + 600;
+
+const CAMERA_FOLLOW_DISTANCE = 2;
+
+// Player car gameplay settings
+const LOSE_GRIP_SPEED = 50;
+const ZERO_GRIP_SPEED = 100;
+const PLAYER_ACCELERATION_MAX = 20;
+const PLAYER_ACCELERATION_MIN = 10;
+const HIGH_ACCEL_THRESHOLD = 30;
+const CORNER_OFFSET_MULTIPLIER = 5.8;      // Higher = harder to corner
+const STEERING_STRENGTH = 72;              // Higher = steering has a stronger effect
+
+// Min/max CPU car target speeds - see also track generation, some track pieces have target speed overrides set
+const CPU_CAR_MIN_TARGET_SPEED = 40;
+const CPU_CAR_MAX_TARGET_SPEED = 65;
+
+const NUM_LAPS = 5;
+const NUM_CARS = 20;
+
+const GRID_CAR_SPACING = 0.55;     // How spaced out the cars are on the starting grid
+
+// Half-width and height used during point transform, to save having to calculate them each time
+const HALF_WIDTH = Math.floor(WIDTH / 2);
+const HALF_HEIGHT = Math.floor(HEIGHT / 2);
+
+// Skid sound starts fading in when grip goes below this level
+const SKID_SOUND_START_GRIP = 0.8;
+
+// Debug options
+const SHOW_TRACK_PIECE_INDEX = false;
+const SHOW_TRACK_PIECE_OFFSETS = false;
+const SHOW_CPU_CAR_SPEEDS = false;
+const SHOW_DEBUG_TEXT = false;
+const SHOW_PROFILE_TIMINGS = false;
+
+const FIXED_TIMESTEP = 1 / 60;
+
+// These symbols substitute for the controller button images when displaying text.
+// The symbols representing these images must be ones that aren't actually used themselves, e.g. we don't use the
+// percent sign in text
+const SPECIAL_FONT_SYMBOLS = '%';
+
+// Create a version of SPECIAL_FONT_SYMBOLS where the keys and values are swapped
+const SPECIAL_FONT_SYMBOLS_INVERSE = 'xb_a';
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
