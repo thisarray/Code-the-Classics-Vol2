@@ -3025,6 +3025,102 @@ const SPECIAL_FONT_SYMBOLS = '%';
 // Create a version of SPECIAL_FONT_SYMBOLS where the keys and values are swapped
 const SPECIAL_FONT_SYMBOLS_INVERSE = 'xb_a';
 
+
+// Utility functions
+
+function remap(old_val, old_min, old_max, new_min, new_max) {
+  // todo explain
+  return ((((new_max - new_min) * (old_val - old_min)) / (old_max - old_min)) + new_min);
+}
+
+function remap_clamp(old_val, old_min, old_max, new_min, new_max) {
+  // todo explain
+  // These first two lines are in case new_min and new_max are inverted
+  let lower_limit = Math.min(new_min, new_max),
+      upper_limit = Math.max(new_min, new_max);
+  return Math.min(upper_limit, Math.max(lower_limit, remap(old_val, old_min, old_max, new_min, new_max)));
+}
+
+function inverse_lerp(a, b, value) {
+  // todo explain
+  if (a !== b) {
+    return Math.min(1, Math.max(0, ((value - a) / (b - a))));
+  }
+  return 0;
+}
+
+function sign(x) {
+  // Returns 1, 0 or -1 depending on whether number is positive, zero or negative
+  if (x === 0) {
+    return 0;
+  }
+  else {
+    return (x < 0) ? -1 : 1;
+  }
+}
+
+function move_towards(n, target, speed) {
+  if (n < target) {
+    return Math.min(n + speed, target);
+  }
+  else {
+    return Math.max(n - speed, target);
+  }
+}
+
+function format_time(seconds) {
+  // Return time string in the form "minutes:seconds.milliseconds"
+  // 06.3f ensures that we always show 2 digits for the whole part of the seconds
+  // 6 refers to the total number of characters including the decimal point
+  // We want to display times like "1:05.123" not "1:5.123"
+  return `${ Math.trunc(Math.floor(seconds / 60)) }:${ (seconds % 60).toFixed(3).padStart(6, '0') }`;
+}
+
+function get_char_image_and_width(char, font) {
+  // Return width of given character. ord() gives the ASCII/Unicode code for the given character.
+  if (char === " ") {
+    return [null, 30];
+  }
+  else {
+    let name;
+    if (char === SPECIAL_FONT_SYMBOLS) {
+      name = SPECIAL_FONT_SYMBOLS_INVERSE;
+    }
+    else {
+      name = font + "0" + char.charCodeAt(0);
+    }
+    return [name, images[name].width];
+  }
+}
+
+const TEXT_GAP_X = new Map([
+  ["font", -6],
+  ["status1b_", 0],
+  ["status2_", 0]]); // Characters in main font are italic so should overlap a little
+
+function text_width(text, font) {
+  let total = 0;
+  for (let c of text) {
+    total += get_char_image_and_width(c, font)[1];
+  }
+  total += TEXT_GAP_X.get(font) * (text.length - 1);
+  return total;
+}
+
+function draw_text(text, x, y, centre = false, font = "font") {
+  if (centre) {
+    x -= Math.floor(text_width(text, font) / 2);
+  }
+
+  for (let char of text) {
+    let [name, width] = get_char_image_and_width(char, font);
+    if (name != null) {
+      screen.blit(name, [x, y]);
+    }
+    x += width + TEXT_GAP_X.get(font);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
