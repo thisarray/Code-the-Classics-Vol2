@@ -3213,6 +3213,99 @@ class JoystickControls extends Controls {
   }
 }
 
+class Scenery {
+  constructor(x, image, min_draw_distance = 0, max_draw_distance = Math.floor(VIEW_DISTANCE / 2), scale = 1, collision_zones = null) {
+    this.x = x;
+    this.image = image;
+    this.min_draw_distance = min_draw_distance;
+    this.max_draw_distance = max_draw_distance;
+    this.scale = scale;
+    if (collision_zones == null) {
+      this.collision_zones = [];
+    }
+    else {
+      this.collision_zones = collision_zones;
+    }
+  }
+
+  get_image() {
+    return this.image;
+  }
+}
+
+class StartGantry extends Scenery {
+  constructor() {
+    super(0, 'start0', 1, VIEW_DISTANCE, 4, [[-3000, -2400], [2400, 3000]]);
+  }
+
+  get_image() {
+    // Before we draw, update our billboard image to the appropriate one based on the game's start timer
+    // Images go from start0 to start4, then we alternate between start4 and start5 every half second
+    let index;
+    if (game.start_timer > 0) {
+      index = Math.trunc(remap(game.start_timer, 4, 0, 0, 4));
+    }
+    else {
+      index = ((Math.trunc(game.timer * 2) % 2) === 0) ? 4 : 5;
+    }
+    return "start" + index;
+  }
+}
+
+class Billboard extends Scenery {
+  constructor(x, image) {
+    let half_width = images[image].width / 2,
+        scale = 2;
+    super(x, image, 0, Math.floor(VIEW_DISTANCE / 2), scale, [[-half_width * scale, half_width * scale]]);
+  }
+}
+
+class LampLeft extends Scenery {
+  constructor() {
+    super(LAMP_X, 'left_light', 0, Math.floor(VIEW_DISTANCE / 2), 2, [[350, 1200]]);
+  }
+}
+
+class LampRight extends Scenery {
+  constructor() {
+    super(-LAMP_X, 'right_light', 0, Math.floor(VIEW_DISTANCE / 2), 2, [[-1200, -350]]);
+  }
+}
+
+/*
+ * The track is defined as list of track pieces. A track piece is technically just a line, but a polygon will be
+ * drawn to connect it to the next piece. So being 'on' a track piece means being in between that track piece and the
+ * next one. Each track piece has X and Y offsets, which define how its position differs from the previous piece.
+ * When the track is drawn, the changes in offset accumulate, so that a series of track pieces with X offsets of 10
+ * will lead to a curve to the left, from the camera's point of view. (Left rather than right because the camera
+ * points along the negative Z axis)
+ * The X and Y offsets are the offsets from the previous track piece, so if, for example, track pieces 0 to 5 have an
+ * X offset of zero and track piece 6 has a very large offset of 1000, it's while moving from 5 to 6 that the car
+ * will start to move to the left
+ */
+class TrackPiece {
+  constructor(scenery = null, offset_x = 0, offset_y = 0, cpu_max_target_speed = null, col = TRACK_COLOUR, width = TRACK_W) {
+    if (scenery == null) {
+      this.scenery = [];
+    }
+    else {
+      this.scenery = scenery;
+    }
+    this.offset_x = offset_x;
+    this.offset_y = offset_y;
+    this.cpu_max_target_speed = cpu_max_target_speed;
+    this.col = col;
+    this.width = width;
+    this.cars = [];  // Cars currently on this track piece
+  }
+}
+
+class TrackPieceStartLine extends TrackPiece {
+  constructor() {
+    super([new StartGantry()], 0, 0, null, [255, 255, 255]);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
