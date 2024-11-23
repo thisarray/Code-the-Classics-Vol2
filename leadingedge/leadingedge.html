@@ -3778,6 +3778,928 @@ class PlayerCar extends Car {
   }
 }
 
+
+function generate_scenery(track_i, image = 'billboard00', interval = 40, lamps = true) {
+  if ((track_i % interval) === 0) {
+    // Billboards
+    return [new Billboard(BILLBOARD_X, image), new Billboard(-BILLBOARD_X, image)];
+  }
+  else if (lamps && ((track_i % 30) === 0)) {
+    // Lamps
+    return [new LampLeft(), new LampRight()];
+  }
+  else {
+    return [];
+  }
+}
+
+function make_track() {
+  // Each track piece in the list represents a line with a particular width, with optional attached scenery.
+  // When the track is drawn, we draw a polygon for each track piece, connecting this line with the line of the
+  // previous track piece.
+  let track = [];
+  for (let lap = 0; lap < (NUM_LAPS + 1); lap++) {
+    for (let i = 0; i < 15; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'billboard02')));
+    }
+
+    // Start gantry
+    track.push(new TrackPieceStartLine());
+
+    for (let i = 0; i < SECTION_SHORT; i++) {
+      track.push(new TrackPiece());
+    }
+
+    // Because the camera is pointing down the negative Z axis, negative/positive X mean right/left from
+    // camera's perspective
+
+    // Mild right turn followed by short straight
+    for (let i = 0; i < SECTION_MEDIUM; i++) {
+      track.push(new TrackPiece(generate_scenery(i), -4, 0));
+    }
+    for (let i = 0; i < SECTION_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'billboard01')));
+    }
+
+    // Slight downward slope, going into moderate right hand turn
+    for (let i = 0; i < SECTION_VERY_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i), 0, -1));
+    }
+    for (let i = 0; i < SECTION_VERY_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i), 0, -2));
+    }
+    for (let i = 0; i < SECTION_VERY_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i), -2, -1));
+    }
+    for (let i = 0; i < SECTION_VERY_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'billboard03'), -5, 0));
+    }
+    for (let i = 0; i < SECTION_MEDIUM; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'billboard03'), -10, 0));
+    }
+
+    // Short straight
+    for (let i = 0; i < SECTION_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i)));
+    }
+
+    // Medium-sharp turn left, slight upward slope
+    for (let i = 0; i < SECTION_MEDIUM; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'arrow_left', 10), 13, 1));
+    }
+
+    for (let i = 0; i < SECTION_MEDIUM; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'billboard02'), 0, 0));
+    }
+
+    // Small hill
+    for (let i = 0; i < SECTION_MEDIUM; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'billboard02'), 0, 2));
+    }
+
+    // Slightly down and to the right
+    for (let i = 0; i < SECTION_LONG; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'billboard01'), -3, -1));
+    }
+
+    // Crazy downward curve
+    for (let i = 0; i < SECTION_MEDIUM; i++) {
+      track.push(new TrackPiece(generate_scenery(i), 0, -4));
+    }
+
+    // Upward slope
+    for (let i = 0; i < SECTION_LONG; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'billboard03'), 0, 2));
+    }
+
+    // Turn to left and up, gradually increasing curve
+    for (let j = 1; j < 10; j++) {
+      for (let i = 0; i < SECTION_VERY_SHORT; i++) {
+        track.push(new TrackPiece(generate_scenery(i), j, j));
+      }
+    }
+
+    // Downward curve, increasing then decreasing in intensity
+    for (let j = 1; j < 10; j++) {
+      for (let i = 0; i < SECTION_VERY_SHORT; i++) {
+        track.push(new TrackPiece(generate_scenery(i), 0, -j));
+      }
+    }
+
+    // straight with chevron billboards at end, CPU cars will slow down in this section
+    for (let i = 0; i < SECTION_MEDIUM; i++) {
+      track.push(new TrackPiece([], 0, 0, 60));
+    }
+    for (let i = 0; i < SECTION_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'arrow_right', 10, false), 0, 0, 58));
+    }
+    for (let i = 0; i < SECTION_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'arrow_right', 10, false), 0, 0, 58));
+    }
+
+    // sharp turn right, easing off slightly at end
+    for (let i = 0; i < SECTION_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'arrow_right', 10, false), -15, 0, 55));
+    }
+    for (let i = 0; i < SECTION_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'arrow_right', 10, false), -13, 0, 57));
+    }
+    for (let i = 0; i < SECTION_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i), -11, 0));
+    }
+    for (let i = 0; i < SECTION_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i), -9, 0));
+    }
+
+    // straight
+    for (let i = 0; i < SECTION_MEDIUM; i++) {
+      track.push(new TrackPiece(generate_scenery(i), 0, 0));
+    }
+
+    // cosine hills
+    for (let i = 0; i < SECTION_LONG; i++) {
+      track.push(new TrackPiece(generate_scenery(i), 0, Math.cos(i / 20) * 5));
+    }
+
+    // Mild upward slope - the purpose is to reset the Y scrolling of the background so it roughly matches the
+    // background position at the start of the lap
+    for (let i = 0; i < SECTION_LONG; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'billboard03'), 0, 0.25));
+    }
+
+    // short straight
+    for (let i = 0; i < SECTION_SHORT; i++) {
+      track.push(new TrackPiece(generate_scenery(i, 'billboard03'), 0, 0));
+    }
+  }
+
+  return track;
+}
+
+class Game {
+  constructor(controls = null) {
+    this.track = make_track();
+
+    // We only create a player car (in setup_cars) when there is a controls object
+    this.player_car = null;
+    this.camera_follow_car = null;
+
+    this.setup_cars(controls);
+
+    this.camera = new Vecta3D(0, 400, 0);
+
+    this.background = 'background';
+    this.bg_offset = new Vecta(Math.floor(-images[this.background].width / 2), 30);
+
+    this.first_frame = true;
+    this.on_screen_debug_strs = [];
+    this.frame_counter = 0;
+    this.timer = 0;
+    this.race_complete = false;
+    this.time_up = false;
+
+    if (this.player_car != null) {
+      this.start_timer = 3.999;
+      play_music("engines_startline");
+    }
+    else {
+      // Race starts immediately on title screen
+      this.start_timer = 0;
+    }
+  }
+
+  setup_cars(controls) {
+    this.cars = [];  // Will be kept in sorted order of position
+    for (let i = 0; i < NUM_CARS; i++) {
+      let z = -3 - (i * GRID_CAR_SPACING),
+          x = ((i % 2) === 0) ? -400 : 400;
+      if ((i === 0) && (controls != null)) {
+        // Don't create player car on title screen
+        this.player_car = new PlayerCar(new Vecta3D(x, 0, z), controls);
+        this.cars.push(this.player_car);
+      }
+      else {
+        this.cars.push(new CPUCar(new Vecta3D(x, 0, z),
+                                  remap(i, 0, NUM_CARS - 1, 1.5, 2),
+                                  remap(i, 0, NUM_CARS - 1, CPU_CAR_MIN_TARGET_SPEED, CPU_CAR_MAX_TARGET_SPEED)));
+      }
+    }
+
+    if (this.player_car != null) {
+      this.camera_follow_car = this.player_car;
+    }
+    else {
+      this.camera_follow_car = this.cars[0];
+    }
+  }
+
+  update(delta_time) {
+    this.timer += delta_time;
+    this.frame_counter += 1;
+
+    // Race start sequence
+    if (this.start_timer > 0) {
+      // Ensure cars are added to the appropriate track piece's car list, so that
+      // they're displayed during the start countdown (during which time their update is not called)
+      for (let car of this.cars) {
+        car.update_current_track_piece();
+      }
+      let timer_old = this.start_timer;
+      this.start_timer = Math.max(0, this.start_timer - delta_time);
+      // Every second of the countdown, make a sound effect
+      if (this.start_timer === 0) {
+        // Go!
+        // Ambience is stereo so is treated as music
+        play_music("ambience");
+        game.play_sound("gobeep");
+      }
+
+      else if (Math.trunc(timer_old) !== Math.trunc(this.start_timer)) {
+        game.play_sound("startbeep");
+      }
+    }
+
+    let old_camera_z = this.camera.z,
+        prev_ahead = this.get_first_track_piece_ahead(old_camera_z)[0];
+
+    // If race has started, update all cars
+    if (this.start_timer === 0) {
+      for (let car of this.cars) {
+        car.update(delta_time);
+      }
+    }
+
+    // Is the race complete?
+    if ((!this.race_complete) && (this.player_car != null)) {
+      // End the game if lap time reaches 4 mins
+      // This serves two purposes:
+      // 1) Prevent lap time text from overflowing its area (would happen after 10 mins)
+      // 2) If the game is being demoed in public, and someone starts playing and then leaves before finishing
+      //    a race, the game will eventually end so that the next player can start a fresh race without having
+      //    to quit and re-run the game
+      // Also allow player to end the game by pressing Escape
+      if ((this.player_car.lap_time >= (60 * 4)) || keyboard[keys.ESCAPE]) {
+        stop_music();
+        this.time_up = true;
+        this.race_complete = true;
+      }
+
+      else if (this.player_car.lap > NUM_LAPS) {
+        stop_music();
+        this.race_complete = true;
+
+        this.play_sound("game_complete");
+      }
+
+      // Sort cars in the list based on race positions
+      this.cars.sort((a, b) => (a.pos.z - b.pos.z));
+    }
+
+    // Update camera position to follow player car
+    this.camera.x = this.camera_follow_car.pos.x;
+    this.camera.z = this.camera_follow_car.pos.z + CAMERA_FOLLOW_DISTANCE;
+
+    // As camera moves around corners, add to bg_offset and shift car X position so that steering is required on corners
+
+    // Get the new camera pos and determine which track piece it's on. The logic is different depending on whether
+    // the position change goes from one track piece to the next, or is within one track piece
+    let new_camera_z = this.camera.z,
+        new_ahead = this.get_first_track_piece_ahead(new_camera_z)[0],
+
+    // We need to deal with not just interpolating during movement within one track piece, but also when we pass the
+    // boundary of a track piece.
+    // We need to know how far the camera has travelled since the start of the frame and work out which portion of the
+    // movement covers which track piece.
+    // It's also possible for the movement to be across more than two track pieces.
+
+    // Example
+    // track i   z   offset_x
+    // 5         -5  0
+    // 6         -6  1000
+    // 7         -7  0
+
+    // Car start Z = -5      First track piece ahead = 5 (offset 0)
+    // Car end Z = -5.5      First track piece ahead = 6 (offset 1000)
+    // Offset change = 500
+
+    // Car start Z = -5.4    First track piece ahead = 6 (offset 1000)
+    // Car end Z = -5.5      First track piece ahead = 6 (offset 1000)
+    // Offset change = 100
+
+    // Car start Z = -5      First track piece ahead = 5 (offset 0)
+    //                       Spans whole of piece 6 (offset 1000)
+    // Car end Z = -6.1      First track piece ahead = 7 (offset 0)
+    // Offset change = 1000
+
+    // Car start Z = -5.001  First track piece ahead = 6 (offset 1000)
+    // Car end Z = -6.1      First track piece ahead = 7 (offset 0)
+    // Offset change = 999.9
+
+    // Get distance from here to next SPACING increment or new camera z, whichever is a smaller change (higher number)
+    // Ignore if camera moved backwards (debug camera only), or the camera is before the start of the track
+    // Don't do this on first frame, as camera won't have its correct initial Z position at the beginning of the frame
+        distance = old_camera_z - new_camera_z,
+        offset_change = new Vecta(0, 0);
+    if ((distance > 0) && (!this.first_frame) && (prev_ahead >= 0) && (new_ahead >= 0)) {
+      let old_z_next_spacing_boundary = Math.floor(old_camera_z / SPACING) * SPACING,
+          new_z_prev_spacing_boundary = (Math.floor(new_camera_z / SPACING) * SPACING) + SPACING,
+          prev_track = this.track[prev_ahead],
+          new_track = this.track[new_ahead],
+          distance_first = old_camera_z - old_z_next_spacing_boundary,
+          distance_last = new_z_prev_spacing_boundary - new_camera_z,
+          fraction_first = distance_first / SPACING,
+          fraction_last = distance_last / SPACING,
+          offset_change = (new Vecta(prev_track.offset_x, prev_track.offset_y)).multiply(fraction_first).add(
+            (new Vecta(new_track.offset_x, new_track.offset_y)).multiply(fraction_last)),
+          background_width = images[this.background].width,
+          fraction;
+      if (new_ahead > prev_ahead) {
+        // Movement touches at least two track pieces
+        // Figure out how much of the movement was within the old and new track pieces, plus whether there
+        // are any intermediate track pieces between them (whose offsets will be fully applied)
+
+        // What proportion of the old and new track pieces have we covered?
+
+        // assert stops the program with an AssertionError if the specified condition is false. Both fractions
+        // should always be between zero and one, and if they aren't then we want to know about it. This assertion
+        // may trigger with very low values of SPACING, possibly due to floating point inaccuracy.
+        console.assert((0 <= fraction_first) && (fraction_first <= 1) && (0 <= fraction_last) && (fraction_last <= 1));
+
+        // If difference between prev_ahead and new_ahead is more than 1, that means the movement involves
+        // three or more track pieces. We will have passed 100% of each of the in-between track pieces, so we
+        // fully add their offsets
+        if ((new_ahead - prev_ahead) > 1) {
+          for (let i = prev_ahead + 1; i < new_ahead; i++) {
+            offset_change = offset_change.add(new Vecta(this.track[i].offset_x, this.track[i].offset_y));
+          }
+        }
+      }
+
+      else {
+        // Movement was just within one track piece
+        fraction = distance / SPACING;
+        console.assert((0 <= fraction) && (fraction <= 1));
+        offset_change = (new Vecta(prev_track.offset_x, prev_track.offset_y)).multiply(fraction);
+      }
+
+      // Shift background by the calculated offset
+      this.bg_offset = this.bg_offset.add(offset_change);
+
+      // Keep bg_offset.x within the range -backgroundwidth to +backgroundwidth
+      while (this.bg_offset.x < -background_width) {
+        this.bg_offset.x += background_width;
+      }
+      while (this.bg_offset.x > background_width) {
+        this.bg_offset.x -= background_width;
+      }
+    }
+
+    // Shift player car's X offset - this means the car will go off the track if you go around a corner without
+    // steering. Without this, the car would magically stick to the track as if the corner wasn't there - because
+    // the curvature is really just a visual effect!
+    if (this.player_car != null) {
+      this.player_car.set_offset_x_change(offset_change.x);
+    }
+
+    // This deals with moving the background when the camera is moving backwards, which will only happen if the
+    // player uses the down arrow key debug mode
+    if (new_ahead < prev_ahead) {
+      this.bg_offset.x -= this.track[prev_ahead].offset_x;
+      this.bg_offset.y -= this.track[prev_ahead].offset_y;
+    }
+
+    this.first_frame = false;
+  }
+
+  draw() {
+    // Fill background with single colour
+    // We use a different background colour depending on the Y offset of the background image, because
+    // the top and bottom of that image are different colours
+    if (this.bg_offset.y > 0) {
+      screen.fill([0, 20, 117]);
+    }
+    else {
+      screen.fill([0, 77, 180]);
+    }
+
+    // Profiling times
+    let times = new Map([
+      ["scenery_scale", 0],
+      ["car_scale", 0],
+      ["prepare_draw_cars", 0]]),
+        background_width = images[this.background].width,
+        self = this,
+        profiler;
+
+    // Draw background
+    // Need to draw either one or two backgrounds - second copy is for wrapping (when bg_offset.x changes enough that
+    // we'd see the edge of the image)
+    performance.mark('bg_start');
+    this.on_screen_debug_strs.push(this.bg_offset.toString());
+    screen.blit(this.background, [this.bg_offset.x, this.bg_offset.y]);
+    if (this.bg_offset.x > 0) {
+      screen.blit(this.background, [this.bg_offset.x - background_width, this.bg_offset.y]);
+    }
+    if ((this.bg_offset.x + background_width) < WIDTH) {
+      screen.blit(this.background, [this.bg_offset.x + background_width, this.bg_offset.y]);
+    }
+    performance.mark('bg_end');
+    profiler = performance.measure('bg_duration', 'bg_start', 'bg_end');
+    times.set("bg", profiler.duration);
+
+    function transform(point_v3, w = null, h = null, clipping_plane = CLIPPING_PLANE) {
+      // This local function receives a point as a Vector3 and transforms it into a Vector2 point in screen space
+      // When called for a car or scenery item, w and h are specified, referring to the size of the original
+      // sprite, so it also calculates and returns the scaled width and height, based on the distance from the camera
+      let newpoint = point_v3.subtract(self.camera),
+          point_v2;
+      if (newpoint.z > clipping_plane) {
+        return (w == null) ? null : [null, null, null];
+      }
+
+      // Apply perspective and centre on the screen
+      point_v2 = new Vecta((newpoint.x / newpoint.z) + HALF_WIDTH,
+                           (newpoint.y / newpoint.z) + HALF_HEIGHT);
+
+      if (w == null) {
+        return point_v2;
+      }
+      else {
+        return [point_v2, w / -newpoint.z, h / -newpoint.z];
+      }
+    }
+
+    // offset and offset_delta keep track of the cumulative changes in track offsets (X and Y - Z remains as 0), so
+    // that each track piece is drawn in the correct position
+    let offset = new Vecta3D(0, 0, 0),
+        offset_delta = new Vecta3D(0, 0, 0),
+
+    // Tuples of pairs of Vector2s storing screen positions of left and right edges of the track, central
+    // stripes and left/right rumble strips. We remember them so they don't need to be recalculated when joining up
+    // a track piece or stripe with the previous one
+        prev_track_screen = null,
+        prev_stripe_screen = null,
+        prev_rumble_left_outer_screen = null,
+        prev_rumble_right_outer_screen = null,
+        prev_yellow_line_left_outer_screen = null,
+        prev_yellow_line_left_inner_screen = null,
+        prev_yellow_line_right_outer_screen = null,
+        prev_yellow_line_right_inner_screen = null,
+
+    // Instead of drawing track pieces etc as we come across them, we store draw calls in this list. Then we once
+    // we've finished going through track pieces, we execute the draw calls in reverse order, so that track
+    // pieces, cars and scenery in the distance are drawn before things which are closer
+        draw_list = [],
+        is_first_track_piece_ahead = true,
+        [first_track_piece_idx, current_piece_z] = this.get_first_track_piece_ahead(this.camera.z),
+
+    // Index of the track piece that we're drawing, relative to first_track_piece_idx
+        track_ahead_i = 0;
+
+    function add_to_draw_list(drawcall, type = "?") {
+      draw_list.push([drawcall, type]);
+    }
+
+    performance.mark('track_start');
+
+    // Get index of first track piece that starts at or just in front of the camera Z position
+    // This means the track piece we're currently part-way through won't be displayed, but that doesn't matter
+    // as it would be off the bottom of the camera.
+
+    // At the start of the loop body below, we subtract SPACING from current_piece_z. Therefore we must add SPACING
+    // before the loop so that current_piece_z is correct for the first track piece.
+    current_piece_z += SPACING;
+
+    // Go through each track piece ahead
+    for (let i = first_track_piece_idx; i < this.track.length; i++) {
+      // Stop when we've displayed VIEW_DISTANCE number of track pieces
+      track_ahead_i += 1;
+      if (track_ahead_i > VIEW_DISTANCE) {
+        break;
+      }
+
+      current_piece_z -= SPACING;
+      let track_piece = this.track[i],
+
+      // Because the camera is pointing down the negative Z axis, negative/positive X mean right/left from
+      // camera's perspective
+          left = new Vecta3D(track_piece.width / 2, 0, current_piece_z),
+          right = new Vecta3D(-track_piece.width / 2, 0, current_piece_z),
+          fraction;
+
+      // Interpolate for X offset between first and next track piece. Without this, going around corners would
+      // look very juddery
+      if (is_first_track_piece_ahead) {
+        // Get fraction between this and next
+        // Current track piece is actually the first track piece IN FRONT of Z
+        // And next is the one after that
+        // So to find the fraction we need to add spacing
+        fraction = inverse_lerp(current_piece_z - SPACING, current_piece_z, this.camera.z - SPACING);
+        offset_delta = new Vecta3D(fraction * track_piece.offset_x, fraction * track_piece.offset_y, 0);
+      }
+      else {
+        offset_delta = offset_delta.add(new Vecta3D(track_piece.offset_x, track_piece.offset_y, 0));
+      }
+
+      is_first_track_piece_ahead = false;
+
+      offset = offset.add(offset_delta);
+
+      left = left.add(offset);
+      right = right.add(offset);
+
+      // Calculate screen positions of track boundaries
+      let left_screen = transform(left),
+          right_screen = transform(right),
+
+      // Calculate screen pos of central stripe
+      // Always work out stripe points even for pieces which don't need them, because the next track piece may
+      // make use of the calculated points to connect up to
+          stripe_left = (new Vecta3D(HALF_STRIPE_W, 0, current_piece_z)).add(offset),
+          stripe_right = (new Vecta3D(-HALF_STRIPE_W, 0, current_piece_z)).add(offset),
+          stripe_left_screen = transform(stripe_left),
+          stripe_right_screen = transform(stripe_right),
+
+      // Calculate screen pos of outer parts of left/right rumble strips (can just use left/right track positions
+      // for inner part that touches track)
+          rumble_strip_left_outer = left.add(new Vecta3D(HALF_RUMBLE_STRIP_W, 0, 0)),
+          rumble_strip_right_outer = right.subtract(new Vecta3D(HALF_RUMBLE_STRIP_W, 0, 0)),
+          rumble_strip_left_outer_screen = transform(rumble_strip_left_outer),
+          rumble_strip_right_outer_screen = transform(rumble_strip_right_outer),
+
+      // Calculate screen pos of left and right yellow lines, which are just inside the outer edges of the track
+          yellow_line_left_outer = left.subtract(new Vecta3D(YELLOW_LINE_DISTANCE_FROM_EDGE, 0, 0)),
+          yellow_line_left_inner = yellow_line_left_outer.subtract(new Vecta3D(HALF_YELLOW_LINE_W, 0, 0)),
+          yellow_line_right_outer = right.add(new Vecta3D(YELLOW_LINE_DISTANCE_FROM_EDGE, 0, 0)),
+          yellow_line_right_inner = yellow_line_right_outer.add(new Vecta3D(HALF_YELLOW_LINE_W, 0, 0)),
+          yellow_line_left_outer_screen = transform(yellow_line_left_outer),
+          yellow_line_left_inner_screen = transform(yellow_line_left_inner),
+          yellow_line_right_outer_screen = transform(yellow_line_right_outer),
+          yellow_line_right_inner_screen = transform(yellow_line_right_inner),
+
+          points;
+
+      // Only draw if both points are in front of clipping plane
+      if ((left_screen != null) && (right_screen != null)) {
+        // To draw, there must be a previous track piece that we can connect to
+        if (prev_track_screen != null) {
+          function draw_points(points, col, id) {
+            points = points.map((p) => (p instanceof Vecta) ? [p.x, p.y] : p);
+            if (points.some((point) => (point[1] < HEIGHT))) {
+              // point[1] gets Y for both tuple pair and Vector2
+              if (OUTLINE_W === 0) {
+                add_to_draw_list(() => screen.draw.filled_polygon(points, col), id);
+              }
+              else {
+                add_to_draw_list(() => screen.draw.polygon(points, col), id);
+              }
+            }
+          }
+
+          // Draw stripe (3m on/off)
+          if ((Math.floor(i / 3) % 2) === 0) {
+            draw_points([stripe_left_screen, stripe_right_screen, prev_stripe_screen[1], prev_stripe_screen[0]], STRIPE_COLOUR, "stripe");
+          }
+
+          // Draw yellow lines
+          // This is before the drawing of the track as we want to draw on top of the track, and items in the
+          // draw list are drawn in reverse order
+          if (SHOW_YELLOW_LINES) {
+            draw_points([prev_yellow_line_left_outer_screen,
+                         yellow_line_left_outer_screen,
+                         yellow_line_left_inner_screen,
+                         prev_yellow_line_left_inner_screen], YELLOW_LINE_COL, "yellow line L");
+
+            draw_points([prev_yellow_line_right_outer_screen,
+                         yellow_line_right_outer_screen,
+                         yellow_line_right_inner_screen,
+                         prev_yellow_line_right_inner_screen], YELLOW_LINE_COL, "yellow line R");
+          }
+
+
+          // Draw track
+          points = [prev_track_screen[0], left_screen, right_screen, prev_track_screen[1]];
+          draw_points(points, track_piece.col, "track");
+
+          // Draw rumble strip
+          // This is before trackside as it draws on top of trackside, and items in the draw list are drawn
+          // in reverse order
+          if (SHOW_RUMBLE_STRIPS) {
+            // Alternating colours
+            let rumble_col = ((Math.floor(i / 2) % 2) === 0) ? RUMBLE_COLOUR_1 : RUMBLE_COLOUR_2;
+            draw_points([prev_rumble_left_outer_screen, prev_track_screen[0], left_screen, rumble_strip_left_outer_screen], rumble_col, "rumble L");
+            draw_points([prev_rumble_right_outer_screen, prev_track_screen[1], right_screen, rumble_strip_right_outer_screen], rumble_col, "rumble R");
+          }
+
+          // Draw trackside
+          if (SHOW_TRACKSIDE) {
+            // Alternating colours
+            let trackside_col = ((Math.floor(i / 5) % 2) === 0) ? TRACKSIDE_COLOUR_1 : TRACKSIDE_COLOUR_2;
+            draw_points([points[2], points[3], [0, points[3].y], [0, points[2].y]], trackside_col, "trackside left");
+            draw_points([points[0], points[1], [WIDTH - 1, points[1].y], [WIDTH - 1, points[0].y]], trackside_col, "trackside right");
+          }
+        }
+
+        // Store screen positions of various parts of the track, as they form half of the polygon for the next
+        // track piece
+        prev_track_screen = [left_screen, right_screen];
+        prev_stripe_screen = [stripe_left_screen, stripe_right_screen];
+        prev_rumble_left_outer_screen = rumble_strip_left_outer_screen;
+        prev_rumble_right_outer_screen = rumble_strip_right_outer_screen;
+        prev_yellow_line_left_outer_screen = yellow_line_left_outer_screen;
+        prev_yellow_line_left_inner_screen = yellow_line_left_inner_screen;
+        prev_yellow_line_right_outer_screen = yellow_line_right_outer_screen;
+        prev_yellow_line_right_inner_screen = yellow_line_right_inner_screen;
+
+        // Show debug info for this track piece
+        if (SHOW_TRACK_PIECE_INDEX || SHOW_TRACK_PIECE_OFFSETS) {
+          let items = [];
+          if (SHOW_TRACK_PIECE_INDEX) {
+            items.push(i.toFixed());
+          }
+          if (SHOW_TRACK_PIECE_OFFSETS) {
+            items.push(track_piece.offset_x.toFixed());
+            items.push(track_piece.offset_y.toFixed());
+          }
+          add_to_draw_list(() => screen.draw.text(items.join(","), {
+            pos: [left_screen[0], left_screen[1] - 30]
+          }));
+        }
+      }
+
+      // Draw scenery for the current track piece
+      if (SHOW_SCENERY) {
+        for (let obj of track_piece.scenery) {
+          if ((track_ahead_i * SPACING) < obj.max_draw_distance) {
+            let pos_v3 = (new Vecta3D(obj.x, 0, current_piece_z)).add(offset),
+                billboard, pos, scaled_w, scaled_h;
+            if ((this.camera.z - current_piece_z) > obj.min_draw_distance) {
+              billboard = obj.get_image();
+              [pos, scaled_w, scaled_h] = transform(pos_v3, images[billboard].width * obj.scale,
+                                                    images[billboard].height * obj.scale);
+              // If a piece of scenery is very close to the camera, the scaled size may become enormous.
+              // Don't try to draw such scenery, due to memory and frame rate issues
+              if ((pos != null) && (scaled_w < MAX_SCENERY_SCALED_WIDTH)) {
+                // Anchor point at bottom
+                pos = pos.subtract(new Vecta(Math.floor(scaled_w / 2), scaled_h));
+                performance.mark(`scenery_scale_${ i }_start`);
+                performance.mark(`scenery_scale_${ i }_end`);
+                profiler = performance.measure(`scenery_scale_${ i }_duration`, `scenery_scale_${ i }_start`, `scenery_scale_${ i }_end`);
+                times.set("scenery_scale", times.get("scenery_scale") + profiler.duration);
+                add_to_draw_list(() => screen.blit(billboard, new Rect(pos.x, pos.y, Math.trunc(scaled_w), Math.trunc(scaled_h))),
+                                 "scenery_draw");
+              }
+            }
+          }
+        }
+      }
+
+      // Draw cars
+      performance.mark(`prepare_draw_cars_${ i }_start`);
+      let cars_to_draw = [],
+          car_offset, next_track_piece, pos_v3, scale;
+      for (let car of track_piece.cars) {
+        // Each car needs to be drawn during the track piece it is on, but with an additional offset interpolated
+        // towards the next track piece, so that it starts turning a corner as it reaches the piece
+        // Also, the order of  drawing needs to be correct if there is more than one car per track piece
+        car_offset = new Vecta3D(offset);
+        if ((car.pos.z % SPACING) !== 0) {
+          // Interpolate offset between this and next track piece
+          // Note that "Interpolate for X offset between first and next track piece"
+          // will already have happened! Does that matter?
+
+          // The following lines deal with the car when it's moving onto a track piece with an offset
+          fraction = inverse_lerp(current_piece_z, current_piece_z - SPACING, car.pos.z);
+          next_track_piece = this.track[i+1];
+          car_offset = car_offset.add(new Vecta3D(fraction * next_track_piece.offset_x,
+                                                  fraction * next_track_piece.offset_y, -fraction * SPACING));
+
+          // This ensures that the car's forward motion is correct on pieces following a piece with an offset
+          car_offset = car_offset.add(offset_delta.multiply(fraction));
+        }
+
+        // The rules for drawing the player car (or whichever car the camera is following, in demo mode) are
+        // a bit different. If we drew it in the same way, its position on the screen would be a bit off as
+        // it would start going around corners before the camera does. So don't apply any offset.
+        // (For Y offset, you can achieve an interesting effect by changing 0 to -car_offset.y / 2, but
+        // it is a bit glitchy sometimes so we've left it at zero)
+        if (car == this.camera_follow_car) {
+          car_offset.x = 0;
+          car_offset.y = 0;
+        }
+
+        pos_v3 = (new Vecta3D(car.pos.x, 0, current_piece_z)).add(car_offset);
+        scale = 2;
+
+        // For CPU cars, choose the sprite to use based on the car's angle in relation to the camera
+        if (car instanceof CPUCar) {
+          // Approximate the angle we're seeing the car from, to determine the sprite
+          // The further the car is ahead, the smaller the effect
+          // The car sprite filenames end in a number in the range -4 to 4, where 0 is the car not turning,
+          // -1 is the car turning slightly to the left, 1 is turning slightly to the right, etc
+          let z_distance = Math.max(1, -(pos_v3.z - this.camera.z)),
+              offset_for_angle = (pos_v3.x - this.camera.x) / z_distance,
+              angle_sprite_idx;
+          offset_for_angle += -car.steering * 10;
+          angle_sprite_idx = Math.trunc(remap_clamp(offset_for_angle, -200, 200, -4, 4));
+
+          // If this is the camera follow car (which for a CPU car will only be the case during
+          // the title screen), limit to only the shallowest angles (-1 to 1), as this car is a stand-in
+          // for the plyaer car and the player car only uses angles between -1 and 1
+          if (car == this.camera_follow_car) {
+            angle_sprite_idx = Math.min(Math.max(angle_sprite_idx, -1), 1);
+          }
+
+          car.update_sprite(angle_sprite_idx, false);
+        }
+
+        // Calculate screen pos and scaled sprite size for car
+        let [pos, scaled_w, scaled_h] = transform(pos_v3,
+                                                  images[car.image].width * scale,
+                                                  images[car.image].height * scale,
+                                                  CLIPPING_PLANE_CARS);
+
+        if ((pos != null) && (scaled_w < MAX_CAR_SCALED_WIDTH)) {
+          // Anchor point at bottom, centre
+          pos = pos.subtract(new Vecta(Math.floor(scaled_w / 2), scaled_h));
+          performance.mark(`car_scale_${ i }_start`);
+          performance.mark(`car_scale_${ i }_end`);
+          profiler = performance.measure(`car_scale_${ i }_duration`, `car_scale_${ i }_start`, `car_scale_${ i }_end`);
+          times.set("car_scale", times.get("car_scale") + profiler.duration);
+
+          // We can't send it to the draw list just yet as there might be more than one car on this track
+          // piece and we need to draw them in order starting from the one furthest from the camera.
+          // So we'll add it to a list to sort and draw later
+          cars_to_draw.push({
+            z: car.pos.z,
+            drawcall: () => screen.blit(car.image, new Rect(pos.x, pos.y, Math.trunc(scaled_w), Math.trunc(scaled_h)))
+          });
+
+          if (SHOW_CPU_CAR_SPEEDS && (car instanceof CPUCar)) {
+            add_to_draw_list(() => draw_text(`${ car.target_speed.toFixed() }`, pos.x, pos.y - 40));
+          }
+        }
+      }
+
+      performance.mark(`prepare_draw_cars_${ i }_end`);
+      profiler = performance.measure(`prepare_draw_cars_${ i }_duration`, `prepare_draw_cars_${ i }_start`, `prepare_draw_cars_${ i }_end`);
+      times.set("prepare_draw_cars", times.get("prepare_draw_cars") + profiler.duration);
+
+      // Draw the cars that are on the current track piece,starting from the one with the lowest Z position
+      cars_to_draw.sort((a, b) => (b.z - a.z));
+      for (let entry of cars_to_draw) {
+        add_to_draw_list(entry["drawcall"], "cars");
+      }
+    }
+
+    // Draw everything in draw_list, in reverse order - so that items furthest ahead are drawn first
+    for (let [draw_call, type] of draw_list.reverse()) {
+      performance.mark(`draw_${ type }_start`);
+      draw_call();
+      performance.mark(`draw_${ type }_end`);
+      profiler = performance.measure(`draw_${ type }_duration`, `draw_${ type }_start`, `draw_${ type }_end`);
+      if (!times.has(type)) {
+        times.set(type, profiler.duration);
+      }
+      else {
+        times.set(type, times.get(type) + profiler.duration);
+      }
+    }
+
+    // Is there an actual player car, or are we in demo mode?
+    if (this.player_car != null) {
+      // Show info text
+      // Adapt to varying window widths by using fractions of WIDTH instead of absolute coordinates
+
+      let player_pos = this.cars.indexOf(this.player_car) + 1;
+
+      // Show race complete or time up screens if relevant
+      if (this.time_up) {
+        draw_text("TIME UP!", Math.floor(WIDTH / 2), HEIGHT * 0.4, true);
+      }
+
+      else if (this.race_complete) {
+        draw_text("RACE COMPLETE!", Math.floor(WIDTH / 2), HEIGHT * 0.15, true);
+        draw_text("POSITION", Math.floor(WIDTH / 2), HEIGHT * 0.3, true);
+        draw_text(player_pos.toFixed(), Math.floor(WIDTH / 2), HEIGHT * 0.42, true);
+        draw_text("FASTEST LAP", WIDTH * 0.25, HEIGHT * 0.55, true);
+        draw_text(format_time(this.player_car.fastest_lap), WIDTH * 0.25, HEIGHT * 0.68, true);
+        draw_text("RACE TIME", WIDTH * 0.75, HEIGHT * 0.55, true);
+        draw_text(format_time(this.player_car.race_time), WIDTH * 0.75, HEIGHT * 0.68, true);
+      }
+
+      else {
+        // Race not complete - show status text at top of screen
+
+        // Show status background
+        let status_x = (WIDTH / 2) - (565 / 2);
+        screen.blit("status", [status_x, 0]);
+
+        // Show lap
+        draw_text(`${ this.player_car.lap.toFixed().padStart(2, '0') }`, status_x + 30, 37, false, "status1b_");
+
+        // Show position
+        draw_text(`${ player_pos.toFixed().padStart(2, '0') }`, status_x + 116, 37, false, "status1b_");
+
+        // Show speed
+        draw_text(`${ Math.trunc(this.player_car.speed).toFixed().padStart(3, '0') }`, status_x + 197, 37, false, "status1b_");
+
+        // Show lap time
+        draw_text(format_time(this.player_car.lap_time), status_x + 299, 37, false, "status2_");
+
+        // Show fastest lap
+        if (this.player_car.last_lap_was_fastest && (this.player_car.lap_time < 4)) {
+          let y = HEIGHT * 0.4;
+          draw_text("FASTEST LAP!", Math.floor(WIDTH / 2), y, true);
+          draw_text(format_time(this.player_car.fastest_lap), Math.floor(WIDTH / 2), y + 60, true);
+        }
+
+        // Show final lap text
+        // If we're currently showing fastest lap text, wait for that to disappear before showing the final
+        // lap text
+        let begin_time, end_time;
+        if (this.player_car.last_lap_was_fastest) {
+          begin_time = 4;
+          end_time = 8;
+        }
+        else {
+          begin_time = 0;
+          end_time = 4;
+        }
+        if ((this.player_car.lap === NUM_LAPS) && (begin_time < this.player_car.lap_time) && (this.player_car.lap_time < end_time)) {
+          draw_text("FINAL LAP!", Math.floor(WIDTH / 2), HEIGHT * 0.4, true);
+        }
+      }
+    }
+
+    // Show debug text
+    if (SHOW_DEBUG_TEXT) {
+      for (let i = 0; i < this.on_screen_debug_strs.length; i++) {
+        screen.draw.text(this.on_screen_debug_strs[i], {
+          pos: [0, 50 + (i * 20)]
+        });
+      }
+    }
+    this.on_screen_debug_strs.splice(0, this.on_screen_debug_strs.length);
+
+    if (SHOW_PROFILE_TIMINGS) {
+      performance.mark('track_end');
+      profiler = performance.measure('track_duration', 'track_start', 'track_end');
+      performance.clearMarks();
+      performance.clearMeasures();
+      console.log("track: " + profiler.duration + "ms " + Array.from(times.values()).reduce((a, b) => (a + b)));
+
+      // if sum(times.values()) > 16:
+      console.log(this.frame_counter, times);
+
+      // test drawing a very large polygon
+      // pygame.draw.polygon(screen.surface, (255,0,0), (Vector2(-4000,test), Vector2(WIDTH*4,test), Vector2(0,test+500)))
+    }
+  }
+
+  /*
+   * Returns index of track piece at the specified Z position, or None if the specified position is off the end
+   * of the track
+   * e.g. track piece 0 goes from Z 0 to -0.999, etc
+   */
+  get_track_piece_for_z(z) {
+    let idx = -Math.trunc(z / SPACING);
+    if (idx >= this.track.length) {
+      return null;
+    }
+    else {
+      return idx;
+    }
+  }
+
+  /*
+   * Returns index and Z position of first track piece ahead of or exactly at the specified Z position, or None,None
+   * if the specified position is off the end of the track
+   */
+  get_first_track_piece_ahead(z) {
+    let idx = -Math.trunc(Math.floor(z / SPACING)),
+        first_piece_z = -idx * SPACING;
+    if (idx >= this.track.length) {
+      return [null, null];
+    }
+    else {
+      return [idx, first_piece_z];
+    }
+  }
+
+  play_sound(name, count = 1) {
+    // Some sounds have multiple varieties. If count > 1, we'll randomly choose one from those
+    // We don't play any sounds if there is no player (e.g. if we're on the menu)
+    // Pygame Zero allows you to write things like 'sounds.explosion.play()'
+    // This automatically loads and plays a file named 'explosion.wav' (or .ogg) from the sounds folder (if
+    // such a file exists)
+    // But what if you have files named 'explosion0.ogg' to 'explosion5.ogg' and want to randomly choose
+    // one of them to play? You can generate a string such as 'explosion3', but to use such a string
+    // to access an attribute of Pygame Zero's sounds object, we must use Python's built-in function getattr
+    sounds[name+getRandomInteger(0, count)].play();
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
