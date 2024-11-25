@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kinetix</title>
+  <script src="../../jsgame0.js"></script>
+  <style type="text/css" media="screen">
+body {
+  background-color: white;
+  color: black;
+}
+.hidden {
+  display: none;
+}
+#original {
+  margin-left: 1em;
+}
+  </style>
+</head>
+
+<body>
+<section id="imageLoader" class="hidden">
+  <img class="hidden" src="images/arena0.png" alt="arena0" data-name="arena0">
+  <img class="hidden" src="images/arena1.png" alt="arena1" data-name="arena1">
+  <img class="hidden" src="images/arena2.png" alt="arena2" data-name="arena2">
+  <img class="hidden" src="images/arena3.png" alt="arena3" data-name="arena3">
+  <img class="hidden" src="images/arena4.png" alt="arena4" data-name="arena4">
+  <img class="hidden" src="images/arena5.png" alt="arena5" data-name="arena5">
+  <img class="hidden" src="images/arena6.png" alt="arena6" data-name="arena6">
+  <img class="hidden" src="images/ball0.png" alt="ball0" data-name="ball0">
+  <img class="hidden" src="images/ball1.png" alt="ball1" data-name="ball1">
+  <img class="hidden" src="images/ball2.png" alt="ball2" data-name="ball2">
+  <img class="hidden" src="images/ball3.png" alt="ball3" data-name="ball3">
+  <img class="hidden" src="images/balls.png" alt="balls" data-name="balls">
+  <img class="hidden" src="images/barrel00.png" alt="barrel00" data-name="barrel00">
+  <img class="hidden" src="images/barrel01.png" alt="barrel01" data-name="barrel01">
+  <img class="hidden" src="images/barrel02.png" alt="barrel02" data-name="barrel02">
+  <img class="hidden" src="images/barrel03.png" alt="barrel03" data-name="barrel03">
+  <img class="hidden" src="images/barrel04.png" alt="barrel04" data-name="barrel04">
+  <img class="hidden" src="images/barrel05.png" alt="barrel05" data-name="barrel05">
+  <img class="hidden" src="images/barrel06.png" alt="barrel06" data-name="barrel06">
+  <img class="hidden" src="images/barrel07.png" alt="barrel07" data-name="barrel07">
+  <img class="hidden" src="images/barrel08.png" alt="barrel08" data-name="barrel08">
+  <img class="hidden" src="images/barrel09.png" alt="barrel09" data-name="barrel09">
+  <img class="hidden" src="images/barrel10.png" alt="barrel10" data-name="barrel10">
+  <img class="hidden" src="images/barrel11.png" alt="barrel11" data-name="barrel11">
+  <img class="hidden" src="images/barrel12.png" alt="barrel12" data-name="barrel12">
+  <img class="hidden" src="images/barrel13.png" alt="barrel13" data-name="barrel13">
+  <img class="hidden" src="images/barrel14.png" alt="barrel14" data-name="barrel14">
+  <img class="hidden" src="images/barrel15.png" alt="barrel15" data-name="barrel15">
+  <img class="hidden" src="images/barrel16.png" alt="barrel16" data-name="barrel16">
+  <img class="hidden" src="images/barrel17.png" alt="barrel17" data-name="barrel17">
+  <img class="hidden" src="images/barrel18.png" alt="barrel18" data-name="barrel18">
+  <img class="hidden" src="images/barrel19.png" alt="barrel19" data-name="barrel19">
+  <img class="hidden" src="images/barrel20.png" alt="barrel20" data-name="barrel20">
+  <img class="hidden" src="images/barrel21.png" alt="barrel21" data-name="barrel21">
+  <img class="hidden" src="images/barrel22.png" alt="barrel22" data-name="barrel22">
+  <img class="hidden" src="images/barrel23.png" alt="barrel23" data-name="barrel23">
+  <img class="hidden" src="images/barrel24.png" alt="barrel24" data-name="barrel24">
+  <img class="hidden" src="images/barrel25.png" alt="barrel25" data-name="barrel25">
+  <img class="hidden" src="images/barrel26.png" alt="barrel26" data-name="barrel26">
+  <img class="hidden" src="images/barrel27.png" alt="barrel27" data-name="barrel27">
+  <img class="hidden" src="images/barrel28.png" alt="barrel28" data-name="barrel28">
+  <img class="hidden" src="images/barrel29.png" alt="barrel29" data-name="barrel29">
+  <img class="hidden" src="images/barrel30.png" alt="barrel30" data-name="barrel30">
+  <img class="hidden" src="images/barrel31.png" alt="barrel31" data-name="barrel31">
+  <img class="hidden" src="images/barrel32.png" alt="barrel32" data-name="barrel32">
+  <img class="hidden" src="images/barrel33.png" alt="barrel33" data-name="barrel33">
+  <img class="hidden" src="images/barrel34.png" alt="barrel34" data-name="barrel34">
+  <img class="hidden" src="images/barrel35.png" alt="barrel35" data-name="barrel35">
+  <img class="hidden" src="images/barrel36.png" alt="barrel36" data-name="barrel36">
+  <img class="hidden" src="images/barrel37.png" alt="barrel37" data-name="barrel37">
+  <img class="hidden" src="images/barrel38.png" alt="barrel38" data-name="barrel38">
+  <img class="hidden" src="images/barrel39.png" alt="barrel39" data-name="barrel39">
+  <img class="hidden" src="images/barrel40.png" alt="barrel40" data-name="barrel40">
+  <img class="hidden" src="images/barrel41.png" alt="barrel41" data-name="barrel41">
+  <img class="hidden" src="images/barrel42.png" alt="barrel42" data-name="barrel42">
+  <img class="hidden" src="images/barrel43.png" alt="barrel43" data-name="barrel43">
+  <img class="hidden" src="images/barrel44.png" alt="barrel44" data-name="barrel44">
+  <img class="hidden" src="images/barrel45.png" alt="barrel45" data-name="barrel45">
+  <img class="hidden" src="images/barrel46.png" alt="barrel46" data-name="barrel46">
+  <img class="hidden" src="images/barrel47.png" alt="barrel47" data-name="barrel47">
+  <img class="hidden" src="images/barrel48.png" alt="barrel48" data-name="barrel48">
+  <img class="hidden" src="images/barrel49.png" alt="barrel49" data-name="barrel49">
+  <img class="hidden" src="images/barrel50.png" alt="barrel50" data-name="barrel50">
+  <img class="hidden" src="images/barrel51.png" alt="barrel51" data-name="barrel51">
+  <img class="hidden" src="images/barrel52.png" alt="barrel52" data-name="barrel52">
+  <img class="hidden" src="images/barrel53.png" alt="barrel53" data-name="barrel53">
+  <img class="hidden" src="images/barrel54.png" alt="barrel54" data-name="barrel54">
+  <img class="hidden" src="images/barrel55.png" alt="barrel55" data-name="barrel55">
+  <img class="hidden" src="images/barrel56.png" alt="barrel56" data-name="barrel56">
+  <img class="hidden" src="images/barrel57.png" alt="barrel57" data-name="barrel57">
+  <img class="hidden" src="images/barrel58.png" alt="barrel58" data-name="barrel58">
+  <img class="hidden" src="images/barrel59.png" alt="barrel59" data-name="barrel59">
+  <img class="hidden" src="images/barrel60.png" alt="barrel60" data-name="barrel60">
+  <img class="hidden" src="images/barrel61.png" alt="barrel61" data-name="barrel61">
+  <img class="hidden" src="images/barrel62.png" alt="barrel62" data-name="barrel62">
+  <img class="hidden" src="images/barrel63.png" alt="barrel63" data-name="barrel63">
+  <img class="hidden" src="images/barrel64.png" alt="barrel64" data-name="barrel64">
+  <img class="hidden" src="images/barrel65.png" alt="barrel65" data-name="barrel65">
+  <img class="hidden" src="images/barrel66.png" alt="barrel66" data-name="barrel66">
+  <img class="hidden" src="images/barrel67.png" alt="barrel67" data-name="barrel67">
+  <img class="hidden" src="images/barrel68.png" alt="barrel68" data-name="barrel68">
+  <img class="hidden" src="images/barrel69.png" alt="barrel69" data-name="barrel69">
+  <img class="hidden" src="images/barrel70.png" alt="barrel70" data-name="barrel70">
+  <img class="hidden" src="images/barrel71.png" alt="barrel71" data-name="barrel71">
+  <img class="hidden" src="images/barrel72.png" alt="barrel72" data-name="barrel72">
+  <img class="hidden" src="images/barrel73.png" alt="barrel73" data-name="barrel73">
+  <img class="hidden" src="images/barrel74.png" alt="barrel74" data-name="barrel74">
+  <img class="hidden" src="images/barrel75.png" alt="barrel75" data-name="barrel75">
+  <img class="hidden" src="images/barrel76.png" alt="barrel76" data-name="barrel76">
+  <img class="hidden" src="images/barrel77.png" alt="barrel77" data-name="barrel77">
+  <img class="hidden" src="images/barrel78.png" alt="barrel78" data-name="barrel78">
+  <img class="hidden" src="images/barrel79.png" alt="barrel79" data-name="barrel79">
+  <img class="hidden" src="images/barrel80.png" alt="barrel80" data-name="barrel80">
+  <img class="hidden" src="images/barrel81.png" alt="barrel81" data-name="barrel81">
+  <img class="hidden" src="images/barrel82.png" alt="barrel82" data-name="barrel82">
+  <img class="hidden" src="images/barrel83.png" alt="barrel83" data-name="barrel83">
+  <img class="hidden" src="images/barrel84.png" alt="barrel84" data-name="barrel84">
+  <img class="hidden" src="images/barrel85.png" alt="barrel85" data-name="barrel85">
+  <img class="hidden" src="images/barrel86.png" alt="barrel86" data-name="barrel86">
+  <img class="hidden" src="images/barrel87.png" alt="barrel87" data-name="barrel87">
+  <img class="hidden" src="images/barrel88.png" alt="barrel88" data-name="barrel88">
+  <img class="hidden" src="images/barrel89.png" alt="barrel89" data-name="barrel89">
+  <img class="hidden" src="images/barrel90.png" alt="barrel90" data-name="barrel90">
+  <img class="hidden" src="images/barrel91.png" alt="barrel91" data-name="barrel91">
+  <img class="hidden" src="images/barrel92.png" alt="barrel92" data-name="barrel92">
+  <img class="hidden" src="images/barrel93.png" alt="barrel93" data-name="barrel93">
+  <img class="hidden" src="images/barrel94.png" alt="barrel94" data-name="barrel94">
+  <img class="hidden" src="images/barrel95.png" alt="barrel95" data-name="barrel95">
+  <img class="hidden" src="images/barrel96.png" alt="barrel96" data-name="barrel96">
+  <img class="hidden" src="images/barrel97.png" alt="barrel97" data-name="barrel97">
+  <img class="hidden" src="images/barrel98.png" alt="barrel98" data-name="barrel98">
+  <img class="hidden" src="images/barrel99.png" alt="barrel99" data-name="barrel99">
+  <img class="hidden" src="images/barrels.png" alt="barrels" data-name="barrels">
+  <img class="hidden" src="images/bat00.png" alt="bat00" data-name="bat00">
+  <img class="hidden" src="images/bat10.png" alt="bat10" data-name="bat10">
+  <img class="hidden" src="images/bat11.png" alt="bat11" data-name="bat11">
+  <img class="hidden" src="images/bat12.png" alt="bat12" data-name="bat12">
+  <img class="hidden" src="images/bat13.png" alt="bat13" data-name="bat13">
+  <img class="hidden" src="images/bat20.png" alt="bat20" data-name="bat20">
+  <img class="hidden" src="images/bat21.png" alt="bat21" data-name="bat21">
+  <img class="hidden" src="images/bat22.png" alt="bat22" data-name="bat22">
+  <img class="hidden" src="images/bat23.png" alt="bat23" data-name="bat23">
+  <img class="hidden" src="images/bat23f.png" alt="bat23f" data-name="bat23f">
+  <img class="hidden" src="images/bat30.png" alt="bat30" data-name="bat30">
+  <img class="hidden" src="images/bat31.png" alt="bat31" data-name="bat31">
+  <img class="hidden" src="images/bat32.png" alt="bat32" data-name="bat32">
+  <img class="hidden" src="images/bat33.png" alt="bat33" data-name="bat33">
+  <img class="hidden" src="images/bat40.png" alt="bat40" data-name="bat40">
+  <img class="hidden" src="images/bat41.png" alt="bat41" data-name="bat41">
+  <img class="hidden" src="images/bat42.png" alt="bat42" data-name="bat42">
+  <img class="hidden" src="images/bat43.png" alt="bat43" data-name="bat43">
+  <img class="hidden" src="images/bats00.png" alt="bats00" data-name="bats00">
+  <img class="hidden" src="images/bats10.png" alt="bats10" data-name="bats10">
+  <img class="hidden" src="images/bats11.png" alt="bats11" data-name="bats11">
+  <img class="hidden" src="images/bats12.png" alt="bats12" data-name="bats12">
+  <img class="hidden" src="images/bats13.png" alt="bats13" data-name="bats13">
+  <img class="hidden" src="images/bats20.png" alt="bats20" data-name="bats20">
+  <img class="hidden" src="images/bats21.png" alt="bats21" data-name="bats21">
+  <img class="hidden" src="images/bats22.png" alt="bats22" data-name="bats22">
+  <img class="hidden" src="images/bats23.png" alt="bats23" data-name="bats23">
+  <img class="hidden" src="images/bats30.png" alt="bats30" data-name="bats30">
+  <img class="hidden" src="images/bats31.png" alt="bats31" data-name="bats31">
+  <img class="hidden" src="images/bats32.png" alt="bats32" data-name="bats32">
+  <img class="hidden" src="images/bats33.png" alt="bats33" data-name="bats33">
+  <img class="hidden" src="images/bats40.png" alt="bats40" data-name="bats40">
+  <img class="hidden" src="images/bats41.png" alt="bats41" data-name="bats41">
+  <img class="hidden" src="images/bats42.png" alt="bats42" data-name="bats42">
+  <img class="hidden" src="images/bats43.png" alt="bats43" data-name="bats43">
+  <img class="hidden" src="images/blank.png" alt="blank" data-name="blank">
+  <img class="hidden" src="images/brick0.png" alt="brick0" data-name="brick0">
+  <img class="hidden" src="images/brick1.png" alt="brick1" data-name="brick1">
+  <img class="hidden" src="images/brick2.png" alt="brick2" data-name="brick2">
+  <img class="hidden" src="images/brick3.png" alt="brick3" data-name="brick3">
+  <img class="hidden" src="images/brick4.png" alt="brick4" data-name="brick4">
+  <img class="hidden" src="images/brick5.png" alt="brick5" data-name="brick5">
+  <img class="hidden" src="images/brick6.png" alt="brick6" data-name="brick6">
+  <img class="hidden" src="images/brick7.png" alt="brick7" data-name="brick7">
+  <img class="hidden" src="images/brick8.png" alt="brick8" data-name="brick8">
+  <img class="hidden" src="images/brick9.png" alt="brick9" data-name="brick9">
+  <img class="hidden" src="images/bricka.png" alt="bricka" data-name="bricka">
+  <img class="hidden" src="images/brickb.png" alt="brickb" data-name="brickb">
+  <img class="hidden" src="images/brickc.png" alt="brickc" data-name="brickc">
+  <img class="hidden" src="images/brickd.png" alt="brickd" data-name="brickd">
+  <img class="hidden" src="images/bricks.png" alt="bricks" data-name="bricks">
+  <img class="hidden" src="images/bullet0.png" alt="bullet0" data-name="bullet0">
+  <img class="hidden" src="images/bullet1.png" alt="bullet1" data-name="bullet1">
+  <img class="hidden" src="images/digit0.png" alt="digit0" data-name="digit0">
+  <img class="hidden" src="images/digit1.png" alt="digit1" data-name="digit1">
+  <img class="hidden" src="images/digit2.png" alt="digit2" data-name="digit2">
+  <img class="hidden" src="images/digit3.png" alt="digit3" data-name="digit3">
+  <img class="hidden" src="images/digit4.png" alt="digit4" data-name="digit4">
+  <img class="hidden" src="images/digit5.png" alt="digit5" data-name="digit5">
+  <img class="hidden" src="images/digit6.png" alt="digit6" data-name="digit6">
+  <img class="hidden" src="images/digit7.png" alt="digit7" data-name="digit7">
+  <img class="hidden" src="images/digit8.png" alt="digit8" data-name="digit8">
+  <img class="hidden" src="images/digit9.png" alt="digit9" data-name="digit9">
+  <img class="hidden" src="images/gameover0.png" alt="gameover0" data-name="gameover0">
+  <img class="hidden" src="images/gameover1.png" alt="gameover1" data-name="gameover1">
+  <img class="hidden" src="images/gameover10.png" alt="gameover10" data-name="gameover10">
+  <img class="hidden" src="images/gameover11.png" alt="gameover11" data-name="gameover11">
+  <img class="hidden" src="images/gameover12.png" alt="gameover12" data-name="gameover12">
+  <img class="hidden" src="images/gameover13.png" alt="gameover13" data-name="gameover13">
+  <img class="hidden" src="images/gameover14.png" alt="gameover14" data-name="gameover14">
+  <img class="hidden" src="images/gameover2.png" alt="gameover2" data-name="gameover2">
+  <img class="hidden" src="images/gameover3.png" alt="gameover3" data-name="gameover3">
+  <img class="hidden" src="images/gameover4.png" alt="gameover4" data-name="gameover4">
+  <img class="hidden" src="images/gameover5.png" alt="gameover5" data-name="gameover5">
+  <img class="hidden" src="images/gameover6.png" alt="gameover6" data-name="gameover6">
+  <img class="hidden" src="images/gameover7.png" alt="gameover7" data-name="gameover7">
+  <img class="hidden" src="images/gameover8.png" alt="gameover8" data-name="gameover8">
+  <img class="hidden" src="images/gameover9.png" alt="gameover9" data-name="gameover9">
+  <img class="hidden" src="images/impact00.png" alt="impact00" data-name="impact00">
+  <img class="hidden" src="images/impact01.png" alt="impact01" data-name="impact01">
+  <img class="hidden" src="images/impact02.png" alt="impact02" data-name="impact02">
+  <img class="hidden" src="images/impact03.png" alt="impact03" data-name="impact03">
+  <img class="hidden" src="images/impact10.png" alt="impact10" data-name="impact10">
+  <img class="hidden" src="images/impact11.png" alt="impact11" data-name="impact11">
+  <img class="hidden" src="images/impact12.png" alt="impact12" data-name="impact12">
+  <img class="hidden" src="images/impact13.png" alt="impact13" data-name="impact13">
+  <img class="hidden" src="images/impact20.png" alt="impact20" data-name="impact20">
+  <img class="hidden" src="images/impact21.png" alt="impact21" data-name="impact21">
+  <img class="hidden" src="images/impact22.png" alt="impact22" data-name="impact22">
+  <img class="hidden" src="images/impact23.png" alt="impact23" data-name="impact23">
+  <img class="hidden" src="images/impact30.png" alt="impact30" data-name="impact30">
+  <img class="hidden" src="images/impact31.png" alt="impact31" data-name="impact31">
+  <img class="hidden" src="images/impact32.png" alt="impact32" data-name="impact32">
+  <img class="hidden" src="images/impact33.png" alt="impact33" data-name="impact33">
+  <img class="hidden" src="images/impact40.png" alt="impact40" data-name="impact40">
+  <img class="hidden" src="images/impact41.png" alt="impact41" data-name="impact41">
+  <img class="hidden" src="images/impact42.png" alt="impact42" data-name="impact42">
+  <img class="hidden" src="images/impact43.png" alt="impact43" data-name="impact43">
+  <img class="hidden" src="images/impact50.png" alt="impact50" data-name="impact50">
+  <img class="hidden" src="images/impact51.png" alt="impact51" data-name="impact51">
+  <img class="hidden" src="images/impact52.png" alt="impact52" data-name="impact52">
+  <img class="hidden" src="images/impact53.png" alt="impact53" data-name="impact53">
+  <img class="hidden" src="images/impact60.png" alt="impact60" data-name="impact60">
+  <img class="hidden" src="images/impact61.png" alt="impact61" data-name="impact61">
+  <img class="hidden" src="images/impact62.png" alt="impact62" data-name="impact62">
+  <img class="hidden" src="images/impact63.png" alt="impact63" data-name="impact63">
+  <img class="hidden" src="images/impact70.png" alt="impact70" data-name="impact70">
+  <img class="hidden" src="images/impact71.png" alt="impact71" data-name="impact71">
+  <img class="hidden" src="images/impact72.png" alt="impact72" data-name="impact72">
+  <img class="hidden" src="images/impact73.png" alt="impact73" data-name="impact73">
+  <img class="hidden" src="images/impact80.png" alt="impact80" data-name="impact80">
+  <img class="hidden" src="images/impact81.png" alt="impact81" data-name="impact81">
+  <img class="hidden" src="images/impact82.png" alt="impact82" data-name="impact82">
+  <img class="hidden" src="images/impact83.png" alt="impact83" data-name="impact83">
+  <img class="hidden" src="images/impact90.png" alt="impact90" data-name="impact90">
+  <img class="hidden" src="images/impact91.png" alt="impact91" data-name="impact91">
+  <img class="hidden" src="images/impact92.png" alt="impact92" data-name="impact92">
+  <img class="hidden" src="images/impact93.png" alt="impact93" data-name="impact93">
+  <img class="hidden" src="images/impacta0.png" alt="impacta0" data-name="impacta0">
+  <img class="hidden" src="images/impacta1.png" alt="impacta1" data-name="impacta1">
+  <img class="hidden" src="images/impacta2.png" alt="impacta2" data-name="impacta2">
+  <img class="hidden" src="images/impacta3.png" alt="impacta3" data-name="impacta3">
+  <img class="hidden" src="images/impactb0.png" alt="impactb0" data-name="impactb0">
+  <img class="hidden" src="images/impactb1.png" alt="impactb1" data-name="impactb1">
+  <img class="hidden" src="images/impactb2.png" alt="impactb2" data-name="impactb2">
+  <img class="hidden" src="images/impactb3.png" alt="impactb3" data-name="impactb3">
+  <img class="hidden" src="images/impactc0.png" alt="impactc0" data-name="impactc0">
+  <img class="hidden" src="images/impactc1.png" alt="impactc1" data-name="impactc1">
+  <img class="hidden" src="images/impactc2.png" alt="impactc2" data-name="impactc2">
+  <img class="hidden" src="images/impactc3.png" alt="impactc3" data-name="impactc3">
+  <img class="hidden" src="images/impactc4.png" alt="impactc4" data-name="impactc4">
+  <img class="hidden" src="images/impactd0.png" alt="impactd0" data-name="impactd0">
+  <img class="hidden" src="images/impactd1.png" alt="impactd1" data-name="impactd1">
+  <img class="hidden" src="images/impactd2.png" alt="impactd2" data-name="impactd2">
+  <img class="hidden" src="images/impactd3.png" alt="impactd3" data-name="impactd3">
+  <img class="hidden" src="images/impactd4.png" alt="impactd4" data-name="impactd4">
+  <img class="hidden" src="images/impacte0.png" alt="impacte0" data-name="impacte0">
+  <img class="hidden" src="images/impacte1.png" alt="impacte1" data-name="impacte1">
+  <img class="hidden" src="images/impacte2.png" alt="impacte2" data-name="impacte2">
+  <img class="hidden" src="images/impacte3.png" alt="impacte3" data-name="impacte3">
+  <img class="hidden" src="images/impacte4.png" alt="impacte4" data-name="impacte4">
+  <img class="hidden" src="images/impactf0.png" alt="impactf0" data-name="impactf0">
+  <img class="hidden" src="images/impactf1.png" alt="impactf1" data-name="impactf1">
+  <img class="hidden" src="images/impactf2.png" alt="impactf2" data-name="impactf2">
+  <img class="hidden" src="images/impactf3.png" alt="impactf3" data-name="impactf3">
+  <img class="hidden" src="images/life.png" alt="life" data-name="life">
+  <img class="hidden" src="images/portal_exit0.png" alt="portal_exit0" data-name="portal_exit0">
+  <img class="hidden" src="images/portal_exit1.png" alt="portal_exit1" data-name="portal_exit1">
+  <img class="hidden" src="images/portal_exit2.png" alt="portal_exit2" data-name="portal_exit2">
+  <img class="hidden" src="images/portal_exit3.png" alt="portal_exit3" data-name="portal_exit3">
+  <img class="hidden" src="images/portal_meanie00.png" alt="portal_meanie00" data-name="portal_meanie00">
+  <img class="hidden" src="images/portal_meanie10.png" alt="portal_meanie10" data-name="portal_meanie10">
+  <img class="hidden" src="images/start0.png" alt="start0" data-name="start0">
+  <img class="hidden" src="images/start1.png" alt="start1" data-name="start1">
+  <img class="hidden" src="images/start10.png" alt="start10" data-name="start10">
+  <img class="hidden" src="images/start11.png" alt="start11" data-name="start11">
+  <img class="hidden" src="images/start12.png" alt="start12" data-name="start12">
+  <img class="hidden" src="images/start2.png" alt="start2" data-name="start2">
+  <img class="hidden" src="images/start3.png" alt="start3" data-name="start3">
+  <img class="hidden" src="images/start4.png" alt="start4" data-name="start4">
+  <img class="hidden" src="images/start5.png" alt="start5" data-name="start5">
+  <img class="hidden" src="images/start6.png" alt="start6" data-name="start6">
+  <img class="hidden" src="images/start7.png" alt="start7" data-name="start7">
+  <img class="hidden" src="images/start8.png" alt="start8" data-name="start8">
+  <img class="hidden" src="images/start9.png" alt="start9" data-name="start9">
+  <img class="hidden" src="images/startgame.png" alt="startgame" data-name="startgame">
+  <img class="hidden" src="images/title.png" alt="title" data-name="title">
+</section>
+<section id="soundLoader" class="hidden">
+  <audio class="hidden" controls preload="auto" src="sounds/ball_stick0.ogg" data-name="ball_stick0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/bat_extend0.ogg" data-name="bat_extend0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/bat_gun0.ogg" data-name="bat_gun0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/bat_small0.ogg" data-name="bat_small0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/bounce_synth0.ogg" data-name="bounce_synth0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/bullet_hit0.ogg" data-name="bullet_hit0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/bullet_hit1.ogg" data-name="bullet_hit1">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/bullet_hit2.ogg" data-name="bullet_hit2">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/bullet_hit3.ogg" data-name="bullet_hit3">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/extra_life0.ogg" data-name="extra_life0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/game_over0.ogg" data-name="game_over0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/hit_brick0.ogg" data-name="hit_brick0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/hit_fast0.ogg" data-name="hit_fast0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/hit_medium0.ogg" data-name="hit_medium0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/hit_veryfast0.ogg" data-name="hit_veryfast0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/hit_wall0.ogg" data-name="hit_wall0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/laser0.ogg" data-name="laser0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/lose_life0.ogg" data-name="lose_life0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/magnet0.ogg" data-name="magnet0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/multiball0.ogg" data-name="multiball0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/portal_exit0.ogg" data-name="portal_exit0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/powerup0.ogg" data-name="powerup0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/speed_up0.ogg" data-name="speed_up0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/start_game0.ogg" data-name="start_game0">Your browser does not support the audio element.</audio>
+</section>
+<section id="musicLoader" class="hidden">
+  <audio class="hidden" controls preload="auto" src="music/title_theme.ogg" data-name="title_theme">Your browser does not support the audio element.</audio>
+</section>
+
+<main>
+<h1>kinetix</h1>
+
+<canvas id="screen">
+The game screen appears here if your browser supports the Canvas API.
+</canvas>
+<section id="controls">
+  <button type="button" id="reset">Reset</button>
+  <button type="button" id="pause">Pause</button>
+</section>
+
+<h2>Attribution</h2>
+
+<p><a href="https://store.rpipress.cc/products/code-the-classics-volume-ii">Code the Classics – Volume 2</a>.</p>
+
+<p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported</a>.</p>
+
+<h2>Original Python code</h2>
+
+<pre id="original"><code>
+# Kinetix - Code the Classics Volume 2
+# Code by Eben Upton and Andrew Gillett
+# Graphics by Dan Malone
+# Music and sound effects by Allister Brimble
+# https://github.com/raspberrypipress/Code-the-Classics-Vol2.git
+# https://store.rpipress.cc/products/code-the-classics-volume-ii
+
+# If the game window doesn&#x27;t fit on the screen, you may need to turn off or reduce display scaling in the Windows/macOS settings
+# On Windows, you can uncomment the following two lines to fix the issue. It sets the program as &quot;DPI aware&quot;
+# meaning that display scaling won&#x27;t be applied to it.
+#import ctypes
+#ctypes.windll.user32.SetProcessDPIAware()
+
+import pygame, pgzero, pgzrun, math, sys
+from abc import ABC, abstractmethod
+from enum import Enum, IntEnum
+from random import random, randint, uniform, choice
+from pygame import surface
+from pygame.math import Vector2
+
+# Check Python version number. sys.version_info gives version as a tuple, e.g. if (3,7,2,&#x27;final&#x27;,0) for version 3.7.2.
+# Unlike many languages, Python can compare two tuples in the same way that you can compare numbers.
+if sys.version_info &lt; (3,6):
+    print(&quot;This game requires at least version 3.6 of Python. Please download it from www.python.org&quot;)
+    sys.exit()
+
+# Check Pygame Zero version. This is a bit trickier because Pygame Zero only lets us get its version number as a string.
+# So we have to split the string into a list, using &#x27;.&#x27; as the character to split on. We convert each element of the
+# version number into an integer - but only if the string contains numbers and nothing else, because it&#x27;s possible for
+# a component of the version to contain letters as well as numbers (e.g. &#x27;2.0.dev0&#x27;)
+# This uses a Python feature called list comprehension
+pgzero_version = [int(s) if s.isnumeric() else s for s in pgzero.__version__.split(&#x27;.&#x27;)]
+if pgzero_version &lt; [1,2]:
+    print(f&quot;This game requires at least version 1.2 of Pygame Zero. You have version {pgzero.__version__}. Please upgrade using the command &#x27;pip3 install --upgrade pgzero&#x27;&quot;)
+    sys.exit()
+
+# Set up constants
+WIDTH = 640
+HEIGHT = 640
+TITLE = &quot;Kinetix&quot;
+
+BAT_SPEED = 8
+
+BAT_MIN_X = 35
+BAT_MAX_X = 605
+
+TOP_EDGE = 50
+RIGHT_EDGE = 617
+LEFT_EDGE = 23
+
+BAT_TOP_EDGE = 590
+
+BALL_INITIAL_OFFSET = 10
+
+BALL_START_SPEED = 5
+BALL_MIN_SPEED = 4
+BALL_MAX_SPEED = 11
+
+BALL_SPEED_UP_INTERVAL = 10 * 60        # Normal ball speed up interval (10 seconds at 60 frames per second)
+BALL_SPEED_UP_INTERVAL_FAST = 15 * 60   # Speed up interval for when the ball is above a speed threshold
+BALL_FAST_SPEED_THRESHOLD = 7
+
+BALL_RADIUS = 7
+
+BULLET_SPEED = 8
+
+BRICKS_X_START = 20
+BRICKS_Y_START = 100
+
+BRICK_WIDTH = 40
+BRICK_HEIGHT = 20
+SHADOW_OFFSET = 10
+
+POWERUP_CHANCE = 0.2
+
+FIRE_INTERVAL = 30
+
+PORTAL_ANIMATION_SPEED = 5
+
+LEVELS = [
+        [&quot;        &quot;,
+         &quot;        &quot;,
+         &quot;        &quot;,
+         &quot;     a  &quot;,
+         &quot;    a7a &quot;,
+         &quot;     a  &quot;,
+         &quot;     a55&quot;,
+         &quot;    444 &quot;,
+         &quot;   333a &quot;,
+         &quot;  222a  &quot;,
+         &quot; 111a   &quot;,
+         &quot;   11aa &quot;,
+         &quot;    111 &quot;,
+         &quot;    6   &quot;,
+         &quot;     6  &quot;],
+
+        [&quot;        &quot;,
+         &quot;        &quot;,
+         &quot;    3   &quot;,
+         &quot;    3   &quot;,
+         &quot;    3   &quot;,
+         &quot;    3000&quot;,
+         &quot;    3000&quot;,
+         &quot;   53000&quot;,
+         &quot;   53000&quot;,
+         &quot;  35a555&quot;,
+         &quot; 3 5aa55&quot;,
+         &quot;3  5aaa5&quot;,
+         &quot;  355555&quot;,
+         &quot;  333333&quot;,
+         &quot;   333  &quot;,
+         &quot;    33  &quot;,
+         &quot;     3  &quot;],
+
+        [&quot;   7    &quot;,
+         &quot;  77    &quot;,
+         &quot; 7777   &quot;,
+         &quot; 7777   &quot;,
+         &quot; 77777  &quot;,
+         &quot; 77777  &quot;,
+         &quot; 77 777 &quot;,
+         &quot; 7  7777&quot;,
+         &quot; 7   717&quot;,
+         &quot;     777&quot;,
+         &quot;      77&quot;,
+         &quot;      7 &quot;,
+         &quot;     c7 &quot;,
+         &quot;      c &quot;,
+         &quot;      c &quot;],
+
+        [&quot;   03   &quot;,
+         &quot;   30   &quot;,
+         &quot;    03  &quot;,
+         &quot;    30  &quot;,
+         &quot;     0  &quot;,
+         &quot; 8   0  &quot;,
+         &quot; 88 8033&quot;,
+         &quot;  883333&quot;,
+         &quot;   8333d&quot;,
+         &quot;   33733&quot;,
+         &quot;  33373d&quot;,
+         &quot; 3333333&quot;,
+         &quot; 3c 333d&quot;,
+         &quot; cc 3333&quot;,
+         &quot; c   3 3&quot;,
+         &quot;     3 3&quot;,
+         &quot;    3 3 &quot;,
+         &quot;    c 3 &quot;,
+         &quot;    cc3c&quot;,
+         &quot;    cccc&quot;,
+         &quot;      d &quot;],
+
+        [&quot;5   9  0&quot;,
+         &quot;0   4  3&quot;,
+         &quot;08  4  4&quot;,
+         &quot;53  47 2&quot;,
+         &quot; 39 92 1&quot;,
+         &quot; 84  2  &quot;,
+         &quot;  47 26 &quot;,
+         &quot;5 92 71 &quot;,
+         &quot;08 26 1 &quot;,
+         &quot;53971 1 &quot;,
+         &quot; 8471c6 &quot;,
+         &quot;  926acc&quot;,
+         &quot;   71aad&quot;,
+         &quot;039 6aac&quot;,
+         &quot;dc421ac &quot;,
+         &quot;  dccc  &quot;,
+         &quot;    d   &quot;],
+
+        [&quot;  dccccd&quot;,
+         &quot;  c89765&quot;,
+         &quot;  c34210&quot;,
+         &quot;  c34210&quot;,
+         &quot;  c34210&quot;,
+         &quot;  c34210&quot;,
+         &quot;  c3421d&quot;,
+         &quot;  c34210&quot;,
+         &quot;  c34210&quot;,
+         &quot;  c34210&quot;,
+         &quot;  c34210&quot;,
+         &quot;  c89765&quot;,
+         &quot;  dccccd&quot;]
+]
+
+def get_mirrored_level(level):
+    # For each row, return a new row which includes the existing row plus
+    # a mirrored version. todo explain row[-2::-1]
+    return [row + row[-2::-1] for row in level]
+
+class Controls(ABC):
+    def __init__(self):
+        self.fire_previously_down = False
+        self.is_fire_pressed = False
+
+    def update(self):
+        # Call each frame to update fire status
+        fire_down = self.fire_down()
+        self.is_fire_pressed = fire_down and not self.fire_previously_down
+        self.fire_previously_down = fire_down
+
+    @abstractmethod
+    def get_x(self):
+        # Overridden by subclasses
+        pass
+
+    @abstractmethod
+    def fire_down(self):
+        # Overridden by subclasses
+        pass
+
+    def fire_pressed(self):
+        return self.is_fire_pressed
+
+class KeyboardControls(Controls):
+    def get_x(self):
+        if keyboard.left:
+            return -BAT_SPEED
+        elif keyboard.right:
+            return BAT_SPEED
+        else:
+            return 0
+
+    def fire_down(self):
+        return keyboard.space
+
+class JoystickControls(Controls):
+    def __init__(self, joystick):
+        super().__init__()
+        self.joystick = joystick
+        joystick.init() # Not necessary in Pygame 2.0.0 onwards
+
+    def get_x(self):
+        # First check if there is an input on the dpad for the X axis. The dpad is classified here as a joystick &#x27;hat&#x27;
+        if self.joystick.get_numhats() &gt; 0 and self.joystick.get_hat(0)[0] != 0:
+            return self.joystick.get_hat(0)[0] * BAT_SPEED
+
+        # If no input on the dpad, check for analogue left/right input
+        axis_value = self.joystick.get_axis(0)
+        if abs(axis_value) &lt; 0.2:
+            # Dead-zone, necessary because some devices may register a small amount of input even when the player isn&#x27;t
+            # moving the analogue stick
+            return 0
+        else:
+            return axis_value * BAT_SPEED
+
+    def fire_down(self):
+        # Before checking button 0, check to make sure that the controller actually has any buttons
+        # There are some weird devices out there which could cause a crash if this check were not present
+        if self.joystick.get_numbuttons() &lt;= 0:
+            print(&quot;Warning: controller does not have any buttons!&quot;)
+            return False
+        return self.joystick.get_button(0) != 0
+
+class AIControls(Controls):
+    def __init__(self):
+        super().__init__()
+        self.offset = 0
+
+    def get_x(self):
+        if game.portal_active:
+            # If the portal to the next level is open, just move right so that we go through it
+            return BAT_SPEED
+        else:
+            # Randomly shift the bat AI offset over time, so the AI player doesn&#x27;t constantly hit the ball perfectly
+            # in the centre of the bat. Limit offset between -40 and 40
+            self.offset += randint(-1, 1)
+            self.offset = min(max(-40, self.offset), 40)
+
+            # Follow position of the first ball (in case of multiball)
+            return min(BAT_SPEED, max(-BAT_SPEED, game.balls[0].x - (game.bat.x + self.offset)))
+
+    def fire_down(self):
+        # Just have the AI mash the fire button
+        return randint(0,5) == 0
+
+class Powerup(IntEnum):
+    # These numbers correspond to the sprite filenames
+    # e.g. barrel06 is extend bat, frame 6
+    EXTEND_BAT = 0
+    GUN = 1
+    SMALL_BAT = 2
+    MAGNET = 3
+    MULTI_BALL = 4
+    FAST_BALLS = 5
+    SLOW_BALLS = 6
+    PORTAL = 7
+    EXTRA_LIFE = 8
+
+class BatType(IntEnum):
+    NORMAL = 0
+    MAGNET = 1
+    GUN = 2
+    EXTENDED = 3
+    SMALL = 4
+
+POWERUP_BAT_TYPES = {
+    Powerup.EXTEND_BAT: BatType.EXTENDED,
+    Powerup.GUN: BatType.GUN,
+    Powerup.SMALL_BAT: BatType.SMALL,
+    Powerup.MAGNET: BatType.MAGNET
+}
+
+POWERUP_SOUNDS = {
+    Powerup.EXTEND_BAT: &quot;bat_extend&quot;,
+    Powerup.GUN: &quot;bat_gun&quot;,
+    Powerup.MAGNET: &quot;magnet&quot;,
+    Powerup.SMALL_BAT: &quot;bat_small&quot;,
+    Powerup.EXTRA_LIFE: &quot;extra_life&quot;,
+    Powerup.FAST_BALLS: &quot;speed_up&quot;,
+    Powerup.SLOW_BALLS: &quot;powerup&quot;,
+    Powerup.MULTI_BALL: &quot;multiball&quot;
+}
+
+class CollisionType(Enum):
+    WALL = 0
+    BAT = 1
+    BAT_EDGE = 2
+    BRICK = 3
+    INDESTRUCTIBLE_BRICK = 4
+
+class Bullet(Actor):
+    def __init__(self, pos, side):
+        super().__init__(f&quot;bullet{side}&quot;, pos)
+
+        self.alive = True
+
+    def update(self):
+        self.y -= BULLET_SPEED
+
+        # returns tuple of (tuple 2: impact pos, bool: show impact, CollisionType), or None if no collision
+        c = game.collide(self.x, self.y, Vector2(0, -1), 2)
+        if c is not None:
+            self.alive = False
+            game.impacts.append(Impact(self.pos, 15))
+            if c[2] == CollisionType.BRICK or c[2] == CollisionType.INDESTRUCTIBLE_BRICK:
+                game.play_sound(&quot;bullet_hit&quot;, 4)
+
+# The barrel class represents the collectable powerups that sometimes fall from destroyed bricks
+class Barrel(Actor):
+    def __init__(self, pos):
+        super().__init__(&quot;blank&quot;, pos)
+
+        # Decide powerup type, with each type able to have its own probability
+        # First we create a dictionary of types to weights, where a higher weight means that powerup is more likely
+        # to be chosen. For the PORTAL powerup, which opens a portal to the next level, it can&#x27;t be generated unless
+        # there are only a few bricks remaining, at which point it becomes very likely
+        weights = {Powerup.EXTEND_BAT:6,
+                   Powerup.GUN:6,
+                   Powerup.SMALL_BAT:6,
+                   Powerup.MAGNET:6,
+                   Powerup.MULTI_BALL:6,
+                   Powerup.FAST_BALLS:6,
+                   Powerup.SLOW_BALLS:6,
+                   Powerup.EXTRA_LIFE:2,
+                   Powerup.PORTAL:0 if game.bricks_remaining &gt; 20 or game.portal_active else 20}
+
+        # Create a list of powerup types, with each type repeated a certain
+        # number of times based on its weight
+        types = [type for type, weight in weights.items() for i in range(weight)]
+
+        # Randomly choose one of the types from the list. Types which
+        # are repeated many times are more likely to be chosen
+        self.type = choice(types)
+
+        self.time = 0
+
+        # Create separate actor for shadow sprite
+        self.shadow = Actor(&quot;barrels&quot;, (self.x + SHADOW_OFFSET, self.y + SHADOW_OFFSET))
+
+    def update(self):
+        self.time += 1
+        self.y += 1
+
+        w = (game.bat.width // 2) + BALL_RADIUS
+
+        # Check for barrel being collected by bat
+        if self.y &gt;= BAT_TOP_EDGE - 10 and self.y &lt;= BAT_TOP_EDGE + 30 and abs(self.x - game.bat.x) &lt; w:
+            # Create barrel collection animation - sprites &#x27;impacte0&#x27; to &#x27;impacte4&#x27;
+            # 14 is E in hexadecimal
+            game.impacts.append(Impact((self.x, self.y - 11), 14))
+
+            # Play sound effect (if this powerup has a sound effect)
+            if self.type in POWERUP_SOUNDS:
+                game.play_sound(POWERUP_SOUNDS[self.type])
+
+            # Move barrel off the bottom of the screen, it will then be deleted
+            self.y = HEIGHT + 100
+
+            if self.type in POWERUP_BAT_TYPES:
+                game.bat.change_type(POWERUP_BAT_TYPES[self.type])
+            elif self.type == Powerup.MULTI_BALL:
+                game.balls = [j for b in game.balls for j in b.generate_multiballs()]
+            elif self.type == Powerup.FAST_BALLS:
+                game.change_all_ball_speeds(3)
+            elif self.type == Powerup.SLOW_BALLS:
+                game.change_all_ball_speeds(-3)
+            elif self.type == Powerup.PORTAL:
+                game.activate_portal()
+            elif self.type == Powerup.EXTRA_LIFE:
+                game.lives += 1
+
+        # The name of each powerup sprite has the format &quot;barrel[powerup type][frame]&quot;,
+        # where powerup type is a number from 0 to 8 and frame is a number from 0 to 9
+        # We switch to a new animation frame every 10 game frames
+        self.image = f&quot;barrel{int(self.type)}{self.time // 10 % 10}&quot;
+
+        self.shadow.pos = (self.x + SHADOW_OFFSET, self.y + SHADOW_OFFSET)
+
+# The Impact class is used for the animations played when the ball hits a wall or destroys a brick
+class Impact(Actor):
+    def __init__(self, pos, type):
+        super().__init__(&quot;blank&quot;, pos)
+
+        self.type = type
+        self.time = 0
+
+    def update(self):
+        # The impact animation sprites have names like &#x27;impact00&#x27; where the first digit is the type of impact and
+        # the second is the animation frame. The type is converted into a hexadecimal number. The type can be between
+        # 0 and 15, where values from 10 to 15 are represented by the hexadecimal digits a to f. The Python hex
+        # function is used to convert the type to hexadecimal, the resulting string will always start with &#x27;0x&#x27; meaning
+        # hexadecimal, so we strip off the first two characters from the start of string.
+        self.image = &quot;impact&quot; + hex(self.type)[2:] + str(self.time // 4)
+
+        self.time += 1
+
+class Ball(Actor):
+    def __init__(self, x=0, y=0, dir=Vector2(0, 0), stuck_to_bat=True, speed=BALL_START_SPEED):
+        super().__init__(&quot;ball0&quot;, (0,0))
+
+        self.x = x
+        self.y = y
+
+        # Direction should always be a unit vector (a vector with a length of 1)
+        # It&#x27;s important that we make a full copy of the direction, rather than just copying the reference.
+        # Since a Vector2 is an object, it&#x27;s a reference type. If you copy a reference type it means you now have two
+        # variables referring to the same object. If we said below &#x27;self.dir = dir&#x27; it would mean that when a ball
+        # copied its direction from another ball, the directions of the two balls would remain linked to each other
+        self.dir = Vector2(dir)
+
+        self.stuck_to_bat = stuck_to_bat
+        self.bat_offset = BALL_INITIAL_OFFSET
+
+        self.speed = speed
+
+        self.speed_up_timer = 0
+        self.time_since_touched_bat = 0
+        self.time_since_damaged_brick = 0
+
+        self.shadow = Actor(&quot;balls&quot;, (self.x + 16, self.y + 16))
+
+    def update(self):
+        self.time_since_damaged_brick += 1
+
+        if self.stuck_to_bat:
+            self.x = game.bat.x + self.bat_offset
+            self.y = game.bat.y - BALL_RADIUS
+
+            # Launch ball from bat if fire is pressed
+            if game.controls.fire_pressed():
+                self.stuck_to_bat = False
+                _, self.dir = self.get_bat_bounce_vector()
+        else:
+            # Normal ball movement
+            self.time_since_touched_bat += 1
+
+            # Speed up every so often
+            # If ball hasn&#x27;t touched bat in a while, speed up more frequently
+            self.speed_up_timer += 1
+            if self.time_since_touched_bat &gt; 5 * 60:
+                self.speed_up_timer += 1
+            interval = BALL_SPEED_UP_INTERVAL if self.speed &lt; BALL_FAST_SPEED_THRESHOLD else BALL_SPEED_UP_INTERVAL_FAST
+            interval2 = interval * 0.75
+            if self.speed_up_timer &gt; interval or (self.speed_up_timer &gt; interval2 and self.time_since_touched_bat &gt; interval2):
+                self.increment_speed()
+                self.speed_up_timer = 0
+
+            # Move one pixel at a time, speed times (rounded down to a whole number)
+            for i in range(self.speed):
+                # Move and collide on X axis
+                self.x += self.dir.x
+
+                # returns tuple of (tuple 2: impact pos, bool: show impact, CollisionType), or None if no collision
+                c = game.collide(self.x, self.y, self.dir)
+
+                if c is not None:
+                    # Invert X direction and move back to previous position, before the collision
+                    self.dir.x = -self.dir.x
+                    self.x += self.dir.x
+
+                    if c[1]:
+                        # Create impact animation type 12 (C in hexadecimal)
+                        game.impacts.append(Impact(c[0], 0xc))
+
+                    if c[2] == CollisionType.BRICK:
+                        self.time_since_damaged_brick = 0
+
+                    Ball.collision_sound(c[2])
+
+                # Original y position before movement
+                oy = self.y
+
+                # Move and collide on Y axis
+                self.y += self.dir.y
+
+                # returns tuple of (tuple 2: impact pos, bool: show impact, CollisionType), or None
+                c = game.collide(self.x, self.y, self.dir)
+
+                if c is not None:
+                    # Invert Y direction and move back to previous position, before the collision
+                    self.dir.y = -self.dir.y
+                    self.y += self.dir.y
+
+                    if c[1]:
+                        # Create impact animation type 12 (C in hexadecimal)
+                        game.impacts.append(Impact(c[0], 0xc))
+
+                    if c[2] == CollisionType.BRICK:
+                        self.time_since_damaged_brick = 0
+
+                    Ball.collision_sound(c[2])
+
+                elif self.dir.y &gt; 0:
+                    # Check for collision with bat - only if we&#x27;re moving down
+
+                    # If bottom of ball was previously above/at top edge of bat, but is now below it
+                    if oy + BALL_RADIUS &lt;= BAT_TOP_EDGE and self.y + BALL_RADIUS &gt; BAT_TOP_EDGE:
+                        # See if we&#x27;re colliding on X axis
+                        collided_x, new_dir = self.get_bat_bounce_vector()
+                        if collided_x:
+                            # Ball collided with bat
+                            if game.bat.current_type == BatType.MAGNET:
+                                self.stuck_to_bat = True
+                                self.bat_offset = self.x - game.bat.x
+                                self.dir = Vector2(0, 0)
+                            else:
+                                # No magnet powerup, bounce ball in the direction we got from get_bat_bounce_vector
+                                self.dir = new_dir
+
+                            self.time_since_touched_bat = 0
+
+                            game.impacts.append(Impact((self.x, self.y), 0xc))
+
+                            Ball.collision_sound(CollisionType.BAT)
+
+                            # If we became stuck to the bat, break out of the movement/speed loop
+                            if self.stuck_to_bat:
+                                break
+
+                    # If bottom of ball is below top edge of bat, and top of ball is above halfway point of bat
+                    elif self.y + BALL_RADIUS &gt; BAT_TOP_EDGE and self.y &lt; BAT_TOP_EDGE + 15:
+                        # If the ball hits the top of the bat, the section above will deal with it, if we get here
+                        # and the bat/ball positions on the X axis overlap, that means the ball must have hit the
+                        # side of the bat.
+
+                        # See if we&#x27;re colliding on X axis
+                        collided_x, _ = self.get_bat_bounce_vector()
+                        if collided_x:
+                            # Detected ball hitting the side of the bat
+                            # Send the ball off at an extreme angle, and increase speed
+
+                            # Determine whether the ball will go left or right
+                            dx = 1 if self.x &gt; game.bat.x else -1
+
+                            # Determine new direction vector, with a slightly random Y velocity
+                            # The new direction vector is normalised to ensure that it is a unit vector
+                            self.dir = Vector2(dx, uniform(-0.3, -0.1)).normalize()
+
+                            self.time_since_touched_bat = 0
+
+                            game.impacts.append(Impact((self.x, BAT_TOP_EDGE), 0xc))
+
+                            self.speed = min(self.speed + 4, BALL_MAX_SPEED)
+
+                            Ball.collision_sound(CollisionType.BAT_EDGE)
+
+        # Set shadow actor&#x27;s position
+        self.shadow.pos = (self.x + 16, self.y + 16)
+
+    def increment_speed(self):
+        self.speed = min(self.speed + 1, BALL_MAX_SPEED)
+
+    def get_bat_bounce_vector(self):
+        # Determine the direction vector to use for the ball bouncing off the bat
+        # For bat side collisions this is handled in update, in that case this
+        # method is just used to determine whether the ball overlapped with the
+        # bat on the X axis
+
+        # dx = difference in X position between centre of bat and centre of ball
+        dx = self.x - game.bat.x
+
+        # dx must be within w pixels for the ball to be able to hit the bat
+        w = (game.bat.width // 2) + BALL_RADIUS
+
+        # Is ball is within the correct range of the bat on the X axis?
+        if abs(dx) &lt; w:
+            # Return that the ball was within the correct range on the X
+            # axis for there to be a collision, and the bounce vector this
+            # position corresponds to
+            vec = Vector2(dx / w, -0.5).normalize()
+            return True, vec
+        else:
+            # Return that the ball was not close enough on the X axis for a
+            # collision to be possible. Return a vector pointing straight up
+            # in case any code tries to use the bounce vector in this scenario.
+            # This shouldn&#x27;t happen, but better safe than sorry - returning
+            # None for these values could result in a crash in such a scenario
+            return False, Vector2(0, -1)
+
+    def generate_multiballs(self):
+        # Get multi ball initial positions
+        # This method is called for each existing ball, returning a list of 3 new balls for each one
+        # The original ball is then discarded
+        balls = []
+        for i in range(3):
+            # Create direction vector for new ball, the first ball will have the same direction as
+            # its original parent ball, the others will have direction vectors rotated 120 and 240
+            # degrees from that
+            vec = self.dir.rotate(i * 120)
+            if abs(vec.y) &lt; 0.15:
+                # dy could be zero if the ball is currently stuck to the bat, or could be very close
+                # to zero by chance, which could lead to the ball bouncing left and right for ages
+                # So if either of these happen, just generate a random upward vector
+                vec = Vector2(uniform(-1,1), -1).normalize()
+
+            balls.append(Ball(self.x, self.y, vec, False, self.speed))
+
+        return balls
+
+    @staticmethod
+    def collision_sound(collision_type):
+        # A static method relates to the class as a whole rather than a specific instance
+        # of the class, so doesn&#x27;t have self as the first parameter
+        if collision_type == CollisionType.BRICK or collision_type == CollisionType.INDESTRUCTIBLE_BRICK:
+            game.play_sound(&quot;hit_brick&quot;)
+        elif collision_type == CollisionType.WALL:
+            game.play_sound(&quot;hit_wall&quot;)
+        elif collision_type == CollisionType.BAT:
+            if game.bat.current_type == BatType.MAGNET:
+                game.play_sound(&quot;ball_stick&quot;)
+            else:
+                game.play_sound(&quot;hit_fast&quot;)
+        elif collision_type == CollisionType.BAT_EDGE:
+            if game.bat.current_type == BatType.MAGNET:
+                game.play_sound(&quot;ball_stick&quot;)
+            else:
+                game.play_sound(&quot;hit_veryfast&quot;)
+
+class Bat(Actor):
+    def __init__(self, controls):
+        super().__init__(&quot;blank&quot;, (320, 590), anchor=(&quot;center&quot;, 15))
+
+        self.controls = controls
+        self.fire_timer = 0
+
+        # The values of target_type and current_type are instances the BatType enum
+        # Normally these will be the same. If the player has just picked up a powerup/powerdown
+        # then type is the type of bat we&#x27;re transitioning to, once the transition animation has finished
+        # the current type is set to the type
+        self.current_type = BatType.NORMAL
+        self.target_type = BatType.NORMAL
+        self.frame = 0
+
+        # Create shadow actor
+        self.shadow = Actor(&quot;blank&quot;, (self.x + 16, self.y + 16), anchor=(&quot;center&quot;, 15))
+
+    def update(self):
+        # Handle animating to a new bat type
+        # If we&#x27;re a normal bat, we animate to a new type over 12 game frames,
+        # changing animation frame every 4 game frames
+        # e.g. changing from normal bat (sprite: bat00) to small bat, we go to
+        # bat40 (which is the same as the normal bat), then through bat41, bat42
+        # and ending at bat43, the fully shrunk bat.
+        if self.target_type != BatType.NORMAL and self.target_type == self.current_type and self.frame &lt; 12:
+            self.frame += 1
+
+        # If we&#x27;re switching to a new type from something other than normal bat,
+        # we first animate backwards to the first frame of the current type
+        if self.target_type != self.current_type and self.frame &gt; 0:
+            self.frame -= 1
+
+        # When we&#x27;re at frame 0, we can update the current type to equal the
+        # new type
+        if self.frame == 0:
+            self.current_type = self.target_type
+
+        # Choose sprite based on current_type and frame
+        self.image = f&quot;bat{int(self.current_type)}{self.frame // 4}&quot;
+
+        self.fire_timer -= 1
+
+        # Fire gun?
+        if self.controls.fire_down() and self.current_type == BatType.GUN and self.frame == 12 and self.fire_timer &lt;= 0:
+            self.fire_timer = FIRE_INTERVAL
+
+            self.image += &quot;f&quot;  # not really visible for the 1 frame it&#x27;s shown
+
+            game.bullets.append(Bullet((self.x - 20, self.y), 0))
+            game.bullets.append(Bullet((self.x + 20, self.y), 1))
+
+            game.play_sound(&quot;laser&quot;)
+
+        # Move bat based on controls, don&#x27;t let it go off the edge of the screen
+        new_x = self.x + self.controls.get_x()
+
+        # Enforce left boundary
+        min_x = BAT_MIN_X + (self.width // 2)
+        new_x = max(min_x, new_x)
+
+        if not game.portal_active:
+            # Enforce right boundary
+            max_x = BAT_MAX_X - (self.width // 2)
+            new_x = min(max_x, new_x)
+
+        self.x = new_x
+
+        # Check for leaving level via portal
+        if game.portal_active and new_x == BAT_MAX_X - (self.width // 2):
+            self.portal_animation_active = True
+
+        # Update shadow actor
+        self.shadow.x = self.x + 16
+        self.shadow.y = self.y + 16
+        self.shadow.image = f&quot;bats{str(int(self.current_type))}{self.frame // 4}&quot;
+
+    def change_type(self, type):
+        self.target_type = type
+
+    def is_portal_transition_complete(self):
+        return self.x - (self.width // 2) &gt;= WIDTH
+
+# Does the ball (x, y, radius) collide with the brick at the given
+# grid position? Returns the point at which the collision occurred
+def brick_collide(x, y, grid_x, grid_y, r):
+    # Get ball extent as a square
+    x0 = x - r
+    y0 = y - r
+    x1 = x + r
+    y1 = y + r
+
+    # Get brick&#x27;s left, top, right and bottom coordinates
+    xb0 = grid_x * BRICK_WIDTH + BRICKS_X_START
+    yb0 = grid_y * BRICK_HEIGHT + BRICKS_Y_START
+    xb1 = xb0 + BRICK_WIDTH
+    yb1 = yb0 + BRICK_HEIGHT
+
+    # Calculate brick centre position
+    xbc = (xb0+xb1) // 2
+    ybc = (yb0+yb1) // 2
+
+    # Detecting bounce off side of brick
+    # if ball right edge &gt; brick left edge,
+    #  and ball left edge &lt; brick right edge
+    #  and ball y centre &gt; brick top edge
+    #  and ball y centre &lt; brick bottom edge
+    if x1 &gt; xb0 and x0 &lt; xb1 and y &gt; yb0 and y &lt; yb1:
+        if x &lt; xbc:
+            return xb0, y
+        else:
+            return xb1, y
+
+    # Detect bounce off top or bottom of brick
+    # if ball x centre &gt; brick left edge
+    #  and ball x centre &lt; brick right edge
+    #  and ball y bottom &gt; brick y top
+    #  and ball y top &lt; brick y bottom
+    if x &gt; xb0 and x &lt; xb1 and y1 &gt; yb0 and y0 &lt; yb1:
+        if y &lt; ybc:
+            return x, yb0
+        else:
+            return x, yb1
+
+    # Put x/y position into a Vector2 object, which allows us to use the Vector2 methods length/length_squared
+    # to calculate distances
+    pos_vector = Vector2(x, y)
+
+    # Get closest brick corner
+    # We call the Python min function with a list of positions (one for each corner of the brick)
+    # The key argument is a lambda function which calculates the squared distance between pos_vector (the pos we&#x27;re
+    # checking) and the corner position (p). We use length_squared rather than length because it&#x27;s faster and we just
+    # care about which corner is closest, not what the actual distance is
+    closest = min([(xb0, yb0), (xb1, yb0), (xb0, yb1), (xb1, yb1)],
+                  key = lambda p: (pos_vector - Vector2(p)).length_squared())
+
+    # Check if we are actually overlapping with the nearest corner
+    if (pos_vector - Vector2(closest)).length() &lt; r:
+        # Position does overlap with nearest corner, return corner position
+        return closest
+    else:
+        # No collision with this brick
+        return None
+
+class Game:
+    def __init__(self, controls=None, lives=3):
+        self.controls = controls if controls else AIControls()
+        self.lives = lives
+        self.score = 0
+
+        self.new_level(0)
+
+    def new_level(self, level_num):
+        self.play_sound(&quot;start_game&quot;)
+
+        # Go back to first level if we&#x27;ve finished last level
+        if level_num &gt;= len(LEVELS):
+            level_num = 0
+
+        # Create bitmaps for brick and shadow backgrounds
+        self.brick_surface = surface.Surface((WIDTH, HEIGHT), flags=pygame.SRCALPHA)
+        self.brick_surface.fill((0, 0, 0, 0))
+
+        self.shadow_surface = surface.Surface((WIDTH, HEIGHT), flags=pygame.SRCALPHA)
+        self.shadow_surface.fill((0, 0, 0, 0))
+
+        level = get_mirrored_level(LEVELS[level_num])
+
+        self.num_rows = len(level)
+        self.num_cols = len(level[0])
+
+        # Convert level data, a list of strings, to as 2D list of integers (or None where no brick is present)
+        # The numbers in the level data are in hexadecimal (base 16), where A to F represent 10 to 15
+        self.bricks = [[None if level[y][x] == &quot; &quot; else int(level[y][x], 16) for x in range(self.num_cols)] for y in range(self.num_rows)]
+
+        # Draw bricks, and count how many there are, not counting brick ID 13 which is indestructible
+        self.bricks_remaining = 0
+        for y in range(self.num_rows):
+            for x in range(self.num_cols):
+                self.redraw_brick(x, y)
+                if self.bricks[y][x] != None and self.bricks[y][x] != 13:
+                    self.bricks_remaining += 1
+
+        self.balls = [Ball()]
+        self.bat = Bat(self.controls)
+
+        self.bullets = []
+        self.barrels = []
+        self.impacts = []
+
+        self.level_num = level_num
+        self.portal_active = False
+        self.portal_frame = 0
+        self.portal_timer = 0
+
+    def redraw_brick(self, x, y):
+        screen_x = x * BRICK_WIDTH + BRICKS_X_START
+        screen_y = y * BRICK_HEIGHT + BRICKS_Y_START
+        if self.bricks[y][x] != None:
+            # Display a brick at this position
+
+            # Get brick image via filename, the files have names brick0 to brickd, see Impact class for a comment
+            # explaining how we use hexadecimal numbers here
+            brick_image = getattr(images, &quot;brick&quot; + hex(self.bricks[y][x])[2:])
+
+            # Display the brick image to the brick surface, which is an image just containing the bricks
+            self.brick_surface.blit(brick_image, (screen_x, screen_y))
+
+            # Update shadow surface
+            self.shadow_surface.blit(images.bricks, (screen_x + SHADOW_OFFSET, screen_y + SHADOW_OFFSET))
+        else:
+            # Remove a brick (and its shadow) from this position)
+            self.brick_surface.fill((0, 0, 0, 0), (screen_x, screen_y, BRICK_WIDTH, BRICK_HEIGHT))
+            self.shadow_surface.fill((0, 0, 0, 0), (screen_x + SHADOW_OFFSET, screen_y + SHADOW_OFFSET, BRICK_WIDTH, BRICK_HEIGHT))
+
+    def collide(self, x, y, dir, r=BALL_RADIUS):
+        # Called to check whether a ball or a bullet would collide with something if it moved in the specified direction
+        # Only checks for walls and bricks, collisions with bat are handled elsewhere
+        # If there&#x27;s a collision with a destructible brick, the brick will take damage
+        # returns tuple of (tuple 2: impact pos, bool: show impact, CollisionType), or None if no collision
+
+        # Extract x and y of direction into separate variables
+        dx,dy = dir
+
+        if dx &lt; 0 and x &lt; LEFT_EDGE + r:
+            return (LEFT_EDGE, y), True, CollisionType.WALL
+        if dx &gt; 0 and x &gt; RIGHT_EDGE - r:
+            return (RIGHT_EDGE, y), True, CollisionType.WALL
+        if dy &lt; 0 and y &lt; TOP_EDGE + r:
+            return (x, TOP_EDGE), True, CollisionType.WALL
+
+        # Work out the range of brick rows and columns that the ball overlaps
+        # This means we don&#x27;t need to check the ball against every brick,
+        # only against the bricks it could potentially be colliding with
+        x0 = max(0, math.floor((x-BRICKS_X_START-r)/BRICK_WIDTH))
+        y0 = max(0, math.floor((y-BRICKS_Y_START-r)/BRICK_HEIGHT))
+        x1 = min(self.num_cols - 1, math.floor((x - BRICKS_X_START + r) / BRICK_WIDTH))
+        y1 = min(self.num_rows - 1, math.floor((y - BRICKS_Y_START + r) / BRICK_HEIGHT))
+
+        # Collide with bricks
+        for yb in range(y0, y1+1):
+            for xb in range(x0, x1+1):
+                # Is there a brick in this position?
+                if self.bricks[yb][xb] != None:
+                    # Check for collision with current brick
+                    c = brick_collide(x, y, xb, yb, r)
+
+                    if c is not None:
+                        # There was a collision
+                        centre_pos = (xb * BRICK_WIDTH + BRICKS_X_START + BRICK_WIDTH // 2,
+                                      yb * BRICK_HEIGHT + BRICKS_Y_START + BRICK_HEIGHT // 2)
+
+                        collision_type = CollisionType.BRICK
+
+                        # Check brick type
+                        # Brick 12 (brickc.png) requires a hit to turn into brick 11
+                        # Brick 13 (brickd.png) is indestructible
+                        if self.bricks[yb][xb] &gt;= 12:
+                            # Indestructible brick
+                            if self.bricks[yb][xb] == 13:
+                                collision_type = CollisionType.INDESTRUCTIBLE_BRICK
+                            self.impacts.append(Impact(centre_pos, 13))
+                            if self.bricks[yb][xb] == 12:
+                                self.bricks[yb][xb] = 11
+                        else:
+                            self.impacts.append(Impact(centre_pos, self.bricks[yb][xb]))
+
+                            if random() &lt; POWERUP_CHANCE:
+                                self.barrels.append(Barrel(centre_pos))
+
+                            self.bricks[yb][xb] = None
+                            self.redraw_brick(xb, yb)
+
+                            self.bricks_remaining -= 1
+                            if self.bricks_remaining == 0:
+                                self.activate_portal()
+
+                            self.score += 10
+
+                        return c, False, collision_type
+
+        return None
+
+    def activate_portal(self):
+        self.portal_active = True
+        self.play_sound(&quot;portal_exit&quot;)
+
+    def update(self):
+        # Update bat and balls
+        for obj in [self.bat] + self.balls:
+            obj.update()
+
+        # Remove any balls which are off the bottom of the screen
+        # We achieve this by regenerating the balls list using a list comprehension, only keeping balls which are
+        # still on the screen
+        self.balls = [obj for obj in self.balls if obj.y &lt; HEIGHT]
+
+        # Lose a life if there are no balls
+        if len(self.balls) == 0:
+            # We don&#x27;t care about how many lives the player has in demo mode
+            if self.lives &gt; 0 or self.in_demo_mode():
+                self.lives -= 1
+                self.balls = [Ball()]
+                self.bat.change_type(BatType.NORMAL)
+
+            self.play_sound(&quot;lose_life&quot;)
+
+        # Update impacts, barrels and bullets
+        for obj in self.impacts + self.barrels + self.bullets:
+            obj.update()
+
+        # Remove timed-out impacts, barrels which have gone off the bottom of
+        # the screen, and bullets which are no longer alive
+        self.impacts = [obj for obj in self.impacts if obj.time &lt; 16]
+        self.barrels = [obj for obj in self.barrels if obj.y &lt; HEIGHT]
+        self.bullets = [obj for obj in self.bullets if obj.alive]
+
+        # Update the portal that allows you to leave the level
+        if self.portal_active:
+            if self.portal_frame &lt; 3:
+                # Update portal animation
+                self.portal_timer -= 1
+                if self.portal_timer &lt;= 0:
+                    self.portal_timer = PORTAL_ANIMATION_SPEED
+                    self.portal_frame += 1
+            elif self.bat.is_portal_transition_complete():
+                self.new_level(self.level_num + 1)
+
+        # If no balls have damaged/destroyed bricks or touched the bat in the last 30 seconds, change all
+        # indestructible bricks to two-hit bricks, to avoid a situation where the ball can get stuck bouncing
+        # between indestructible bricks
+        if self.detect_stuck_balls():
+            # Go through all bricks, change indestructible bricks to two-hit bricks
+            changed_any = False
+            for row in range(self.num_rows):
+                for col in range (self.num_cols):
+                    # 13 is indestructible brick, 12 is two-hit brick
+                    if self.bricks[row][col] == 13:
+                        self.bricks[row][col] = 12
+                        self.redraw_brick(col, row)
+                        changed_any = True
+
+            # Play a sound effect, but only if there were indestructible blocks that were changed
+            if changed_any:
+                self.play_sound(&quot;bat_small&quot;, 1)
+
+            # To prevent this triggering again next frame, which should have no gameplay impact but could have
+            # a performance impact, we&#x27;ll pretend that one of the balls has touched the bat in the last 30 seconds
+            if len(self.balls) &gt; 0:
+                self.balls[0].time_since_touched_bat = 0
+
+    def detect_stuck_balls(self):
+        # Detect whether all balls are stuck bouncing between indestructible bricks,
+        if len(self.balls) == 0:
+            # Having no balls in play doesn&#x27;t count as all balls being stuck
+            return False
+
+        for ball in self.balls:
+            if ball.time_since_damaged_brick &lt; 30 * 60 or ball.time_since_touched_bat &lt; 30 * 60:
+                # This ball has damaged a brick or touched a bat in the last 30 seconds, so all balls aren&#x27;t stuck
+                return False
+
+        # All balls are stuck
+        return True
+
+    def draw(self):
+        screen.blit(f&quot;arena{self.level_num % len(LEVELS)}&quot;, (0,0))
+
+        # Draw exit portal
+        screen.blit(f&quot;portal_exit{self.portal_frame}&quot;, (WIDTH - 70 - 20, HEIGHT - 70))
+
+        # Draw enemy doors - currently unused, but animations are present for the doors opening and closing,
+        # and for enemies - try adding enemies to the game and making use of these animations!
+        screen.blit(&quot;portal_meanie00&quot;, (110, 40))
+        screen.blit(&quot;portal_meanie10&quot;, (440, 40))
+
+        # This prevents drawing onto the edges of the screen, meaning that the
+        # shadows don&#x27;t overlap with the darker part of the right hand wall
+        screen.surface.set_clip((20, 42, 600, 598))
+
+        # Draw brick shadows
+        screen.blit(self.shadow_surface, (0, 0))
+
+        # Draw shadows for powerup barrels, balls and bat
+        for obj in self.barrels + self.balls + [self.bat]:
+            obj.shadow.draw()
+
+        # Draw bricks
+        screen.blit(self.brick_surface, (0, 0))
+
+        # Draw balls, bat, barrels and bullets
+        for obj in self.balls + [self.bat] + self.barrels + self.bullets:
+            obj.draw()
+
+        # Cancel screen clipping mode set earlier
+        screen.surface.set_clip(None)
+
+        # Draw impact animations
+        for obj in self.impacts:
+            obj.draw()
+
+        # Only draw score and lives in normal mode, not in AI/demo mode
+        if not self.in_demo_mode():
+            self.draw_score()
+            self.draw_lives()
+
+    def draw_score(self):
+        # Convert score into a string of digits (e.g. &quot;150&quot;) so we can
+        # draw each individual digit, from left to right
+        x = 15
+        for digit in str(self.score):
+            image = &quot;digit&quot; + digit
+            screen.blit(image, (x, 50))
+            x += 55
+
+    def draw_lives(self):
+        x = 0
+        for i in range(self.lives):
+            screen.blit(&quot;life&quot;, (x, HEIGHT-20))
+            x += 50
+
+    def play_sound(self, name, count=1):
+        # We don&#x27;t play any in-game sound effects if player is an AI player - as this means we&#x27;re on the menu
+        if not self.in_demo_mode():
+            try:
+                # Pygame Zero allows you to write things like &#x27;sounds.explosion.play()&#x27;
+                # This automatically loads and plays a file named &#x27;explosion.wav&#x27; (or .ogg) from the sounds folder (if
+                # such a file exists)
+                # But what if you have files named &#x27;explosion0.ogg&#x27; to &#x27;explosion5.ogg&#x27; and want to randomly choose
+                # one of them to play? You can generate a string such as &#x27;explosion3&#x27;, but to use such a string
+                # to access an attribute of Pygame Zero&#x27;s sounds object, we must use Python&#x27;s built-in function getattr
+                getattr(sounds, name + str(randint(0, count - 1))).play()
+            except Exception as e:
+                # If no sound file of that name was found, print the error that Pygame Zero provides, which
+                # includes the filename.
+                # Also occurs if sound fails to play for another reason (e.g. if this machine has no sound hardware)
+                print(e)
+
+    def change_all_ball_speeds(self, change):
+        for b in self.balls:
+            b.speed = min(max(b.speed + change, BALL_MIN_SPEED), BALL_MAX_SPEED)
+
+    def in_demo_mode(self):
+        return isinstance(self.controls, AIControls)
+
+def get_joystick_if_exists():
+    return pygame.joystick.Joystick(0) if pygame.joystick.get_count() &gt; 0 else None
+
+def setup_joystick_controls():
+    # We call this on startup, and keep calling it if no controller is present,
+    # so a controller can be connected while the game is open
+    global joystick_controls
+    joystick = get_joystick_if_exists()
+    joystick_controls = JoystickControls(joystick) if joystick is not None else None
+
+def update_controls():
+    keyboard_controls.update()
+    # Allow a controller to be connected while the game is open
+    if joystick_controls is None:
+        setup_joystick_controls()
+    if joystick_controls is not None:
+        joystick_controls.update()
+
+class State(Enum):
+    TITLE = 1
+    PLAY = 2
+    GAME_OVER = 3
+
+# Pygame Zero calls the update and draw functions each frame
+
+def update():
+    global state, game, total_frames
+
+    total_frames += 1
+
+    update_controls()
+
+    if state == State.TITLE:
+        ai_controls.update()
+        game.update()
+
+        # Check for start game
+        for controls in (keyboard_controls, joystick_controls):
+            # Check for fire button being pressed on each controls object
+            # joystick_controls will be None if there is no controller, so must check for that
+            if controls is not None and controls.fire_pressed():
+                game = Game(controls)
+                state = State.PLAY
+                stop_music()
+                break
+
+    elif state == State.PLAY:
+        if game.lives &gt; 0:
+            game.update()
+        else:
+            game.play_sound(&quot;game_over&quot;)
+            state = State.GAME_OVER
+
+    elif state == State.GAME_OVER:
+        for controls in (keyboard_controls, joystick_controls):
+            if controls is not None and controls.fire_pressed():
+                # Return to title screen, which includes a game being played by AI in the background
+                game = Game(ai_controls)
+                state = state.TITLE
+                play_music(&quot;title_theme&quot;)
+
+def draw():
+    game.draw()
+
+    if state == State.TITLE:
+        screen.blit(&quot;title&quot;, (0,0))
+        screen.blit(&quot;startgame&quot;, (20,80))
+        screen.blit(f&quot;start{(total_frames // 4) % 13}&quot;, (WIDTH//2 - 250//2, 530))
+
+    elif state == State.GAME_OVER:
+        screen.blit(f&quot;gameover{(total_frames // 4) % 15}&quot;, (WIDTH//2 - 450//2, 450))
+
+def play_music(name):
+    try:
+        music.play(name)
+    except Exception:
+        # If an error occurs (e.g. no sound hardware), ignore it
+        pass
+
+def stop_music():
+    try:
+        music.stop()
+    except Exception:
+        # If an error occurs (e.g. no sound hardware), ignore it
+        pass
+
+##############################################################################
+
+# Set up sound system and start music
+try:
+    # Restart the Pygame audio mixer which Pygame Zero sets up by default. We find that the default settings
+    # cause issues with delayed or non-playing sounds on some devices
+    pygame.mixer.quit()
+    pygame.mixer.init(44100, -16, 2, 1024)
+    play_music(&quot;title_theme&quot;)
+    music.set_volume(0.3)
+except Exception:
+    # If an error occurs (e.g. no sound hardware), ignore it
+    pass
+
+# Set up controls
+keyboard_controls = KeyboardControls()
+ai_controls = AIControls()
+setup_joystick_controls()
+
+# Set up state and Game object
+state = State.TITLE
+game = Game(ai_controls)
+
+total_frames = 0
+
+# Tell Pygame Zero to take over
+pgzrun.go()
+</code></pre>
+</main>
+
+<script>
+window.addEventListener('load', (event) => {
+  screen.init();
+});
+</script>
+</body>
+
+</html>
