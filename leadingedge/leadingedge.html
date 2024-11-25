@@ -4700,6 +4700,161 @@ class Game {
   }
 }
 
+let keyboard_controls, joystick_controls, state, game, accumulated_time, demo_reset_timer, demo_start_timer;
+
+function get_joystick_if_exists() {
+  return (Joystick.get_count() > 0) ? new Joystick(0) : null;
+}
+
+function setup_joystick_controls() {
+  // We call this on startup, and keep calling it if no controller is present,
+  // so a controller can be connected while the game is open
+  Joystick.init();
+  let joystick = get_joystick_if_exists();
+  joystick_controls = (joystick != null) ? new JoystickControls(joystick) : null;
+}
+
+function update_controls() {
+  keyboard_controls.update();
+  // Allow a controller to be connected while the game is open
+  if (joystick_controls == null) {
+    setup_joystick_controls();
+  }
+  if (joystick_controls != null) {
+    joystick_controls.update();
+  }
+}
+
+const State = Object.freeze({
+  TITLE: 1,
+  PLAY: 2,
+  GAME_OVER: 3
+});
+
+
+// Pygame Zero calls the update and draw functions each frame
+
+function update(delta_time) {
+  // delta_time is the time passed (in seconds) since the previous frame
+
+  update_controls();
+
+  function button_pressed_controls(button_num) {
+    // Local function for detecting button 0 being pressed on either keyboard or controller, returns the controls
+    // object which was used to press it, or None if button was not pressed
+    for (let controls of [keyboard_controls, joystick_controls]) {
+      // Check for fire button being pressed on each controls object
+      // joystick_controls will be None if there no controller was connected on game startup,
+      // so must check for that
+      if ((controls != null) && controls.button_pressed(button_num)) {
+        return controls;
+      }
+    }
+    return null;
+  }
+
+  if (state === State.TITLE) {
+    // Check for player starting game with either keyboard or controller
+    let controls = button_pressed_controls(0);
+    if (controls != null) {
+      // Switch to play state, and create a new Game object, passing it a controls object
+      state = State.PLAY;
+      game = new Game(controls);
+    }
+
+    // If the demo race has been running for a while, reset it, otherwise the AI cars will run out of track!
+    demo_reset_timer -= delta_time;
+    demo_start_timer += delta_time;
+    if (demo_reset_timer <= 0) {
+      game = new Game();
+      demo_reset_timer = 60 * 2;
+      demo_start_timer = 0;
+    }
+  }
+
+  else if (state === State.PLAY) {
+    if (game.race_complete) {
+      state = State.GAME_OVER;
+    }
+  }
+
+  else if (state === State.GAME_OVER) {
+    if (button_pressed_controls(0) != null) {
+      // Go back into demo/title screen mode - create a new Game object without a player
+      // First stop the player car's skid sound
+      game.player_car.stop_engine_sound();
+
+      state = State.TITLE;
+      game = new Game();
+      play_music("title_theme");
+    }
+  }
+
+  // Call game.update each time while accumulated_time is above FIXED_TIMESTEP. If it is double or more of FIXED_TIMESTEP,
+  // which would occur if the frame rate is low, we call game.update two or more times per frame
+  accumulated_time += delta_time;
+  while (accumulated_time >= FIXED_TIMESTEP) {
+    accumulated_time -= FIXED_TIMESTEP;
+    game.update(FIXED_TIMESTEP);
+  }
+}
+
+function draw() {
+  game.draw();
+
+  if (state === State.TITLE) {
+    if ((demo_reset_timer < 1) || (demo_start_timer < 1)) {
+      // Fade out screen prior to resetting demo game, and fade in whenever demo (re)starts
+      // Draw a black image with gradually increasing/decreasing opacity
+      // An alpha value of 255 is fully opaque, 0 is fully transparent
+      let value = (demo_reset_timer < 1) ? demo_reset_timer : demo_start_timer,
+          alpha = Math.min(255, 255 - (value * 255));
+      screen.draw.filled_rect(new Rect(0, 0, WIDTH, HEIGHT), [0, 0, 0, alpha]);
+    }
+
+    // Construct start game text
+    // On macOS, encourage the user to use Z instead of left control to accelerate, because
+    // Ctrl+arrow is the keyboard shortcut to switch desktop
+
+    // Draw start game text
+    draw_text(`PRESS ${ SPECIAL_FONT_SYMBOLS } OR LEFT CONTROL`, Math.floor(WIDTH / 2), HEIGHT - 82, true);
+
+    // Draw logo - centred on X axis, centred on top third of the screen on Y axis
+    let logo_img = images['logo'];
+    screen.blit('logo', [Math.floor(WIDTH / 2) - Math.floor(logo_img.width / 2), Math.floor(HEIGHT / 3) - Math.floor(logo_img.height / 2)]);
+  }
+}
+
+function play_music(name) {
+  music.play(name);
+}
+
+function stop_music() {
+  music.stop();
+}
+
+/*
+##############################################################################
+*/
+
+function reset() {
+  // Set up sound system and start music
+  play_music("title_theme");
+
+  // Set up controls
+  keyboard_controls = new KeyboardControls();
+  setup_joystick_controls();
+
+  // Set up initial state and Game object
+  state = State.TITLE;
+  game = new Game();
+
+  demo_reset_timer = 2 * 60;    // Demo race resets after 2 mins
+  demo_start_timer = 0;
+
+  accumulated_time = 0;
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
