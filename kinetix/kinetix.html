@@ -1962,6 +1962,155 @@ Vecta.prototype.toString = function () {
   return `[${ this.x }, ${ this.y }]`;
 }
 
+// Set up constants
+WIDTH = 640;
+HEIGHT = 640;
+TITLE = "Kinetix";
+
+const BAT_SPEED = 8;
+
+const BAT_MIN_X = 35;
+const BAT_MAX_X = 605;
+
+const TOP_EDGE = 50;
+const RIGHT_EDGE = 617;
+const LEFT_EDGE = 23;
+
+const BAT_TOP_EDGE = 590;
+
+const BALL_INITIAL_OFFSET = 10;
+
+const BALL_START_SPEED = 5;
+const BALL_MIN_SPEED = 4;
+const BALL_MAX_SPEED = 11;
+
+const BALL_SPEED_UP_INTERVAL = 10 * 60;        // Normal ball speed up interval (10 seconds at 60 frames per second)
+const BALL_SPEED_UP_INTERVAL_FAST = 15 * 60;   // Speed up interval for when the ball is above a speed threshold
+const BALL_FAST_SPEED_THRESHOLD = 7;
+
+const BALL_RADIUS = 7;
+
+const BULLET_SPEED = 8;
+
+const BRICKS_X_START = 20;
+const BRICKS_Y_START = 100;
+
+const BRICK_WIDTH = 40;
+const BRICK_HEIGHT = 20;
+const SHADOW_OFFSET = 10;
+
+const POWERUP_CHANCE = 0.2;
+
+const FIRE_INTERVAL = 30;
+
+const PORTAL_ANIMATION_SPEED = 5;
+
+const LEVELS = [
+              ["        ",
+               "        ",
+               "        ",
+               "     a  ",
+               "    a7a ",
+               "     a  ",
+               "     a55",
+               "    444 ",
+               "   333a ",
+               "  222a  ",
+               " 111a   ",
+               "   11aa ",
+               "    111 ",
+               "    6   ",
+               "     6  "],
+
+              ["        ",
+               "        ",
+               "    3   ",
+               "    3   ",
+               "    3   ",
+               "    3000",
+               "    3000",
+               "   53000",
+               "   53000",
+               "  35a555",
+               " 3 5aa55",
+               "3  5aaa5",
+               "  355555",
+               "  333333",
+               "   333  ",
+               "    33  ",
+               "     3  "],
+
+              ["   7    ",
+               "  77    ",
+               " 7777   ",
+               " 7777   ",
+               " 77777  ",
+               " 77777  ",
+               " 77 777 ",
+               " 7  7777",
+               " 7   717",
+               "     777",
+               "      77",
+               "      7 ",
+               "     c7 ",
+               "      c ",
+               "      c "],
+
+              ["   03   ",
+               "   30   ",
+               "    03  ",
+               "    30  ",
+               "     0  ",
+               " 8   0  ",
+               " 88 8033",
+               "  883333",
+               "   8333d",
+               "   33733",
+               "  33373d",
+               " 3333333",
+               " 3c 333d",
+               " cc 3333",
+               " c   3 3",
+               "     3 3",
+               "    3 3 ",
+               "    c 3 ",
+               "    cc3c",
+               "    cccc",
+               "      d "],
+
+              ["5   9  0",
+               "0   4  3",
+               "08  4  4",
+               "53  47 2",
+               " 39 92 1",
+               " 84  2  ",
+               "  47 26 ",
+               "5 92 71 ",
+               "08 26 1 ",
+               "53971 1 ",
+               " 8471c6 ",
+               "  926acc",
+               "   71aad",
+               "039 6aac",
+               "dc421ac ",
+               "  dccc  ",
+               "    d   "],
+
+              ["  dccccd",
+               "  c89765",
+               "  c34210",
+               "  c34210",
+               "  c34210",
+               "  c34210",
+               "  c3421d",
+               "  c34210",
+               "  c34210",
+               "  c34210",
+               "  c34210",
+               "  c89765",
+               "  dccccd"]
+];
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
