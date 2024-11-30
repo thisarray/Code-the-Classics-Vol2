@@ -2111,6 +2111,120 @@ const LEVELS = [
                "  dccccd"]
 ];
 
+function get_mirrored_level(level) {
+  // For each row, return a new row which includes the existing row plus
+  // a mirrored version. todo explain row[-2::-1]
+  let result = [],
+      row;
+  for (let rowString of level) {
+    row = Array.from(rowString);
+    result.push(row.concat(row.slice(0, -1).reverse()));
+  }
+  return result;
+}
+
+class Controls {
+  constructor() {
+    this.fire_previously_down = false;
+    this.is_fire_pressed = false;
+  }
+
+  update() {
+    // Call each frame to update fire status
+    let fire_down = this.fire_down();
+    this.is_fire_pressed = fire_down && (!this.fire_previously_down);
+    this.fire_previously_down = fire_down;
+  }
+
+  get_x() {
+    // Overridden by subclasses
+  }
+
+  fire_down() {
+    // Overridden by subclasses
+  }
+
+  fire_pressed() {
+    return this.is_fire_pressed;
+  }
+}
+
+class KeyboardControls extends Controls {
+  get_x() {
+    if (keyboard[keys.LEFT]) {
+      return -BAT_SPEED;
+    }
+    else if (keyboard[keys.RIGHT]) {
+      return BAT_SPEED;
+    }
+    else {
+      return 0;
+    }
+  }
+
+  fire_down() {
+    return keyboard[keys.SPACE];
+  }
+}
+
+class JoystickControls extends Controls {
+  constructor(joystick) {
+    super();
+    this.joystick = joystick;
+  }
+
+  get_x() {
+    // If no input on the dpad, check for analogue left/right input
+    let axis_value = this.joystick.get_axis(0);
+    if (Math.abs(axis_value) < 0.2) {
+      // Dead-zone, necessary because some devices may register a small amount of input even when the player isn't
+      // moving the analogue stick
+      return 0;
+    }
+    else {
+      return axis_value * BAT_SPEED;
+    }
+  }
+
+  fire_down() {
+    // Before checking button 0, check to make sure that the controller actually has any buttons
+    // There are some weird devices out there which could cause a crash if this check were not present
+    if (this.joystick.get_numbuttons() <= 0) {
+      console.log("Warning: controller does not have any buttons!");
+      return false;
+    }
+    return this.joystick.get_button(0);
+  }
+}
+
+class AIControls extends Controls {
+  constructor() {
+    super();
+    this.offset = 0;
+  }
+
+  get_x() {
+    if (game.portal_active) {
+      // If the portal to the next level is open, just move right so that we go through it
+      return BAT_SPEED;
+    }
+    else {
+      // Randomly shift the bat AI offset over time, so the AI player doesn't constantly hit the ball perfectly
+      // in the centre of the bat. Limit offset between -40 and 40
+      this.offset += getRandomInteger(-1, 2);
+      this.offset = Math.min(Math.max(-40, this.offset), 40);
+
+      // Follow position of the first ball (in case of multiball)
+      return Math.min(BAT_SPEED, Math.max(-BAT_SPEED, game.balls[0].posx - (game.bat.posx + this.offset)));
+    }
+  }
+
+  fire_down() {
+    // Just have the AI mash the fire button
+    return getRandomInteger(0, 6) === 0;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
