@@ -2275,6 +2275,151 @@ const CollisionType = Object.freeze({
 
 const HEX = '0123456789abcdef';
 
+class Bullet extends Actor {
+  constructor(pos, side) {
+    super(`bullet${ side }`);
+    this.pos = pos;
+
+    this.alive = true;
+  }
+
+  update() {
+    this.posy -= BULLET_SPEED;
+
+    // returns tuple of (tuple 2: impact pos, bool: show impact, CollisionType), or None if no collision
+    let c = game.collide(this.posx, this.posy, new Vecta(0, -1), 2);
+    if (c != null) {
+      this.alive = false;
+      game.impacts.push(new Impact(this.pos, 15));
+      if ((c[2] === CollisionType.BRICK) || (c[2] === CollisionType.INDESTRUCTIBLE_BRICK)) {
+        game.play_sound("bullet_hit", 4);
+      }
+    }
+  }
+}
+
+/*
+ * The barrel class represents the collectable powerups that sometimes fall from destroyed bricks
+ */
+class Barrel extends Actor {
+  constructor(pos) {
+    super("blank");
+    this.pos = pos;
+
+    // Decide powerup type, with each type able to have its own probability
+    // First we create a dictionary of types to weights, where a higher weight means that powerup is more likely
+    // to be chosen. For the PORTAL powerup, which opens a portal to the next level, it can't be generated unless
+    // there are only a few bricks remaining, at which point it becomes very likely
+    let weights = new Map([[Powerup.EXTEND_BAT, 6],
+                           [Powerup.GUN, 6],
+                           [Powerup.SMALL_BAT, 6],
+                           [Powerup.MAGNET, 6],
+                           [Powerup.MULTI_BALL, 6],
+                           [Powerup.FAST_BALLS, 6],
+                           [Powerup.SLOW_BALLS, 6],
+                           [Powerup.EXTRA_LIFE, 2],
+                           [Powerup.PORTAL, ((game.bricks_remaining > 20) || game.portal_active) ? 0 : 20]]),
+
+    // Create a list of powerup types, with each type repeated a certain
+    // number of times based on its weight
+        types = [];
+    for (let [type, weight] of weights) {
+      for (let i = 0; i < weight; i++) {
+        types.push(type);
+      }
+    }
+
+    // Randomly choose one of the types from the list. Types which
+    // are repeated many times are more likely to be chosen
+    this.type = types[getRandomInteger(0, types.length)];
+
+    this.time = 0;
+
+    // Create separate actor for shadow sprite
+    this.shadow = new Actor("barrels");
+    this.shadow.pos = [this.posx + SHADOW_OFFSET, this.posy + SHADOW_OFFSET];
+  }
+
+  update() {
+    this.time += 1;
+    this.posy += 1;
+
+    let w = Math.floor(game.bat.width / 2) + BALL_RADIUS,
+        result;
+
+    // Check for barrel being collected by bat
+    if ((this.posy >= (BAT_TOP_EDGE - 10)) && (this.posy <= (BAT_TOP_EDGE + 30)) && (Math.abs(this.posx - game.bat.posx) < w)) {
+      // Create barrel collection animation - sprites 'impacte0' to 'impacte4'
+      // 14 is E in hexadecimal
+      game.impacts.push(new Impact([this.posx, this.posy - 11], 14));
+
+      // Play sound effect (if this powerup has a sound effect)
+      if (POWERUP_SOUNDS.has(this.type)) {
+        game.play_sound(POWERUP_SOUNDS.get(this.type));
+      }
+
+      // Move barrel off the bottom of the screen, it will then be deleted
+      this.posy = HEIGHT + 100;
+
+      if (POWERUP_BAT_TYPES.has(this.type)) {
+        game.bat.change_type(POWERUP_BAT_TYPES.get(this.type));
+      }
+      else if (this.type === Powerup.MULTI_BALL) {
+        result = [];
+        for (let b of game.balls) {
+          for (let j of b.generate_multiballs()) {
+            result.push(j);
+          }
+        }
+        game.balls = result;
+      }
+      else if (this.type === Powerup.FAST_BALLS) {
+        game.change_all_ball_speeds(3);
+      }
+      else if (this.type === Powerup.SLOW_BALLS) {
+        game.change_all_ball_speeds(-3);
+      }
+      else if (this.type === Powerup.PORTAL) {
+        game.activate_portal();
+      }
+      else if (this.type === Powerup.EXTRA_LIFE) {
+        game.lives += 1;
+      }
+    }
+
+    // The name of each powerup sprite has the format "barrel[powerup type][frame]",
+    // where powerup type is a number from 0 to 8 and frame is a number from 0 to 9
+    // We switch to a new animation frame every 10 game frames
+    this.name = `barrel${ Math.trunc(this.type) }${ Math.floor(this.time / 10) % 10 }`;
+
+    this.shadow.pos = [this.posx + SHADOW_OFFSET, this.posy + SHADOW_OFFSET];
+  }
+}
+
+/*
+ * The Impact class is used for the animations played when the ball hits a wall or destroys a brick
+ */
+class Impact extends Actor {
+  constructor(pos, type) {
+    super("blank");
+    this.pos = pos;
+
+    this.type = type;
+    this.time = 0;
+  }
+
+  update() {
+    // The impact animation sprites have names like 'impact00' where the first digit is the type of impact and
+    // the second is the animation frame. The type is converted into a hexadecimal number. The type can be between
+    // 0 and 15, where values from 10 to 15 are represented by the hexadecimal digits a to f. The Python hex
+    // function is used to convert the type to hexadecimal, the resulting string will always start with '0x' meaning
+    // hexadecimal, so we strip off the first two characters from the start of string.
+    this.name = "impact" + HEX[this.type] + Math.floor(this.time / 4);
+
+    this.time += 1;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
