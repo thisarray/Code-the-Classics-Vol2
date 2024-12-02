@@ -2225,6 +2225,56 @@ class AIControls extends Controls {
   }
 }
 
+const Powerup = Object.freeze({
+  // These numbers correspond to the sprite filenames
+  // e.g. barrel06 is extend bat, frame 6
+  EXTEND_BAT: 0,
+  GUN: 1,
+  SMALL_BAT: 2,
+  MAGNET: 3,
+  MULTI_BALL: 4,
+  FAST_BALLS: 5,
+  SLOW_BALLS: 6,
+  PORTAL: 7,
+  EXTRA_LIFE: 8
+});
+
+const BatType = Object.freeze({
+  NORMAL: 0,
+  MAGNET: 1,
+  GUN: 2,
+  EXTENDED: 3,
+  SMALL: 4
+});
+
+const POWERUP_BAT_TYPES = new Map([
+  [Powerup.EXTEND_BAT, BatType.EXTENDED],
+  [Powerup.GUN, BatType.GUN],
+  [Powerup.SMALL_BAT, BatType.SMALL],
+  [Powerup.MAGNET, BatType.MAGNET]
+]);
+
+const POWERUP_SOUNDS = new Map([
+  [Powerup.EXTEND_BAT, "bat_extend"],
+  [Powerup.GUN, "bat_gun"],
+  [Powerup.MAGNET, "magnet"],
+  [Powerup.SMALL_BAT, "bat_small"],
+  [Powerup.EXTRA_LIFE, "extra_life"],
+  [Powerup.FAST_BALLS, "speed_up"],
+  [Powerup.SLOW_BALLS, "powerup"],
+  [Powerup.MULTI_BALL, "multiball"]
+]);
+
+const CollisionType = Object.freeze({
+  WALL: 0,
+  BAT: 1,
+  BAT_EDGE: 2,
+  BRICK: 3,
+  INDESTRUCTIBLE_BRICK: 4
+});
+
+const HEX = '0123456789abcdef';
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
