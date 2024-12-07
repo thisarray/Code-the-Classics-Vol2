@@ -2681,6 +2681,102 @@ class Ball extends Actor {
   }
 }
 
+class Bat extends Actor {
+  constructor(controls) {
+    super("blank");
+    this.anchor = ["center", 15];
+    this.pos = [320, 590];
+
+    this.controls = controls;
+    this.fire_timer = 0;
+
+    // The values of target_type and current_type are instances the BatType enum
+    // Normally these will be the same. If the player has just picked up a powerup/powerdown
+    // then type is the type of bat we're transitioning to, once the transition animation has finished
+    // the current type is set to the type
+    this.current_type = BatType.NORMAL;
+    this.target_type = BatType.NORMAL;
+    this.frame = 0;
+
+    // Create shadow actor
+    this.shadow = new Actor("blank");
+    this.shadow.anchor = ["center", 15];
+    this.shadow.pos = [this.posx + 16, this.posy + 16];
+  }
+
+  update() {
+    // Handle animating to a new bat type
+    // If we're a normal bat, we animate to a new type over 12 game frames,
+    // changing animation frame every 4 game frames
+    // e.g. changing from normal bat (sprite: bat00) to small bat, we go to
+    // bat40 (which is the same as the normal bat), then through bat41, bat42
+    // and ending at bat43, the fully shrunk bat.
+    if ((this.target_type !== BatType.NORMAL) && (this.target_type === this.current_type) && (this.frame < 12)) {
+      this.frame += 1;
+    }
+
+    // If we're switching to a new type from something other than normal bat,
+    // we first animate backwards to the first frame of the current type
+    if ((this.target_type !== this.current_type) && (this.frame > 0)) {
+      this.frame -= 1;
+    }
+
+    // When we're at frame 0, we can update the current type to equal the
+    // new type
+    if (this.frame === 0) {
+      this.current_type = this.target_type;
+    }
+
+    // Choose sprite based on current_type and frame
+    this.name = `bat${ Math.trunc(this.current_type) }${ Math.floor(this.frame / 4) }`;
+
+    this.fire_timer -= 1;
+
+    // Fire gun?
+    if (this.controls.fire_down() && (this.current_type === BatType.GUN) && (this.frame === 12) && (this.fire_timer <= 0)) {
+      this.fire_timer = FIRE_INTERVAL;
+
+      this.name += "f";  // not really visible for the 1 frame it's shown
+
+      game.bullets.push(new Bullet([this.posx - 20, this.posy], 0));
+      game.bullets.push(new Bullet([this.posx + 20, this.posy], 1));
+
+      game.play_sound("laser");
+    }
+
+    // Move bat based on controls, don't let it go off the edge of the screen
+    let new_x = this.posx + this.controls.get_x();
+
+    // Enforce left boundary
+    new_x = Math.max(BAT_MIN_X + Math.floor(this.width / 2), new_x);
+
+    if (!game.portal_active) {
+      // Enforce right boundary
+      new_x = Math.min(BAT_MAX_X - Math.floor(this.width / 2), new_x);
+    }
+
+    this.posx = new_x;
+
+    // Check for leaving level via portal
+    if (game.portal_active && (new_x === (BAT_MAX_X - Math.floor(this.width / 2)))) {
+      this.portal_animation_active = true;
+    }
+
+    // Update shadow actor
+    this.shadow.posx = this.posx + 16;
+    this.shadow.posy = this.posy + 16;
+    this.shadow.name = `bats${ Math.trunc(this.current_type) }${ Math.floor(this.frame / 4) }`;
+  }
+
+  change_type(type) {
+    this.target_type = type;
+  }
+
+  is_portal_transition_complete() {
+    return (this.posx - Math.floor(this.width / 2)) >= WIDTH;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
