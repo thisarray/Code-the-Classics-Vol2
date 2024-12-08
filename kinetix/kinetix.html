@@ -2777,6 +2777,447 @@ class Bat extends Actor {
   }
 }
 
+/*
+ * Does the ball (x, y, radius) collide with the brick at the given
+ * grid position? Returns the point at which the collision occurred
+ */
+function brick_collide(x, y, grid_x, grid_y, r) {
+  // Get ball extent as a square
+  let x0 = x - r,
+      y0 = y - r,
+      x1 = x + r,
+      y1 = y + r,
+
+  // Get brick's left, top, right and bottom coordinates
+      xb0 = (grid_x * BRICK_WIDTH) + BRICKS_X_START,
+      yb0 = (grid_y * BRICK_HEIGHT) + BRICKS_Y_START,
+      xb1 = xb0 + BRICK_WIDTH,
+      yb1 = yb0 + BRICK_HEIGHT,
+
+  // Calculate brick centre position
+      xbc = Math.floor((xb0 + xb1) / 2),
+      ybc = Math.floor((yb0 + yb1) / 2),
+
+      pos_vector, corners, closest;
+
+  // Detecting bounce off side of brick
+  // if ball right edge > brick left edge,
+  //  and ball left edge < brick right edge
+  //  and ball y centre > brick top edge
+  //  and ball y centre < brick bottom edge
+  if ((x1 > xb0) && (x0 < xb1) && (y > yb0) && (y < yb1)) {
+    if (x < xbc) {
+      return [xb0, y];
+    }
+    else {
+      return [xb1, y];
+    }
+  }
+
+  // Detect bounce off top or bottom of brick
+  // if ball x centre > brick left edge
+  //  and ball x centre < brick right edge
+  //  and ball y bottom > brick y top
+  //  and ball y top < brick y bottom
+  if ((x > xb0) && (x < xb1) && (y1 > yb0) && (y0 < yb1)) {
+    if (y < ybc) {
+      return [x, yb0];
+    }
+    else {
+      return [x, yb1];
+    }
+  }
+
+  // Put x/y position into a Vector2 object, which allows us to use the Vector2 methods length/length_squared
+  // to calculate distances
+  pos_vector = new Vecta(x, y);
+
+  // Get closest brick corner
+  // We call the Python min function with a list of positions (one for each corner of the brick)
+  // The key argument is a lambda function which calculates the squared distance between pos_vector (the pos we're
+  // checking) and the corner position (p). We use length_squared rather than length because it's faster and we just
+  // care about which corner is closest, not what the actual distance is
+  corners = [[xb0, yb0], [xb1, yb0], [xb0, yb1], [xb1, yb1]];
+  closest = [];
+  for (let [i, j] of corners) {
+    closest.push([pos_vector.subtract(new Vecta(i, j)).length_squared(), i, j]);
+  }
+  closest.sort((a, b) => (a[0] - b[0]));
+  closest = [closest[0][1], closest[0][2]];
+
+  // Check if we are actually overlapping with the nearest corner
+  if (pos_vector.subtract(new Vecta(closest)).length() < r) {
+    // Position does overlap with nearest corner, return corner position
+    return closest;
+  }
+  else {
+    // No collision with this brick
+    return null;
+  }
+}
+
+class Game {
+  constructor(controls = null, lives = 3) {
+    this.controls = (controls != null) ? controls : new AIControls();
+    this.lives = lives;
+    this.score = 0;
+
+    this.new_level(0);
+  }
+
+  new_level(level_num) {
+    this.play_sound("start_game");
+
+    // Go back to first level if we've finished last level
+    if (level_num >= LEVELS.length) {
+      level_num = 0;
+    }
+
+    // Create bitmaps for brick and shadow backgrounds
+
+    let level = get_mirrored_level(LEVELS[level_num]);
+
+    this.num_rows = level.length;
+    this.num_cols = level[0].length;
+
+    // Convert level data, a list of strings, to as 2D list of integers (or None where no brick is present)
+    // The numbers in the level data are in hexadecimal (base 16), where A to F represent 10 to 15
+    this.bricks = [];
+    for (let y = 0; y < this.num_rows; y++) {
+      this.bricks.push([]);
+      for (let x = 0; x < this.num_cols; x++) {
+        if (level[y][x] === " ") {
+          this.bricks[y].push(null);
+        }
+        else {
+          this.bricks[y].push(HEX.indexOf(level[y][x]));
+        }
+      }
+    }
+
+    // Draw bricks, and count how many there are, not counting brick ID 13 which is indestructible
+    this.bricks_remaining = 0;
+    for (let y = 0; y < this.num_rows; y++) {
+      for (let x = 0; x < this.num_cols; x++) {
+        if ((this.bricks[y][x] != null) && (this.bricks[y][x] !== 13)) {
+          this.bricks_remaining += 1;
+        }
+      }
+    }
+
+    this.balls = [new Ball()];
+    this.bat = new Bat(this.controls);
+
+    this.bullets = [];
+    this.barrels = [];
+    this.impacts = [];
+
+    this.level_num = level_num;
+    this.portal_active = false;
+    this.portal_frame = 0;
+    this.portal_timer = 0;
+  }
+
+  redraw_brick(x, y, shadow = false) {
+    let screen_x = (x * BRICK_WIDTH) + BRICKS_X_START,
+        screen_y = (y * BRICK_HEIGHT) + BRICKS_Y_START,
+        brick_image;
+    if (this.bricks[y][x] != null) {
+      // Display a brick at this position
+
+      if (!shadow) {
+        // Get brick image via filename, the files have names brick0 to brickd, see Impact class for a comment
+        // explaining how we use hexadecimal numbers here
+        brick_image = "brick" + HEX[this.bricks[y][x]];
+
+        // Display the brick image to the brick surface, which is an image just containing the bricks
+        screen.blit(brick_image, [screen_x, screen_y]);
+      }
+      else {
+        // Update shadow surface
+        screen.blit('bricks', [screen_x + SHADOW_OFFSET, screen_y + SHADOW_OFFSET]);
+      }
+    }
+    else {
+      // Remove a brick (and its shadow) from this position)
+    }
+  }
+
+  collide(x, y, dir, r = BALL_RADIUS) {
+    // Called to check whether a ball or a bullet would collide with something if it moved in the specified direction
+    // Only checks for walls and bricks, collisions with bat are handled elsewhere
+    // If there's a collision with a destructible brick, the brick will take damage
+    // returns tuple of (tuple 2: impact pos, bool: show impact, CollisionType), or None if no collision
+
+    // Extract x and y of direction into separate variables
+    if ((dir.x < 0) && (x < (LEFT_EDGE + r))) {
+      return [[LEFT_EDGE, y], true, CollisionType.WALL];
+    }
+    if ((dir.x > 0) && (x > (RIGHT_EDGE - r))) {
+      return [[RIGHT_EDGE, y], true, CollisionType.WALL];
+    }
+    if ((dir.y < 0) && (y < (TOP_EDGE + r))) {
+      return [[x, TOP_EDGE], true, CollisionType.WALL];
+    }
+
+    // Work out the range of brick rows and columns that the ball overlaps
+    // This means we don't need to check the ball against every brick,
+    // only against the bricks it could potentially be colliding with
+    let x0 = Math.max(0, Math.floor((x - BRICKS_X_START - r) / BRICK_WIDTH)),
+        y0 = Math.max(0, Math.floor((y - BRICKS_Y_START - r) / BRICK_HEIGHT)),
+        x1 = Math.min(this.num_cols - 1, Math.floor((x - BRICKS_X_START + r) / BRICK_WIDTH)),
+        y1 = Math.min(this.num_rows - 1, Math.floor((y - BRICKS_Y_START + r) / BRICK_HEIGHT)),
+        c, centre_pos, collision_type;
+
+    // Collide with bricks
+    for (let yb = y0; yb < (y1 + 1); yb++) {
+      for (let xb = x0; xb < (x1 + 1); xb++) {
+        // Is there a brick in this position?
+        if (this.bricks[yb][xb] != null) {
+          // Check for collision with current brick
+          c = brick_collide(x, y, xb, yb, r);
+
+          if (c != null) {
+            // There was a collision
+            centre_pos = [(xb * BRICK_WIDTH) + BRICKS_X_START + Math.floor(BRICK_WIDTH / 2),
+                          (yb * BRICK_HEIGHT) + BRICKS_Y_START + Math.floor(BRICK_HEIGHT / 2)];
+
+            collision_type = CollisionType.BRICK;
+
+            // Check brick type
+            // Brick 12 (brickc.png) requires a hit to turn into brick 11
+            // Brick 13 (brickd.png) is indestructible
+            if (this.bricks[yb][xb] >= 12) {
+              // Indestructible brick
+              if (this.bricks[yb][xb] === 13) {
+                collision_type = CollisionType.INDESTRUCTIBLE_BRICK;
+              }
+              this.impacts.push(new Impact(centre_pos, 13));
+              if (this.bricks[yb][xb] === 12) {
+                this.bricks[yb][xb] = 11;
+              }
+            }
+            else {
+              this.impacts.push(new Impact(centre_pos, this.bricks[yb][xb]));
+
+              if (getRandom(0, 1) < POWERUP_CHANCE) {
+                this.barrels.push(new Barrel(centre_pos));
+              }
+
+              this.bricks[yb][xb] = null;
+
+              this.bricks_remaining -= 1;
+              if (this.bricks_remaining === 0) {
+                this.activate_portal();
+              }
+
+              this.score += 10;
+            }
+
+            return [c, false, collision_type];
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  activate_portal() {
+    this.portal_active = true;
+    this.play_sound("portal_exit");
+  }
+
+  update() {
+    // Update bat and balls
+    for (let obj of ([this.bat]).concat(this.balls)) {
+      obj.update();
+    }
+
+    // Remove any balls which are off the bottom of the screen
+    // We achieve this by regenerating the balls list using a list comprehension, only keeping balls which are
+    // still on the screen
+    this.balls = this.balls.filter((obj) => (obj.posy < HEIGHT));
+
+    // Lose a life if there are no balls
+    if (this.balls.length === 0) {
+      // We don't care about how many lives the player has in demo mode
+      if ((this.lives > 0) || this.in_demo_mode()) {
+        this.lives -= 1;
+        this.balls = [new Ball()];
+        this.bat.change_type(BatType.NORMAL);
+      }
+
+      this.play_sound("lose_life");
+    }
+
+    // Update impacts, barrels and bullets
+    for (let obj of this.impacts.concat(this.barrels).concat(this.bullets)) {
+      obj.update();
+    }
+
+    // Remove timed-out impacts, barrels which have gone off the bottom of
+    // the screen, and bullets which are no longer alive
+    this.impacts = this.impacts.filter((obj) => (obj.time < 16));
+    this.barrels = this.barrels.filter((obj) => (obj.posy < HEIGHT));
+    this.bullets = this.bullets.filter((obj) => obj.alive);
+
+    // Update the portal that allows you to leave the level
+    if (this.portal_active) {
+      if (this.portal_frame < 3) {
+        // Update portal animation
+        this.portal_timer -= 1;
+        if (this.portal_timer <= 0) {
+          this.portal_timer = PORTAL_ANIMATION_SPEED;
+          this.portal_frame += 1;
+        }
+      }
+      else if (this.bat.is_portal_transition_complete()) {
+        this.new_level(this.level_num + 1);
+      }
+    }
+
+    // If no balls have damaged/destroyed bricks or touched the bat in the last 30 seconds, change all
+    // indestructible bricks to two-hit bricks, to avoid a situation where the ball can get stuck bouncing
+    // between indestructible bricks
+    if (this.detect_stuck_balls()) {
+      // Go through all bricks, change indestructible bricks to two-hit bricks
+      let changed_any = false;
+      for (let row = 0; row < this.num_rows; row++) {
+        for (let col = 0; col < this.num_cols; col++) {
+          // 13 is indestructible brick, 12 is two-hit brick
+          if (this.bricks[row][col] === 13) {
+            this.bricks[row][col] = 12;
+            changed_any = true;
+          }
+        }
+      }
+
+      // Play a sound effect, but only if there were indestructible blocks that were changed
+      if (changed_any) {
+        this.play_sound("bat_small", 1);
+      }
+
+      // To prevent this triggering again next frame, which should have no gameplay impact but could have
+      // a performance impact, we'll pretend that one of the balls has touched the bat in the last 30 seconds
+      if (this.balls.length > 0) {
+        this.balls[0].time_since_touched_bat = 0;
+      }
+    }
+  }
+
+  detect_stuck_balls() {
+    // Detect whether all balls are stuck bouncing between indestructible bricks,
+    if (this.balls.length === 0) {
+      // Having no balls in play doesn't count as all balls being stuck
+      return false;
+    }
+
+    for (let ball of this.balls) {
+      if ((ball.time_since_damaged_brick < (30 * 60)) || (ball.time_since_touched_bat < (30 * 60))) {
+        // This ball has damaged a brick or touched a bat in the last 30 seconds, so all balls aren't stuck
+        return false;
+      }
+    }
+
+    // All balls are stuck
+    return true;
+  }
+
+  draw() {
+    screen.blit(`arena${ this.level_num % LEVELS.length }`, [0, 0]);
+
+    // Draw exit portal
+    screen.blit(`portal_exit${ this.portal_frame }`, [WIDTH - 70 - 20, HEIGHT - 70]);
+
+    // Draw enemy doors - currently unused, but animations are present for the doors opening and closing,
+    // and for enemies - try adding enemies to the game and making use of these animations!
+    screen.blit("portal_meanie00", [110, 40]);
+    screen.blit("portal_meanie10", [440, 40]);
+
+    // This prevents drawing onto the edges of the screen, meaning that the
+    // shadows don't overlap with the darker part of the right hand wall
+
+    // Draw brick shadows
+    for (let y = 0; y < this.num_rows; y++) {
+      for (let x = 0; x < this.num_cols; x++) {
+        this.redraw_brick(x, y, true);
+      }
+    }
+
+    // Draw shadows for powerup barrels, balls and bat
+    for (let obj of this.barrels.concat(this.balls).concat([this.bat])) {
+      obj.shadow.draw();
+    }
+
+    // Draw bricks
+    for (let y = 0; y < this.num_rows; y++) {
+      for (let x = 0; x < this.num_cols; x++) {
+        this.redraw_brick(x, y, false);
+      }
+    }
+
+    // Draw balls, bat, barrels and bullets
+    for (let obj of this.balls.concat([this.bat]).concat(this.barrels).concat(this.bullets)) {
+      obj.draw();
+    }
+
+    // Cancel screen clipping mode set earlier
+
+    // Draw impact animations
+    for (let obj of this.impacts) {
+      obj.draw();
+    }
+
+    // Only draw score and lives in normal mode, not in AI/demo mode
+    if (!this.in_demo_mode()) {
+      this.draw_score();
+      this.draw_lives();
+    }
+  }
+
+  draw_score() {
+    // Convert score into a string of digits (e.g. "150") so we can
+    // draw each individual digit, from left to right
+    let x = 15;
+    for (let digit of this.score.toFixed()) {
+      screen.blit("digit" + digit, [x, 50]);
+      x += 55;
+    }
+  }
+
+  draw_lives() {
+    let x = 0;
+    for (let i = 0; i < this.lives; i++) {
+      screen.blit("life", [x, HEIGHT - 20]);
+      x += 50;
+    }
+  }
+
+  play_sound(name, count = 1) {
+    // We don't play any in-game sound effects if player is an AI player - as this means we're on the menu
+    if (!this.in_demo_mode()) {
+      // Pygame Zero allows you to write things like 'sounds.explosion.play()'
+      // This automatically loads and plays a file named 'explosion.wav' (or .ogg) from the sounds folder (if
+      // such a file exists)
+      // But what if you have files named 'explosion0.ogg' to 'explosion5.ogg' and want to randomly choose
+      // one of them to play? You can generate a string such as 'explosion3', but to use such a string
+      // to access an attribute of Pygame Zero's sounds object, we must use Python's built-in function getattr
+      sounds[name+getRandomInteger(0, count)].play();
+    }
+  }
+
+  change_all_ball_speeds(change) {
+    for (let b of this.balls) {
+      b.speed = Math.min(Math.max(b.speed + change, BALL_MIN_SPEED), BALL_MAX_SPEED);
+    }
+  }
+
+  in_demo_mode() {
+    return (this.controls instanceof AIControls);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
