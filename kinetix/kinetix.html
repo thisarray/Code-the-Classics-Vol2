@@ -3218,6 +3218,126 @@ class Game {
   }
 }
 
+let keyboard_controls, joystick_controls, ai_controls, state, game, total_frames;
+
+function get_joystick_if_exists() {
+  return (Joystick.get_count() > 0) ? new Joystick(0) : null;
+}
+
+function setup_joystick_controls() {
+  // We call this on startup, and keep calling it if no controller is present,
+  // so a controller can be connected while the game is open
+  Joystick.init();
+  let joystick = get_joystick_if_exists();
+  joystick_controls = (joystick != null) ? new JoystickControls(joystick) : null;
+}
+
+function update_controls() {
+  keyboard_controls.update();
+  // Allow a controller to be connected while the game is open
+  if (joystick_controls == null) {
+    setup_joystick_controls();
+  }
+  if (joystick_controls != null) {
+    joystick_controls.update();
+  }
+}
+
+const State = Object.freeze({
+  TITLE: 1,
+  PLAY: 2,
+  GAME_OVER: 3
+});
+
+// Pygame Zero calls the update and draw functions each frame
+
+function update() {
+  total_frames += 1;
+
+  update_controls();
+
+  if (state === State.TITLE) {
+    ai_controls.update();
+    game.update();
+
+    // Check for start game
+    for (let controls of [keyboard_controls, joystick_controls]) {
+      // Check for fire button being pressed on each controls object
+      // joystick_controls will be None if there is no controller, so must check for that
+      if ((controls != null) && controls.fire_pressed()) {
+        game = new Game(controls);
+        state = State.PLAY;
+        stop_music();
+        break;
+      }
+    }
+  }
+
+  else if (state === State.PLAY) {
+    if (game.lives > 0) {
+      game.update();
+    }
+    else {
+      game.play_sound("game_over");
+      state = State.GAME_OVER;
+    }
+  }
+
+  else if (state === State.GAME_OVER) {
+    for (let controls of [keyboard_controls, joystick_controls]) {
+      if ((controls != null) && controls.fire_pressed()) {
+        // Return to title screen, which includes a game being played by AI in the background
+        game = new Game(ai_controls);
+        state = State.TITLE;
+        play_music("title_theme");
+      }
+    }
+  }
+}
+
+function draw() {
+  game.draw();
+
+  if (state === State.TITLE) {
+    screen.blit("title", [0, 0]);
+    screen.blit("startgame", [20, 80]);
+    screen.blit(`start${ Math.floor(total_frames / 4) % 13 }`, [Math.floor(WIDTH / 2) - Math.floor(250 / 2), 530]);
+  }
+
+  else if (state === State.GAME_OVER) {
+    screen.blit(`gameover${ Math.floor(total_frames / 4) % 15 }`, [Math.floor(WIDTH / 2) - Math.floor(450 / 2), 450]);
+  }
+}
+
+function play_music(name) {
+  music.play(name);
+}
+
+function stop_music() {
+  music.stop();
+}
+
+/*
+##############################################################################
+*/
+
+function reset() {
+  // Set up sound system and start music
+  play_music("title_theme");
+  music.set_volume(0.3);
+
+  // Set up controls
+  keyboard_controls = new KeyboardControls();
+  ai_controls = new AIControls();
+  setup_joystick_controls();
+
+  // Set up state and Game object
+  state = State.TITLE;
+  game = new Game(ai_controls);
+
+  total_frames = 0;
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
