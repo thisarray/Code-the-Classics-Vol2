@@ -1,0 +1,2713 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eggzy</title>
+  <script src="../../jsgame0.js"></script>
+  <style type="text/css" media="screen">
+body {
+  background-color: white;
+  color: black;
+}
+.hidden {
+  display: none;
+}
+#original {
+  margin-left: 1em;
+}
+  </style>
+</head>
+
+<body>
+<section id="imageLoader" class="hidden">
+  <img class="hidden" src="images/air_explosion_0.png" alt="air_explosion_0" data-name="air_explosion_0">
+  <img class="hidden" src="images/air_explosion_1.png" alt="air_explosion_1" data-name="air_explosion_1">
+  <img class="hidden" src="images/air_explosion_10.png" alt="air_explosion_10" data-name="air_explosion_10">
+  <img class="hidden" src="images/air_explosion_11.png" alt="air_explosion_11" data-name="air_explosion_11">
+  <img class="hidden" src="images/air_explosion_2.png" alt="air_explosion_2" data-name="air_explosion_2">
+  <img class="hidden" src="images/air_explosion_3.png" alt="air_explosion_3" data-name="air_explosion_3">
+  <img class="hidden" src="images/air_explosion_4.png" alt="air_explosion_4" data-name="air_explosion_4">
+  <img class="hidden" src="images/air_explosion_5.png" alt="air_explosion_5" data-name="air_explosion_5">
+  <img class="hidden" src="images/air_explosion_6.png" alt="air_explosion_6" data-name="air_explosion_6">
+  <img class="hidden" src="images/air_explosion_7.png" alt="air_explosion_7" data-name="air_explosion_7">
+  <img class="hidden" src="images/air_explosion_8.png" alt="air_explosion_8" data-name="air_explosion_8">
+  <img class="hidden" src="images/air_explosion_9.png" alt="air_explosion_9" data-name="air_explosion_9">
+  <img class="hidden" src="images/bg_castle.png" alt="bg_castle" data-name="bg_castle">
+  <img class="hidden" src="images/bg_forest.png" alt="bg_forest" data-name="bg_forest">
+  <img class="hidden" src="images/bg_forest_to_castle.png" alt="bg_forest_to_castle" data-name="bg_forest_to_castle">
+  <img class="hidden" src="images/bigbloom_0.png" alt="bigbloom_0" data-name="bigbloom_0">
+  <img class="hidden" src="images/bigbloom_0_hit.png" alt="bigbloom_0_hit" data-name="bigbloom_0_hit">
+  <img class="hidden" src="images/bigbloom_1.png" alt="bigbloom_1" data-name="bigbloom_1">
+  <img class="hidden" src="images/bigbloom_1_hit.png" alt="bigbloom_1_hit" data-name="bigbloom_1_hit">
+  <img class="hidden" src="images/bigbloom_2.png" alt="bigbloom_2" data-name="bigbloom_2">
+  <img class="hidden" src="images/bigbloom_2_hit.png" alt="bigbloom_2_hit" data-name="bigbloom_2_hit">
+  <img class="hidden" src="images/bigbloom_3.png" alt="bigbloom_3" data-name="bigbloom_3">
+  <img class="hidden" src="images/bigbloom_3_hit.png" alt="bigbloom_3_hit" data-name="bigbloom_3_hit">
+  <img class="hidden" src="images/bigbloom_4.png" alt="bigbloom_4" data-name="bigbloom_4">
+  <img class="hidden" src="images/bigbloom_4_hit.png" alt="bigbloom_4_hit" data-name="bigbloom_4_hit">
+  <img class="hidden" src="images/bigbloom_5.png" alt="bigbloom_5" data-name="bigbloom_5">
+  <img class="hidden" src="images/bigbloom_5_hit.png" alt="bigbloom_5_hit" data-name="bigbloom_5_hit">
+  <img class="hidden" src="images/bigbloom_6.png" alt="bigbloom_6" data-name="bigbloom_6">
+  <img class="hidden" src="images/bigbloom_6_hit.png" alt="bigbloom_6_hit" data-name="bigbloom_6_hit">
+  <img class="hidden" src="images/bigbloom_7.png" alt="bigbloom_7" data-name="bigbloom_7">
+  <img class="hidden" src="images/bigbloom_7_hit.png" alt="bigbloom_7_hit" data-name="bigbloom_7_hit">
+  <img class="hidden" src="images/blank.png" alt="blank" data-name="blank">
+  <img class="hidden" src="images/change_dir_0_0.png" alt="change_dir_0_0" data-name="change_dir_0_0">
+  <img class="hidden" src="images/change_dir_1_0.png" alt="change_dir_1_0" data-name="change_dir_1_0">
+  <img class="hidden" src="images/climb_0_0.png" alt="climb_0_0" data-name="climb_0_0">
+  <img class="hidden" src="images/climb_0_1.png" alt="climb_0_1" data-name="climb_0_1">
+  <img class="hidden" src="images/climb_1_0.png" alt="climb_1_0" data-name="climb_1_0">
+  <img class="hidden" src="images/climb_1_1.png" alt="climb_1_1" data-name="climb_1_1">
+  <img class="hidden" src="images/controls.png" alt="controls" data-name="controls">
+  <img class="hidden" src="images/dash_down_0_0.png" alt="dash_down_0_0" data-name="dash_down_0_0">
+  <img class="hidden" src="images/dash_down_0_0_trail_0.png" alt="dash_down_0_0_trail_0" data-name="dash_down_0_0_trail_0">
+  <img class="hidden" src="images/dash_down_0_0_trail_1.png" alt="dash_down_0_0_trail_1" data-name="dash_down_0_0_trail_1">
+  <img class="hidden" src="images/dash_down_0_0_trail_2.png" alt="dash_down_0_0_trail_2" data-name="dash_down_0_0_trail_2">
+  <img class="hidden" src="images/dash_down_0_0_trail_3.png" alt="dash_down_0_0_trail_3" data-name="dash_down_0_0_trail_3">
+  <img class="hidden" src="images/dash_down_0_0_trail_4.png" alt="dash_down_0_0_trail_4" data-name="dash_down_0_0_trail_4">
+  <img class="hidden" src="images/dash_down_0_0_trail_5.png" alt="dash_down_0_0_trail_5" data-name="dash_down_0_0_trail_5">
+  <img class="hidden" src="images/dash_down_0_1.png" alt="dash_down_0_1" data-name="dash_down_0_1">
+  <img class="hidden" src="images/dash_down_0_1_trail_0.png" alt="dash_down_0_1_trail_0" data-name="dash_down_0_1_trail_0">
+  <img class="hidden" src="images/dash_down_0_1_trail_1.png" alt="dash_down_0_1_trail_1" data-name="dash_down_0_1_trail_1">
+  <img class="hidden" src="images/dash_down_0_1_trail_2.png" alt="dash_down_0_1_trail_2" data-name="dash_down_0_1_trail_2">
+  <img class="hidden" src="images/dash_down_0_1_trail_3.png" alt="dash_down_0_1_trail_3" data-name="dash_down_0_1_trail_3">
+  <img class="hidden" src="images/dash_down_0_1_trail_4.png" alt="dash_down_0_1_trail_4" data-name="dash_down_0_1_trail_4">
+  <img class="hidden" src="images/dash_down_0_1_trail_5.png" alt="dash_down_0_1_trail_5" data-name="dash_down_0_1_trail_5">
+  <img class="hidden" src="images/dash_down_0_2.png" alt="dash_down_0_2" data-name="dash_down_0_2">
+  <img class="hidden" src="images/dash_down_0_2_trail_0.png" alt="dash_down_0_2_trail_0" data-name="dash_down_0_2_trail_0">
+  <img class="hidden" src="images/dash_down_0_2_trail_1.png" alt="dash_down_0_2_trail_1" data-name="dash_down_0_2_trail_1">
+  <img class="hidden" src="images/dash_down_0_2_trail_2.png" alt="dash_down_0_2_trail_2" data-name="dash_down_0_2_trail_2">
+  <img class="hidden" src="images/dash_down_0_2_trail_3.png" alt="dash_down_0_2_trail_3" data-name="dash_down_0_2_trail_3">
+  <img class="hidden" src="images/dash_down_0_2_trail_4.png" alt="dash_down_0_2_trail_4" data-name="dash_down_0_2_trail_4">
+  <img class="hidden" src="images/dash_down_0_2_trail_5.png" alt="dash_down_0_2_trail_5" data-name="dash_down_0_2_trail_5">
+  <img class="hidden" src="images/dash_down_1_0.png" alt="dash_down_1_0" data-name="dash_down_1_0">
+  <img class="hidden" src="images/dash_down_1_0_trail_0.png" alt="dash_down_1_0_trail_0" data-name="dash_down_1_0_trail_0">
+  <img class="hidden" src="images/dash_down_1_0_trail_1.png" alt="dash_down_1_0_trail_1" data-name="dash_down_1_0_trail_1">
+  <img class="hidden" src="images/dash_down_1_0_trail_2.png" alt="dash_down_1_0_trail_2" data-name="dash_down_1_0_trail_2">
+  <img class="hidden" src="images/dash_down_1_0_trail_3.png" alt="dash_down_1_0_trail_3" data-name="dash_down_1_0_trail_3">
+  <img class="hidden" src="images/dash_down_1_0_trail_4.png" alt="dash_down_1_0_trail_4" data-name="dash_down_1_0_trail_4">
+  <img class="hidden" src="images/dash_down_1_0_trail_5.png" alt="dash_down_1_0_trail_5" data-name="dash_down_1_0_trail_5">
+  <img class="hidden" src="images/dash_down_1_1.png" alt="dash_down_1_1" data-name="dash_down_1_1">
+  <img class="hidden" src="images/dash_down_1_1_trail_0.png" alt="dash_down_1_1_trail_0" data-name="dash_down_1_1_trail_0">
+  <img class="hidden" src="images/dash_down_1_1_trail_1.png" alt="dash_down_1_1_trail_1" data-name="dash_down_1_1_trail_1">
+  <img class="hidden" src="images/dash_down_1_1_trail_2.png" alt="dash_down_1_1_trail_2" data-name="dash_down_1_1_trail_2">
+  <img class="hidden" src="images/dash_down_1_1_trail_3.png" alt="dash_down_1_1_trail_3" data-name="dash_down_1_1_trail_3">
+  <img class="hidden" src="images/dash_down_1_1_trail_4.png" alt="dash_down_1_1_trail_4" data-name="dash_down_1_1_trail_4">
+  <img class="hidden" src="images/dash_down_1_1_trail_5.png" alt="dash_down_1_1_trail_5" data-name="dash_down_1_1_trail_5">
+  <img class="hidden" src="images/dash_down_1_2.png" alt="dash_down_1_2" data-name="dash_down_1_2">
+  <img class="hidden" src="images/dash_down_1_2_trail_0.png" alt="dash_down_1_2_trail_0" data-name="dash_down_1_2_trail_0">
+  <img class="hidden" src="images/dash_down_1_2_trail_1.png" alt="dash_down_1_2_trail_1" data-name="dash_down_1_2_trail_1">
+  <img class="hidden" src="images/dash_down_1_2_trail_2.png" alt="dash_down_1_2_trail_2" data-name="dash_down_1_2_trail_2">
+  <img class="hidden" src="images/dash_down_1_2_trail_3.png" alt="dash_down_1_2_trail_3" data-name="dash_down_1_2_trail_3">
+  <img class="hidden" src="images/dash_down_1_2_trail_4.png" alt="dash_down_1_2_trail_4" data-name="dash_down_1_2_trail_4">
+  <img class="hidden" src="images/dash_down_1_2_trail_5.png" alt="dash_down_1_2_trail_5" data-name="dash_down_1_2_trail_5">
+  <img class="hidden" src="images/dash_down_horizontal_0_0.png" alt="dash_down_horizontal_0_0" data-name="dash_down_horizontal_0_0">
+  <img class="hidden" src="images/dash_down_horizontal_0_0_trail_0.png" alt="dash_down_horizontal_0_0_trail_0" data-name="dash_down_horizontal_0_0_trail_0">
+  <img class="hidden" src="images/dash_down_horizontal_0_0_trail_1.png" alt="dash_down_horizontal_0_0_trail_1" data-name="dash_down_horizontal_0_0_trail_1">
+  <img class="hidden" src="images/dash_down_horizontal_0_0_trail_2.png" alt="dash_down_horizontal_0_0_trail_2" data-name="dash_down_horizontal_0_0_trail_2">
+  <img class="hidden" src="images/dash_down_horizontal_0_0_trail_3.png" alt="dash_down_horizontal_0_0_trail_3" data-name="dash_down_horizontal_0_0_trail_3">
+  <img class="hidden" src="images/dash_down_horizontal_0_0_trail_4.png" alt="dash_down_horizontal_0_0_trail_4" data-name="dash_down_horizontal_0_0_trail_4">
+  <img class="hidden" src="images/dash_down_horizontal_0_0_trail_5.png" alt="dash_down_horizontal_0_0_trail_5" data-name="dash_down_horizontal_0_0_trail_5">
+  <img class="hidden" src="images/dash_down_horizontal_0_1.png" alt="dash_down_horizontal_0_1" data-name="dash_down_horizontal_0_1">
+  <img class="hidden" src="images/dash_down_horizontal_0_1_trail_0.png" alt="dash_down_horizontal_0_1_trail_0" data-name="dash_down_horizontal_0_1_trail_0">
+  <img class="hidden" src="images/dash_down_horizontal_0_1_trail_1.png" alt="dash_down_horizontal_0_1_trail_1" data-name="dash_down_horizontal_0_1_trail_1">
+  <img class="hidden" src="images/dash_down_horizontal_0_1_trail_2.png" alt="dash_down_horizontal_0_1_trail_2" data-name="dash_down_horizontal_0_1_trail_2">
+  <img class="hidden" src="images/dash_down_horizontal_0_1_trail_3.png" alt="dash_down_horizontal_0_1_trail_3" data-name="dash_down_horizontal_0_1_trail_3">
+  <img class="hidden" src="images/dash_down_horizontal_0_1_trail_4.png" alt="dash_down_horizontal_0_1_trail_4" data-name="dash_down_horizontal_0_1_trail_4">
+  <img class="hidden" src="images/dash_down_horizontal_0_1_trail_5.png" alt="dash_down_horizontal_0_1_trail_5" data-name="dash_down_horizontal_0_1_trail_5">
+  <img class="hidden" src="images/dash_down_horizontal_0_2.png" alt="dash_down_horizontal_0_2" data-name="dash_down_horizontal_0_2">
+  <img class="hidden" src="images/dash_down_horizontal_0_2_trail_0.png" alt="dash_down_horizontal_0_2_trail_0" data-name="dash_down_horizontal_0_2_trail_0">
+  <img class="hidden" src="images/dash_down_horizontal_0_2_trail_1.png" alt="dash_down_horizontal_0_2_trail_1" data-name="dash_down_horizontal_0_2_trail_1">
+  <img class="hidden" src="images/dash_down_horizontal_0_2_trail_2.png" alt="dash_down_horizontal_0_2_trail_2" data-name="dash_down_horizontal_0_2_trail_2">
+  <img class="hidden" src="images/dash_down_horizontal_0_2_trail_3.png" alt="dash_down_horizontal_0_2_trail_3" data-name="dash_down_horizontal_0_2_trail_3">
+  <img class="hidden" src="images/dash_down_horizontal_0_2_trail_4.png" alt="dash_down_horizontal_0_2_trail_4" data-name="dash_down_horizontal_0_2_trail_4">
+  <img class="hidden" src="images/dash_down_horizontal_0_2_trail_5.png" alt="dash_down_horizontal_0_2_trail_5" data-name="dash_down_horizontal_0_2_trail_5">
+  <img class="hidden" src="images/dash_down_horizontal_1_0.png" alt="dash_down_horizontal_1_0" data-name="dash_down_horizontal_1_0">
+  <img class="hidden" src="images/dash_down_horizontal_1_0_trail_0.png" alt="dash_down_horizontal_1_0_trail_0" data-name="dash_down_horizontal_1_0_trail_0">
+  <img class="hidden" src="images/dash_down_horizontal_1_0_trail_1.png" alt="dash_down_horizontal_1_0_trail_1" data-name="dash_down_horizontal_1_0_trail_1">
+  <img class="hidden" src="images/dash_down_horizontal_1_0_trail_2.png" alt="dash_down_horizontal_1_0_trail_2" data-name="dash_down_horizontal_1_0_trail_2">
+  <img class="hidden" src="images/dash_down_horizontal_1_0_trail_3.png" alt="dash_down_horizontal_1_0_trail_3" data-name="dash_down_horizontal_1_0_trail_3">
+  <img class="hidden" src="images/dash_down_horizontal_1_0_trail_4.png" alt="dash_down_horizontal_1_0_trail_4" data-name="dash_down_horizontal_1_0_trail_4">
+  <img class="hidden" src="images/dash_down_horizontal_1_0_trail_5.png" alt="dash_down_horizontal_1_0_trail_5" data-name="dash_down_horizontal_1_0_trail_5">
+  <img class="hidden" src="images/dash_down_horizontal_1_1.png" alt="dash_down_horizontal_1_1" data-name="dash_down_horizontal_1_1">
+  <img class="hidden" src="images/dash_down_horizontal_1_1_trail_0.png" alt="dash_down_horizontal_1_1_trail_0" data-name="dash_down_horizontal_1_1_trail_0">
+  <img class="hidden" src="images/dash_down_horizontal_1_1_trail_1.png" alt="dash_down_horizontal_1_1_trail_1" data-name="dash_down_horizontal_1_1_trail_1">
+  <img class="hidden" src="images/dash_down_horizontal_1_1_trail_2.png" alt="dash_down_horizontal_1_1_trail_2" data-name="dash_down_horizontal_1_1_trail_2">
+  <img class="hidden" src="images/dash_down_horizontal_1_1_trail_3.png" alt="dash_down_horizontal_1_1_trail_3" data-name="dash_down_horizontal_1_1_trail_3">
+  <img class="hidden" src="images/dash_down_horizontal_1_1_trail_4.png" alt="dash_down_horizontal_1_1_trail_4" data-name="dash_down_horizontal_1_1_trail_4">
+  <img class="hidden" src="images/dash_down_horizontal_1_1_trail_5.png" alt="dash_down_horizontal_1_1_trail_5" data-name="dash_down_horizontal_1_1_trail_5">
+  <img class="hidden" src="images/dash_down_horizontal_1_2.png" alt="dash_down_horizontal_1_2" data-name="dash_down_horizontal_1_2">
+  <img class="hidden" src="images/dash_down_horizontal_1_2_trail_0.png" alt="dash_down_horizontal_1_2_trail_0" data-name="dash_down_horizontal_1_2_trail_0">
+  <img class="hidden" src="images/dash_down_horizontal_1_2_trail_1.png" alt="dash_down_horizontal_1_2_trail_1" data-name="dash_down_horizontal_1_2_trail_1">
+  <img class="hidden" src="images/dash_down_horizontal_1_2_trail_2.png" alt="dash_down_horizontal_1_2_trail_2" data-name="dash_down_horizontal_1_2_trail_2">
+  <img class="hidden" src="images/dash_down_horizontal_1_2_trail_3.png" alt="dash_down_horizontal_1_2_trail_3" data-name="dash_down_horizontal_1_2_trail_3">
+  <img class="hidden" src="images/dash_down_horizontal_1_2_trail_4.png" alt="dash_down_horizontal_1_2_trail_4" data-name="dash_down_horizontal_1_2_trail_4">
+  <img class="hidden" src="images/dash_down_horizontal_1_2_trail_5.png" alt="dash_down_horizontal_1_2_trail_5" data-name="dash_down_horizontal_1_2_trail_5">
+  <img class="hidden" src="images/dash_horizontal_0_0.png" alt="dash_horizontal_0_0" data-name="dash_horizontal_0_0">
+  <img class="hidden" src="images/dash_horizontal_0_0_trail_0.png" alt="dash_horizontal_0_0_trail_0" data-name="dash_horizontal_0_0_trail_0">
+  <img class="hidden" src="images/dash_horizontal_0_0_trail_1.png" alt="dash_horizontal_0_0_trail_1" data-name="dash_horizontal_0_0_trail_1">
+  <img class="hidden" src="images/dash_horizontal_0_0_trail_2.png" alt="dash_horizontal_0_0_trail_2" data-name="dash_horizontal_0_0_trail_2">
+  <img class="hidden" src="images/dash_horizontal_0_0_trail_3.png" alt="dash_horizontal_0_0_trail_3" data-name="dash_horizontal_0_0_trail_3">
+  <img class="hidden" src="images/dash_horizontal_0_0_trail_4.png" alt="dash_horizontal_0_0_trail_4" data-name="dash_horizontal_0_0_trail_4">
+  <img class="hidden" src="images/dash_horizontal_0_0_trail_5.png" alt="dash_horizontal_0_0_trail_5" data-name="dash_horizontal_0_0_trail_5">
+  <img class="hidden" src="images/dash_horizontal_0_1.png" alt="dash_horizontal_0_1" data-name="dash_horizontal_0_1">
+  <img class="hidden" src="images/dash_horizontal_0_1_trail_0.png" alt="dash_horizontal_0_1_trail_0" data-name="dash_horizontal_0_1_trail_0">
+  <img class="hidden" src="images/dash_horizontal_0_1_trail_1.png" alt="dash_horizontal_0_1_trail_1" data-name="dash_horizontal_0_1_trail_1">
+  <img class="hidden" src="images/dash_horizontal_0_1_trail_2.png" alt="dash_horizontal_0_1_trail_2" data-name="dash_horizontal_0_1_trail_2">
+  <img class="hidden" src="images/dash_horizontal_0_1_trail_3.png" alt="dash_horizontal_0_1_trail_3" data-name="dash_horizontal_0_1_trail_3">
+  <img class="hidden" src="images/dash_horizontal_0_1_trail_4.png" alt="dash_horizontal_0_1_trail_4" data-name="dash_horizontal_0_1_trail_4">
+  <img class="hidden" src="images/dash_horizontal_0_1_trail_5.png" alt="dash_horizontal_0_1_trail_5" data-name="dash_horizontal_0_1_trail_5">
+  <img class="hidden" src="images/dash_horizontal_0_2.png" alt="dash_horizontal_0_2" data-name="dash_horizontal_0_2">
+  <img class="hidden" src="images/dash_horizontal_0_2_trail_0.png" alt="dash_horizontal_0_2_trail_0" data-name="dash_horizontal_0_2_trail_0">
+  <img class="hidden" src="images/dash_horizontal_0_2_trail_1.png" alt="dash_horizontal_0_2_trail_1" data-name="dash_horizontal_0_2_trail_1">
+  <img class="hidden" src="images/dash_horizontal_0_2_trail_2.png" alt="dash_horizontal_0_2_trail_2" data-name="dash_horizontal_0_2_trail_2">
+  <img class="hidden" src="images/dash_horizontal_0_2_trail_3.png" alt="dash_horizontal_0_2_trail_3" data-name="dash_horizontal_0_2_trail_3">
+  <img class="hidden" src="images/dash_horizontal_0_2_trail_4.png" alt="dash_horizontal_0_2_trail_4" data-name="dash_horizontal_0_2_trail_4">
+  <img class="hidden" src="images/dash_horizontal_0_2_trail_5.png" alt="dash_horizontal_0_2_trail_5" data-name="dash_horizontal_0_2_trail_5">
+  <img class="hidden" src="images/dash_horizontal_1_0.png" alt="dash_horizontal_1_0" data-name="dash_horizontal_1_0">
+  <img class="hidden" src="images/dash_horizontal_1_0_trail_0.png" alt="dash_horizontal_1_0_trail_0" data-name="dash_horizontal_1_0_trail_0">
+  <img class="hidden" src="images/dash_horizontal_1_0_trail_1.png" alt="dash_horizontal_1_0_trail_1" data-name="dash_horizontal_1_0_trail_1">
+  <img class="hidden" src="images/dash_horizontal_1_0_trail_2.png" alt="dash_horizontal_1_0_trail_2" data-name="dash_horizontal_1_0_trail_2">
+  <img class="hidden" src="images/dash_horizontal_1_0_trail_3.png" alt="dash_horizontal_1_0_trail_3" data-name="dash_horizontal_1_0_trail_3">
+  <img class="hidden" src="images/dash_horizontal_1_0_trail_4.png" alt="dash_horizontal_1_0_trail_4" data-name="dash_horizontal_1_0_trail_4">
+  <img class="hidden" src="images/dash_horizontal_1_0_trail_5.png" alt="dash_horizontal_1_0_trail_5" data-name="dash_horizontal_1_0_trail_5">
+  <img class="hidden" src="images/dash_horizontal_1_1.png" alt="dash_horizontal_1_1" data-name="dash_horizontal_1_1">
+  <img class="hidden" src="images/dash_horizontal_1_1_trail_0.png" alt="dash_horizontal_1_1_trail_0" data-name="dash_horizontal_1_1_trail_0">
+  <img class="hidden" src="images/dash_horizontal_1_1_trail_1.png" alt="dash_horizontal_1_1_trail_1" data-name="dash_horizontal_1_1_trail_1">
+  <img class="hidden" src="images/dash_horizontal_1_1_trail_2.png" alt="dash_horizontal_1_1_trail_2" data-name="dash_horizontal_1_1_trail_2">
+  <img class="hidden" src="images/dash_horizontal_1_1_trail_3.png" alt="dash_horizontal_1_1_trail_3" data-name="dash_horizontal_1_1_trail_3">
+  <img class="hidden" src="images/dash_horizontal_1_1_trail_4.png" alt="dash_horizontal_1_1_trail_4" data-name="dash_horizontal_1_1_trail_4">
+  <img class="hidden" src="images/dash_horizontal_1_1_trail_5.png" alt="dash_horizontal_1_1_trail_5" data-name="dash_horizontal_1_1_trail_5">
+  <img class="hidden" src="images/dash_horizontal_1_2.png" alt="dash_horizontal_1_2" data-name="dash_horizontal_1_2">
+  <img class="hidden" src="images/dash_horizontal_1_2_trail_0.png" alt="dash_horizontal_1_2_trail_0" data-name="dash_horizontal_1_2_trail_0">
+  <img class="hidden" src="images/dash_horizontal_1_2_trail_1.png" alt="dash_horizontal_1_2_trail_1" data-name="dash_horizontal_1_2_trail_1">
+  <img class="hidden" src="images/dash_horizontal_1_2_trail_2.png" alt="dash_horizontal_1_2_trail_2" data-name="dash_horizontal_1_2_trail_2">
+  <img class="hidden" src="images/dash_horizontal_1_2_trail_3.png" alt="dash_horizontal_1_2_trail_3" data-name="dash_horizontal_1_2_trail_3">
+  <img class="hidden" src="images/dash_horizontal_1_2_trail_4.png" alt="dash_horizontal_1_2_trail_4" data-name="dash_horizontal_1_2_trail_4">
+  <img class="hidden" src="images/dash_horizontal_1_2_trail_5.png" alt="dash_horizontal_1_2_trail_5" data-name="dash_horizontal_1_2_trail_5">
+  <img class="hidden" src="images/dash_start_0.png" alt="dash_start_0" data-name="dash_start_0">
+  <img class="hidden" src="images/dash_start_0_trail_0.png" alt="dash_start_0_trail_0" data-name="dash_start_0_trail_0">
+  <img class="hidden" src="images/dash_start_0_trail_1.png" alt="dash_start_0_trail_1" data-name="dash_start_0_trail_1">
+  <img class="hidden" src="images/dash_start_0_trail_2.png" alt="dash_start_0_trail_2" data-name="dash_start_0_trail_2">
+  <img class="hidden" src="images/dash_start_0_trail_3.png" alt="dash_start_0_trail_3" data-name="dash_start_0_trail_3">
+  <img class="hidden" src="images/dash_start_0_trail_4.png" alt="dash_start_0_trail_4" data-name="dash_start_0_trail_4">
+  <img class="hidden" src="images/dash_start_0_trail_5.png" alt="dash_start_0_trail_5" data-name="dash_start_0_trail_5">
+  <img class="hidden" src="images/dash_start_1.png" alt="dash_start_1" data-name="dash_start_1">
+  <img class="hidden" src="images/dash_start_1_trail_0.png" alt="dash_start_1_trail_0" data-name="dash_start_1_trail_0">
+  <img class="hidden" src="images/dash_start_1_trail_1.png" alt="dash_start_1_trail_1" data-name="dash_start_1_trail_1">
+  <img class="hidden" src="images/dash_start_1_trail_2.png" alt="dash_start_1_trail_2" data-name="dash_start_1_trail_2">
+  <img class="hidden" src="images/dash_start_1_trail_3.png" alt="dash_start_1_trail_3" data-name="dash_start_1_trail_3">
+  <img class="hidden" src="images/dash_start_1_trail_4.png" alt="dash_start_1_trail_4" data-name="dash_start_1_trail_4">
+  <img class="hidden" src="images/dash_start_1_trail_5.png" alt="dash_start_1_trail_5" data-name="dash_start_1_trail_5">
+  <img class="hidden" src="images/dash_up_0_0.png" alt="dash_up_0_0" data-name="dash_up_0_0">
+  <img class="hidden" src="images/dash_up_0_0_trail_0.png" alt="dash_up_0_0_trail_0" data-name="dash_up_0_0_trail_0">
+  <img class="hidden" src="images/dash_up_0_0_trail_1.png" alt="dash_up_0_0_trail_1" data-name="dash_up_0_0_trail_1">
+  <img class="hidden" src="images/dash_up_0_0_trail_2.png" alt="dash_up_0_0_trail_2" data-name="dash_up_0_0_trail_2">
+  <img class="hidden" src="images/dash_up_0_0_trail_3.png" alt="dash_up_0_0_trail_3" data-name="dash_up_0_0_trail_3">
+  <img class="hidden" src="images/dash_up_0_0_trail_4.png" alt="dash_up_0_0_trail_4" data-name="dash_up_0_0_trail_4">
+  <img class="hidden" src="images/dash_up_0_0_trail_5.png" alt="dash_up_0_0_trail_5" data-name="dash_up_0_0_trail_5">
+  <img class="hidden" src="images/dash_up_0_1.png" alt="dash_up_0_1" data-name="dash_up_0_1">
+  <img class="hidden" src="images/dash_up_0_1_trail_0.png" alt="dash_up_0_1_trail_0" data-name="dash_up_0_1_trail_0">
+  <img class="hidden" src="images/dash_up_0_1_trail_1.png" alt="dash_up_0_1_trail_1" data-name="dash_up_0_1_trail_1">
+  <img class="hidden" src="images/dash_up_0_1_trail_2.png" alt="dash_up_0_1_trail_2" data-name="dash_up_0_1_trail_2">
+  <img class="hidden" src="images/dash_up_0_1_trail_3.png" alt="dash_up_0_1_trail_3" data-name="dash_up_0_1_trail_3">
+  <img class="hidden" src="images/dash_up_0_1_trail_4.png" alt="dash_up_0_1_trail_4" data-name="dash_up_0_1_trail_4">
+  <img class="hidden" src="images/dash_up_0_1_trail_5.png" alt="dash_up_0_1_trail_5" data-name="dash_up_0_1_trail_5">
+  <img class="hidden" src="images/dash_up_0_2.png" alt="dash_up_0_2" data-name="dash_up_0_2">
+  <img class="hidden" src="images/dash_up_0_2_trail_0.png" alt="dash_up_0_2_trail_0" data-name="dash_up_0_2_trail_0">
+  <img class="hidden" src="images/dash_up_0_2_trail_1.png" alt="dash_up_0_2_trail_1" data-name="dash_up_0_2_trail_1">
+  <img class="hidden" src="images/dash_up_0_2_trail_2.png" alt="dash_up_0_2_trail_2" data-name="dash_up_0_2_trail_2">
+  <img class="hidden" src="images/dash_up_0_2_trail_3.png" alt="dash_up_0_2_trail_3" data-name="dash_up_0_2_trail_3">
+  <img class="hidden" src="images/dash_up_0_2_trail_4.png" alt="dash_up_0_2_trail_4" data-name="dash_up_0_2_trail_4">
+  <img class="hidden" src="images/dash_up_0_2_trail_5.png" alt="dash_up_0_2_trail_5" data-name="dash_up_0_2_trail_5">
+  <img class="hidden" src="images/dash_up_1_0.png" alt="dash_up_1_0" data-name="dash_up_1_0">
+  <img class="hidden" src="images/dash_up_1_0_trail_0.png" alt="dash_up_1_0_trail_0" data-name="dash_up_1_0_trail_0">
+  <img class="hidden" src="images/dash_up_1_0_trail_1.png" alt="dash_up_1_0_trail_1" data-name="dash_up_1_0_trail_1">
+  <img class="hidden" src="images/dash_up_1_0_trail_2.png" alt="dash_up_1_0_trail_2" data-name="dash_up_1_0_trail_2">
+  <img class="hidden" src="images/dash_up_1_0_trail_3.png" alt="dash_up_1_0_trail_3" data-name="dash_up_1_0_trail_3">
+  <img class="hidden" src="images/dash_up_1_0_trail_4.png" alt="dash_up_1_0_trail_4" data-name="dash_up_1_0_trail_4">
+  <img class="hidden" src="images/dash_up_1_0_trail_5.png" alt="dash_up_1_0_trail_5" data-name="dash_up_1_0_trail_5">
+  <img class="hidden" src="images/dash_up_1_1.png" alt="dash_up_1_1" data-name="dash_up_1_1">
+  <img class="hidden" src="images/dash_up_1_1_trail_0.png" alt="dash_up_1_1_trail_0" data-name="dash_up_1_1_trail_0">
+  <img class="hidden" src="images/dash_up_1_1_trail_1.png" alt="dash_up_1_1_trail_1" data-name="dash_up_1_1_trail_1">
+  <img class="hidden" src="images/dash_up_1_1_trail_2.png" alt="dash_up_1_1_trail_2" data-name="dash_up_1_1_trail_2">
+  <img class="hidden" src="images/dash_up_1_1_trail_3.png" alt="dash_up_1_1_trail_3" data-name="dash_up_1_1_trail_3">
+  <img class="hidden" src="images/dash_up_1_1_trail_4.png" alt="dash_up_1_1_trail_4" data-name="dash_up_1_1_trail_4">
+  <img class="hidden" src="images/dash_up_1_1_trail_5.png" alt="dash_up_1_1_trail_5" data-name="dash_up_1_1_trail_5">
+  <img class="hidden" src="images/dash_up_1_2.png" alt="dash_up_1_2" data-name="dash_up_1_2">
+  <img class="hidden" src="images/dash_up_1_2_trail_0.png" alt="dash_up_1_2_trail_0" data-name="dash_up_1_2_trail_0">
+  <img class="hidden" src="images/dash_up_1_2_trail_1.png" alt="dash_up_1_2_trail_1" data-name="dash_up_1_2_trail_1">
+  <img class="hidden" src="images/dash_up_1_2_trail_2.png" alt="dash_up_1_2_trail_2" data-name="dash_up_1_2_trail_2">
+  <img class="hidden" src="images/dash_up_1_2_trail_3.png" alt="dash_up_1_2_trail_3" data-name="dash_up_1_2_trail_3">
+  <img class="hidden" src="images/dash_up_1_2_trail_4.png" alt="dash_up_1_2_trail_4" data-name="dash_up_1_2_trail_4">
+  <img class="hidden" src="images/dash_up_1_2_trail_5.png" alt="dash_up_1_2_trail_5" data-name="dash_up_1_2_trail_5">
+  <img class="hidden" src="images/dash_up_horizontal_0_0.png" alt="dash_up_horizontal_0_0" data-name="dash_up_horizontal_0_0">
+  <img class="hidden" src="images/dash_up_horizontal_0_0_trail_0.png" alt="dash_up_horizontal_0_0_trail_0" data-name="dash_up_horizontal_0_0_trail_0">
+  <img class="hidden" src="images/dash_up_horizontal_0_0_trail_1.png" alt="dash_up_horizontal_0_0_trail_1" data-name="dash_up_horizontal_0_0_trail_1">
+  <img class="hidden" src="images/dash_up_horizontal_0_0_trail_2.png" alt="dash_up_horizontal_0_0_trail_2" data-name="dash_up_horizontal_0_0_trail_2">
+  <img class="hidden" src="images/dash_up_horizontal_0_0_trail_3.png" alt="dash_up_horizontal_0_0_trail_3" data-name="dash_up_horizontal_0_0_trail_3">
+  <img class="hidden" src="images/dash_up_horizontal_0_0_trail_4.png" alt="dash_up_horizontal_0_0_trail_4" data-name="dash_up_horizontal_0_0_trail_4">
+  <img class="hidden" src="images/dash_up_horizontal_0_0_trail_5.png" alt="dash_up_horizontal_0_0_trail_5" data-name="dash_up_horizontal_0_0_trail_5">
+  <img class="hidden" src="images/dash_up_horizontal_0_1.png" alt="dash_up_horizontal_0_1" data-name="dash_up_horizontal_0_1">
+  <img class="hidden" src="images/dash_up_horizontal_0_1_trail_0.png" alt="dash_up_horizontal_0_1_trail_0" data-name="dash_up_horizontal_0_1_trail_0">
+  <img class="hidden" src="images/dash_up_horizontal_0_1_trail_1.png" alt="dash_up_horizontal_0_1_trail_1" data-name="dash_up_horizontal_0_1_trail_1">
+  <img class="hidden" src="images/dash_up_horizontal_0_1_trail_2.png" alt="dash_up_horizontal_0_1_trail_2" data-name="dash_up_horizontal_0_1_trail_2">
+  <img class="hidden" src="images/dash_up_horizontal_0_1_trail_3.png" alt="dash_up_horizontal_0_1_trail_3" data-name="dash_up_horizontal_0_1_trail_3">
+  <img class="hidden" src="images/dash_up_horizontal_0_1_trail_4.png" alt="dash_up_horizontal_0_1_trail_4" data-name="dash_up_horizontal_0_1_trail_4">
+  <img class="hidden" src="images/dash_up_horizontal_0_1_trail_5.png" alt="dash_up_horizontal_0_1_trail_5" data-name="dash_up_horizontal_0_1_trail_5">
+  <img class="hidden" src="images/dash_up_horizontal_0_2.png" alt="dash_up_horizontal_0_2" data-name="dash_up_horizontal_0_2">
+  <img class="hidden" src="images/dash_up_horizontal_0_2_trail_0.png" alt="dash_up_horizontal_0_2_trail_0" data-name="dash_up_horizontal_0_2_trail_0">
+  <img class="hidden" src="images/dash_up_horizontal_0_2_trail_1.png" alt="dash_up_horizontal_0_2_trail_1" data-name="dash_up_horizontal_0_2_trail_1">
+  <img class="hidden" src="images/dash_up_horizontal_0_2_trail_2.png" alt="dash_up_horizontal_0_2_trail_2" data-name="dash_up_horizontal_0_2_trail_2">
+  <img class="hidden" src="images/dash_up_horizontal_0_2_trail_3.png" alt="dash_up_horizontal_0_2_trail_3" data-name="dash_up_horizontal_0_2_trail_3">
+  <img class="hidden" src="images/dash_up_horizontal_0_2_trail_4.png" alt="dash_up_horizontal_0_2_trail_4" data-name="dash_up_horizontal_0_2_trail_4">
+  <img class="hidden" src="images/dash_up_horizontal_0_2_trail_5.png" alt="dash_up_horizontal_0_2_trail_5" data-name="dash_up_horizontal_0_2_trail_5">
+  <img class="hidden" src="images/dash_up_horizontal_1_0.png" alt="dash_up_horizontal_1_0" data-name="dash_up_horizontal_1_0">
+  <img class="hidden" src="images/dash_up_horizontal_1_0_trail_0.png" alt="dash_up_horizontal_1_0_trail_0" data-name="dash_up_horizontal_1_0_trail_0">
+  <img class="hidden" src="images/dash_up_horizontal_1_0_trail_1.png" alt="dash_up_horizontal_1_0_trail_1" data-name="dash_up_horizontal_1_0_trail_1">
+  <img class="hidden" src="images/dash_up_horizontal_1_0_trail_2.png" alt="dash_up_horizontal_1_0_trail_2" data-name="dash_up_horizontal_1_0_trail_2">
+  <img class="hidden" src="images/dash_up_horizontal_1_0_trail_3.png" alt="dash_up_horizontal_1_0_trail_3" data-name="dash_up_horizontal_1_0_trail_3">
+  <img class="hidden" src="images/dash_up_horizontal_1_0_trail_4.png" alt="dash_up_horizontal_1_0_trail_4" data-name="dash_up_horizontal_1_0_trail_4">
+  <img class="hidden" src="images/dash_up_horizontal_1_0_trail_5.png" alt="dash_up_horizontal_1_0_trail_5" data-name="dash_up_horizontal_1_0_trail_5">
+  <img class="hidden" src="images/dash_up_horizontal_1_1.png" alt="dash_up_horizontal_1_1" data-name="dash_up_horizontal_1_1">
+  <img class="hidden" src="images/dash_up_horizontal_1_1_trail_0.png" alt="dash_up_horizontal_1_1_trail_0" data-name="dash_up_horizontal_1_1_trail_0">
+  <img class="hidden" src="images/dash_up_horizontal_1_1_trail_1.png" alt="dash_up_horizontal_1_1_trail_1" data-name="dash_up_horizontal_1_1_trail_1">
+  <img class="hidden" src="images/dash_up_horizontal_1_1_trail_2.png" alt="dash_up_horizontal_1_1_trail_2" data-name="dash_up_horizontal_1_1_trail_2">
+  <img class="hidden" src="images/dash_up_horizontal_1_1_trail_3.png" alt="dash_up_horizontal_1_1_trail_3" data-name="dash_up_horizontal_1_1_trail_3">
+  <img class="hidden" src="images/dash_up_horizontal_1_1_trail_4.png" alt="dash_up_horizontal_1_1_trail_4" data-name="dash_up_horizontal_1_1_trail_4">
+  <img class="hidden" src="images/dash_up_horizontal_1_1_trail_5.png" alt="dash_up_horizontal_1_1_trail_5" data-name="dash_up_horizontal_1_1_trail_5">
+  <img class="hidden" src="images/dash_up_horizontal_1_2.png" alt="dash_up_horizontal_1_2" data-name="dash_up_horizontal_1_2">
+  <img class="hidden" src="images/dash_up_horizontal_1_2_trail_0.png" alt="dash_up_horizontal_1_2_trail_0" data-name="dash_up_horizontal_1_2_trail_0">
+  <img class="hidden" src="images/dash_up_horizontal_1_2_trail_1.png" alt="dash_up_horizontal_1_2_trail_1" data-name="dash_up_horizontal_1_2_trail_1">
+  <img class="hidden" src="images/dash_up_horizontal_1_2_trail_2.png" alt="dash_up_horizontal_1_2_trail_2" data-name="dash_up_horizontal_1_2_trail_2">
+  <img class="hidden" src="images/dash_up_horizontal_1_2_trail_3.png" alt="dash_up_horizontal_1_2_trail_3" data-name="dash_up_horizontal_1_2_trail_3">
+  <img class="hidden" src="images/dash_up_horizontal_1_2_trail_4.png" alt="dash_up_horizontal_1_2_trail_4" data-name="dash_up_horizontal_1_2_trail_4">
+  <img class="hidden" src="images/dash_up_horizontal_1_2_trail_5.png" alt="dash_up_horizontal_1_2_trail_5" data-name="dash_up_horizontal_1_2_trail_5">
+  <img class="hidden" src="images/die_0.png" alt="die_0" data-name="die_0">
+  <img class="hidden" src="images/die_1.png" alt="die_1" data-name="die_1">
+  <img class="hidden" src="images/die_2.png" alt="die_2" data-name="die_2">
+  <img class="hidden" src="images/die_3.png" alt="die_3" data-name="die_3">
+  <img class="hidden" src="images/die_4.png" alt="die_4" data-name="die_4">
+  <img class="hidden" src="images/die_5.png" alt="die_5" data-name="die_5">
+  <img class="hidden" src="images/door_castle_0_0.png" alt="door_castle_0_0" data-name="door_castle_0_0">
+  <img class="hidden" src="images/door_castle_0_1.png" alt="door_castle_0_1" data-name="door_castle_0_1">
+  <img class="hidden" src="images/door_castle_0_10.png" alt="door_castle_0_10" data-name="door_castle_0_10">
+  <img class="hidden" src="images/door_castle_0_11.png" alt="door_castle_0_11" data-name="door_castle_0_11">
+  <img class="hidden" src="images/door_castle_0_12.png" alt="door_castle_0_12" data-name="door_castle_0_12">
+  <img class="hidden" src="images/door_castle_0_13.png" alt="door_castle_0_13" data-name="door_castle_0_13">
+  <img class="hidden" src="images/door_castle_0_14.png" alt="door_castle_0_14" data-name="door_castle_0_14">
+  <img class="hidden" src="images/door_castle_0_15.png" alt="door_castle_0_15" data-name="door_castle_0_15">
+  <img class="hidden" src="images/door_castle_0_2.png" alt="door_castle_0_2" data-name="door_castle_0_2">
+  <img class="hidden" src="images/door_castle_0_3.png" alt="door_castle_0_3" data-name="door_castle_0_3">
+  <img class="hidden" src="images/door_castle_0_4.png" alt="door_castle_0_4" data-name="door_castle_0_4">
+  <img class="hidden" src="images/door_castle_0_5.png" alt="door_castle_0_5" data-name="door_castle_0_5">
+  <img class="hidden" src="images/door_castle_0_6.png" alt="door_castle_0_6" data-name="door_castle_0_6">
+  <img class="hidden" src="images/door_castle_0_7.png" alt="door_castle_0_7" data-name="door_castle_0_7">
+  <img class="hidden" src="images/door_castle_0_8.png" alt="door_castle_0_8" data-name="door_castle_0_8">
+  <img class="hidden" src="images/door_castle_0_9.png" alt="door_castle_0_9" data-name="door_castle_0_9">
+  <img class="hidden" src="images/door_forest_0_0.png" alt="door_forest_0_0" data-name="door_forest_0_0">
+  <img class="hidden" src="images/door_forest_0_1.png" alt="door_forest_0_1" data-name="door_forest_0_1">
+  <img class="hidden" src="images/door_forest_0_10.png" alt="door_forest_0_10" data-name="door_forest_0_10">
+  <img class="hidden" src="images/door_forest_0_11.png" alt="door_forest_0_11" data-name="door_forest_0_11">
+  <img class="hidden" src="images/door_forest_0_12.png" alt="door_forest_0_12" data-name="door_forest_0_12">
+  <img class="hidden" src="images/door_forest_0_13.png" alt="door_forest_0_13" data-name="door_forest_0_13">
+  <img class="hidden" src="images/door_forest_0_2.png" alt="door_forest_0_2" data-name="door_forest_0_2">
+  <img class="hidden" src="images/door_forest_0_3.png" alt="door_forest_0_3" data-name="door_forest_0_3">
+  <img class="hidden" src="images/door_forest_0_4.png" alt="door_forest_0_4" data-name="door_forest_0_4">
+  <img class="hidden" src="images/door_forest_0_5.png" alt="door_forest_0_5" data-name="door_forest_0_5">
+  <img class="hidden" src="images/door_forest_0_6.png" alt="door_forest_0_6" data-name="door_forest_0_6">
+  <img class="hidden" src="images/door_forest_0_7.png" alt="door_forest_0_7" data-name="door_forest_0_7">
+  <img class="hidden" src="images/door_forest_0_8.png" alt="door_forest_0_8" data-name="door_forest_0_8">
+  <img class="hidden" src="images/door_forest_0_9.png" alt="door_forest_0_9" data-name="door_forest_0_9">
+  <img class="hidden" src="images/door_forest_1_0.png" alt="door_forest_1_0" data-name="door_forest_1_0">
+  <img class="hidden" src="images/door_forest_1_1.png" alt="door_forest_1_1" data-name="door_forest_1_1">
+  <img class="hidden" src="images/door_forest_1_10.png" alt="door_forest_1_10" data-name="door_forest_1_10">
+  <img class="hidden" src="images/door_forest_1_11.png" alt="door_forest_1_11" data-name="door_forest_1_11">
+  <img class="hidden" src="images/door_forest_1_12.png" alt="door_forest_1_12" data-name="door_forest_1_12">
+  <img class="hidden" src="images/door_forest_1_13.png" alt="door_forest_1_13" data-name="door_forest_1_13">
+  <img class="hidden" src="images/door_forest_1_2.png" alt="door_forest_1_2" data-name="door_forest_1_2">
+  <img class="hidden" src="images/door_forest_1_3.png" alt="door_forest_1_3" data-name="door_forest_1_3">
+  <img class="hidden" src="images/door_forest_1_4.png" alt="door_forest_1_4" data-name="door_forest_1_4">
+  <img class="hidden" src="images/door_forest_1_5.png" alt="door_forest_1_5" data-name="door_forest_1_5">
+  <img class="hidden" src="images/door_forest_1_6.png" alt="door_forest_1_6" data-name="door_forest_1_6">
+  <img class="hidden" src="images/door_forest_1_7.png" alt="door_forest_1_7" data-name="door_forest_1_7">
+  <img class="hidden" src="images/door_forest_1_8.png" alt="door_forest_1_8" data-name="door_forest_1_8">
+  <img class="hidden" src="images/door_forest_1_9.png" alt="door_forest_1_9" data-name="door_forest_1_9">
+  <img class="hidden" src="images/door_forest_2_0.png" alt="door_forest_2_0" data-name="door_forest_2_0">
+  <img class="hidden" src="images/door_forest_2_1.png" alt="door_forest_2_1" data-name="door_forest_2_1">
+  <img class="hidden" src="images/door_forest_2_10.png" alt="door_forest_2_10" data-name="door_forest_2_10">
+  <img class="hidden" src="images/door_forest_2_11.png" alt="door_forest_2_11" data-name="door_forest_2_11">
+  <img class="hidden" src="images/door_forest_2_12.png" alt="door_forest_2_12" data-name="door_forest_2_12">
+  <img class="hidden" src="images/door_forest_2_13.png" alt="door_forest_2_13" data-name="door_forest_2_13">
+  <img class="hidden" src="images/door_forest_2_2.png" alt="door_forest_2_2" data-name="door_forest_2_2">
+  <img class="hidden" src="images/door_forest_2_3.png" alt="door_forest_2_3" data-name="door_forest_2_3">
+  <img class="hidden" src="images/door_forest_2_4.png" alt="door_forest_2_4" data-name="door_forest_2_4">
+  <img class="hidden" src="images/door_forest_2_5.png" alt="door_forest_2_5" data-name="door_forest_2_5">
+  <img class="hidden" src="images/door_forest_2_6.png" alt="door_forest_2_6" data-name="door_forest_2_6">
+  <img class="hidden" src="images/door_forest_2_7.png" alt="door_forest_2_7" data-name="door_forest_2_7">
+  <img class="hidden" src="images/door_forest_2_8.png" alt="door_forest_2_8" data-name="door_forest_2_8">
+  <img class="hidden" src="images/door_forest_2_9.png" alt="door_forest_2_9" data-name="door_forest_2_9">
+  <img class="hidden" src="images/door_forest_3_0.png" alt="door_forest_3_0" data-name="door_forest_3_0">
+  <img class="hidden" src="images/door_forest_3_1.png" alt="door_forest_3_1" data-name="door_forest_3_1">
+  <img class="hidden" src="images/door_forest_3_10.png" alt="door_forest_3_10" data-name="door_forest_3_10">
+  <img class="hidden" src="images/door_forest_3_11.png" alt="door_forest_3_11" data-name="door_forest_3_11">
+  <img class="hidden" src="images/door_forest_3_12.png" alt="door_forest_3_12" data-name="door_forest_3_12">
+  <img class="hidden" src="images/door_forest_3_13.png" alt="door_forest_3_13" data-name="door_forest_3_13">
+  <img class="hidden" src="images/door_forest_3_2.png" alt="door_forest_3_2" data-name="door_forest_3_2">
+  <img class="hidden" src="images/door_forest_3_3.png" alt="door_forest_3_3" data-name="door_forest_3_3">
+  <img class="hidden" src="images/door_forest_3_4.png" alt="door_forest_3_4" data-name="door_forest_3_4">
+  <img class="hidden" src="images/door_forest_3_5.png" alt="door_forest_3_5" data-name="door_forest_3_5">
+  <img class="hidden" src="images/door_forest_3_6.png" alt="door_forest_3_6" data-name="door_forest_3_6">
+  <img class="hidden" src="images/door_forest_3_7.png" alt="door_forest_3_7" data-name="door_forest_3_7">
+  <img class="hidden" src="images/door_forest_3_8.png" alt="door_forest_3_8" data-name="door_forest_3_8">
+  <img class="hidden" src="images/door_forest_3_9.png" alt="door_forest_3_9" data-name="door_forest_3_9">
+  <img class="hidden" src="images/door_forest_4_0.png" alt="door_forest_4_0" data-name="door_forest_4_0">
+  <img class="hidden" src="images/door_forest_4_1.png" alt="door_forest_4_1" data-name="door_forest_4_1">
+  <img class="hidden" src="images/door_forest_4_10.png" alt="door_forest_4_10" data-name="door_forest_4_10">
+  <img class="hidden" src="images/door_forest_4_11.png" alt="door_forest_4_11" data-name="door_forest_4_11">
+  <img class="hidden" src="images/door_forest_4_12.png" alt="door_forest_4_12" data-name="door_forest_4_12">
+  <img class="hidden" src="images/door_forest_4_13.png" alt="door_forest_4_13" data-name="door_forest_4_13">
+  <img class="hidden" src="images/door_forest_4_2.png" alt="door_forest_4_2" data-name="door_forest_4_2">
+  <img class="hidden" src="images/door_forest_4_3.png" alt="door_forest_4_3" data-name="door_forest_4_3">
+  <img class="hidden" src="images/door_forest_4_4.png" alt="door_forest_4_4" data-name="door_forest_4_4">
+  <img class="hidden" src="images/door_forest_4_5.png" alt="door_forest_4_5" data-name="door_forest_4_5">
+  <img class="hidden" src="images/door_forest_4_6.png" alt="door_forest_4_6" data-name="door_forest_4_6">
+  <img class="hidden" src="images/door_forest_4_7.png" alt="door_forest_4_7" data-name="door_forest_4_7">
+  <img class="hidden" src="images/door_forest_4_8.png" alt="door_forest_4_8" data-name="door_forest_4_8">
+  <img class="hidden" src="images/door_forest_4_9.png" alt="door_forest_4_9" data-name="door_forest_4_9">
+  <img class="hidden" src="images/explosion_0.png" alt="explosion_0" data-name="explosion_0">
+  <img class="hidden" src="images/explosion_1.png" alt="explosion_1" data-name="explosion_1">
+  <img class="hidden" src="images/explosion_10.png" alt="explosion_10" data-name="explosion_10">
+  <img class="hidden" src="images/explosion_11.png" alt="explosion_11" data-name="explosion_11">
+  <img class="hidden" src="images/explosion_2.png" alt="explosion_2" data-name="explosion_2">
+  <img class="hidden" src="images/explosion_3.png" alt="explosion_3" data-name="explosion_3">
+  <img class="hidden" src="images/explosion_4.png" alt="explosion_4" data-name="explosion_4">
+  <img class="hidden" src="images/explosion_5.png" alt="explosion_5" data-name="explosion_5">
+  <img class="hidden" src="images/explosion_6.png" alt="explosion_6" data-name="explosion_6">
+  <img class="hidden" src="images/explosion_7.png" alt="explosion_7" data-name="explosion_7">
+  <img class="hidden" src="images/explosion_8.png" alt="explosion_8" data-name="explosion_8">
+  <img class="hidden" src="images/explosion_9.png" alt="explosion_9" data-name="explosion_9">
+  <img class="hidden" src="images/fall_0_0.png" alt="fall_0_0" data-name="fall_0_0">
+  <img class="hidden" src="images/fall_0_1.png" alt="fall_0_1" data-name="fall_0_1">
+  <img class="hidden" src="images/fall_1_0.png" alt="fall_1_0" data-name="fall_1_0">
+  <img class="hidden" src="images/fall_1_1.png" alt="fall_1_1" data-name="fall_1_1">
+  <img class="hidden" src="images/flame_change_dir_0_0.png" alt="flame_change_dir_0_0" data-name="flame_change_dir_0_0">
+  <img class="hidden" src="images/flame_change_dir_0_1.png" alt="flame_change_dir_0_1" data-name="flame_change_dir_0_1">
+  <img class="hidden" src="images/flame_change_dir_0_2.png" alt="flame_change_dir_0_2" data-name="flame_change_dir_0_2">
+  <img class="hidden" src="images/flame_change_dir_0_3.png" alt="flame_change_dir_0_3" data-name="flame_change_dir_0_3">
+  <img class="hidden" src="images/flame_change_dir_0_4.png" alt="flame_change_dir_0_4" data-name="flame_change_dir_0_4">
+  <img class="hidden" src="images/flame_change_dir_0_5.png" alt="flame_change_dir_0_5" data-name="flame_change_dir_0_5">
+  <img class="hidden" src="images/flame_change_dir_0_6.png" alt="flame_change_dir_0_6" data-name="flame_change_dir_0_6">
+  <img class="hidden" src="images/flame_change_dir_0_7.png" alt="flame_change_dir_0_7" data-name="flame_change_dir_0_7">
+  <img class="hidden" src="images/flame_change_dir_1_0.png" alt="flame_change_dir_1_0" data-name="flame_change_dir_1_0">
+  <img class="hidden" src="images/flame_change_dir_1_1.png" alt="flame_change_dir_1_1" data-name="flame_change_dir_1_1">
+  <img class="hidden" src="images/flame_change_dir_1_2.png" alt="flame_change_dir_1_2" data-name="flame_change_dir_1_2">
+  <img class="hidden" src="images/flame_change_dir_1_3.png" alt="flame_change_dir_1_3" data-name="flame_change_dir_1_3">
+  <img class="hidden" src="images/flame_change_dir_1_4.png" alt="flame_change_dir_1_4" data-name="flame_change_dir_1_4">
+  <img class="hidden" src="images/flame_change_dir_1_5.png" alt="flame_change_dir_1_5" data-name="flame_change_dir_1_5">
+  <img class="hidden" src="images/flame_change_dir_1_6.png" alt="flame_change_dir_1_6" data-name="flame_change_dir_1_6">
+  <img class="hidden" src="images/flame_change_dir_1_7.png" alt="flame_change_dir_1_7" data-name="flame_change_dir_1_7">
+  <img class="hidden" src="images/flame_climb_0_1.png" alt="flame_climb_0_1" data-name="flame_climb_0_1">
+  <img class="hidden" src="images/flame_climb_1_1.png" alt="flame_climb_1_1" data-name="flame_climb_1_1">
+  <img class="hidden" src="images/flame_dash_down_0_0.png" alt="flame_dash_down_0_0" data-name="flame_dash_down_0_0">
+  <img class="hidden" src="images/flame_dash_down_0_1.png" alt="flame_dash_down_0_1" data-name="flame_dash_down_0_1">
+  <img class="hidden" src="images/flame_dash_down_0_2.png" alt="flame_dash_down_0_2" data-name="flame_dash_down_0_2">
+  <img class="hidden" src="images/flame_dash_down_0_3.png" alt="flame_dash_down_0_3" data-name="flame_dash_down_0_3">
+  <img class="hidden" src="images/flame_dash_down_0_4.png" alt="flame_dash_down_0_4" data-name="flame_dash_down_0_4">
+  <img class="hidden" src="images/flame_dash_down_0_5.png" alt="flame_dash_down_0_5" data-name="flame_dash_down_0_5">
+  <img class="hidden" src="images/flame_dash_down_0_6.png" alt="flame_dash_down_0_6" data-name="flame_dash_down_0_6">
+  <img class="hidden" src="images/flame_dash_down_0_7.png" alt="flame_dash_down_0_7" data-name="flame_dash_down_0_7">
+  <img class="hidden" src="images/flame_dash_down_1_0.png" alt="flame_dash_down_1_0" data-name="flame_dash_down_1_0">
+  <img class="hidden" src="images/flame_dash_down_1_1.png" alt="flame_dash_down_1_1" data-name="flame_dash_down_1_1">
+  <img class="hidden" src="images/flame_dash_down_1_2.png" alt="flame_dash_down_1_2" data-name="flame_dash_down_1_2">
+  <img class="hidden" src="images/flame_dash_down_1_3.png" alt="flame_dash_down_1_3" data-name="flame_dash_down_1_3">
+  <img class="hidden" src="images/flame_dash_down_1_4.png" alt="flame_dash_down_1_4" data-name="flame_dash_down_1_4">
+  <img class="hidden" src="images/flame_dash_down_1_5.png" alt="flame_dash_down_1_5" data-name="flame_dash_down_1_5">
+  <img class="hidden" src="images/flame_dash_down_1_6.png" alt="flame_dash_down_1_6" data-name="flame_dash_down_1_6">
+  <img class="hidden" src="images/flame_dash_down_1_7.png" alt="flame_dash_down_1_7" data-name="flame_dash_down_1_7">
+  <img class="hidden" src="images/flame_dash_down_horizontal_0_0.png" alt="flame_dash_down_horizontal_0_0" data-name="flame_dash_down_horizontal_0_0">
+  <img class="hidden" src="images/flame_dash_down_horizontal_0_1.png" alt="flame_dash_down_horizontal_0_1" data-name="flame_dash_down_horizontal_0_1">
+  <img class="hidden" src="images/flame_dash_down_horizontal_0_2.png" alt="flame_dash_down_horizontal_0_2" data-name="flame_dash_down_horizontal_0_2">
+  <img class="hidden" src="images/flame_dash_down_horizontal_0_3.png" alt="flame_dash_down_horizontal_0_3" data-name="flame_dash_down_horizontal_0_3">
+  <img class="hidden" src="images/flame_dash_down_horizontal_0_4.png" alt="flame_dash_down_horizontal_0_4" data-name="flame_dash_down_horizontal_0_4">
+  <img class="hidden" src="images/flame_dash_down_horizontal_0_5.png" alt="flame_dash_down_horizontal_0_5" data-name="flame_dash_down_horizontal_0_5">
+  <img class="hidden" src="images/flame_dash_down_horizontal_0_6.png" alt="flame_dash_down_horizontal_0_6" data-name="flame_dash_down_horizontal_0_6">
+  <img class="hidden" src="images/flame_dash_down_horizontal_0_7.png" alt="flame_dash_down_horizontal_0_7" data-name="flame_dash_down_horizontal_0_7">
+  <img class="hidden" src="images/flame_dash_down_horizontal_1_0.png" alt="flame_dash_down_horizontal_1_0" data-name="flame_dash_down_horizontal_1_0">
+  <img class="hidden" src="images/flame_dash_down_horizontal_1_1.png" alt="flame_dash_down_horizontal_1_1" data-name="flame_dash_down_horizontal_1_1">
+  <img class="hidden" src="images/flame_dash_down_horizontal_1_2.png" alt="flame_dash_down_horizontal_1_2" data-name="flame_dash_down_horizontal_1_2">
+  <img class="hidden" src="images/flame_dash_down_horizontal_1_3.png" alt="flame_dash_down_horizontal_1_3" data-name="flame_dash_down_horizontal_1_3">
+  <img class="hidden" src="images/flame_dash_down_horizontal_1_4.png" alt="flame_dash_down_horizontal_1_4" data-name="flame_dash_down_horizontal_1_4">
+  <img class="hidden" src="images/flame_dash_down_horizontal_1_5.png" alt="flame_dash_down_horizontal_1_5" data-name="flame_dash_down_horizontal_1_5">
+  <img class="hidden" src="images/flame_dash_down_horizontal_1_6.png" alt="flame_dash_down_horizontal_1_6" data-name="flame_dash_down_horizontal_1_6">
+  <img class="hidden" src="images/flame_dash_down_horizontal_1_7.png" alt="flame_dash_down_horizontal_1_7" data-name="flame_dash_down_horizontal_1_7">
+  <img class="hidden" src="images/flame_dash_horizontal_0_0.png" alt="flame_dash_horizontal_0_0" data-name="flame_dash_horizontal_0_0">
+  <img class="hidden" src="images/flame_dash_horizontal_0_1.png" alt="flame_dash_horizontal_0_1" data-name="flame_dash_horizontal_0_1">
+  <img class="hidden" src="images/flame_dash_horizontal_0_2.png" alt="flame_dash_horizontal_0_2" data-name="flame_dash_horizontal_0_2">
+  <img class="hidden" src="images/flame_dash_horizontal_0_3.png" alt="flame_dash_horizontal_0_3" data-name="flame_dash_horizontal_0_3">
+  <img class="hidden" src="images/flame_dash_horizontal_0_4.png" alt="flame_dash_horizontal_0_4" data-name="flame_dash_horizontal_0_4">
+  <img class="hidden" src="images/flame_dash_horizontal_0_5.png" alt="flame_dash_horizontal_0_5" data-name="flame_dash_horizontal_0_5">
+  <img class="hidden" src="images/flame_dash_horizontal_0_6.png" alt="flame_dash_horizontal_0_6" data-name="flame_dash_horizontal_0_6">
+  <img class="hidden" src="images/flame_dash_horizontal_0_7.png" alt="flame_dash_horizontal_0_7" data-name="flame_dash_horizontal_0_7">
+  <img class="hidden" src="images/flame_dash_horizontal_1_0.png" alt="flame_dash_horizontal_1_0" data-name="flame_dash_horizontal_1_0">
+  <img class="hidden" src="images/flame_dash_horizontal_1_1.png" alt="flame_dash_horizontal_1_1" data-name="flame_dash_horizontal_1_1">
+  <img class="hidden" src="images/flame_dash_horizontal_1_2.png" alt="flame_dash_horizontal_1_2" data-name="flame_dash_horizontal_1_2">
+  <img class="hidden" src="images/flame_dash_horizontal_1_3.png" alt="flame_dash_horizontal_1_3" data-name="flame_dash_horizontal_1_3">
+  <img class="hidden" src="images/flame_dash_horizontal_1_4.png" alt="flame_dash_horizontal_1_4" data-name="flame_dash_horizontal_1_4">
+  <img class="hidden" src="images/flame_dash_horizontal_1_5.png" alt="flame_dash_horizontal_1_5" data-name="flame_dash_horizontal_1_5">
+  <img class="hidden" src="images/flame_dash_horizontal_1_6.png" alt="flame_dash_horizontal_1_6" data-name="flame_dash_horizontal_1_6">
+  <img class="hidden" src="images/flame_dash_horizontal_1_7.png" alt="flame_dash_horizontal_1_7" data-name="flame_dash_horizontal_1_7">
+  <img class="hidden" src="images/flame_dash_start_0_0.png" alt="flame_dash_start_0_0" data-name="flame_dash_start_0_0">
+  <img class="hidden" src="images/flame_dash_start_0_1.png" alt="flame_dash_start_0_1" data-name="flame_dash_start_0_1">
+  <img class="hidden" src="images/flame_dash_start_1_0.png" alt="flame_dash_start_1_0" data-name="flame_dash_start_1_0">
+  <img class="hidden" src="images/flame_dash_start_1_1.png" alt="flame_dash_start_1_1" data-name="flame_dash_start_1_1">
+  <img class="hidden" src="images/flame_dash_up_0_0.png" alt="flame_dash_up_0_0" data-name="flame_dash_up_0_0">
+  <img class="hidden" src="images/flame_dash_up_0_1.png" alt="flame_dash_up_0_1" data-name="flame_dash_up_0_1">
+  <img class="hidden" src="images/flame_dash_up_0_2.png" alt="flame_dash_up_0_2" data-name="flame_dash_up_0_2">
+  <img class="hidden" src="images/flame_dash_up_0_3.png" alt="flame_dash_up_0_3" data-name="flame_dash_up_0_3">
+  <img class="hidden" src="images/flame_dash_up_0_4.png" alt="flame_dash_up_0_4" data-name="flame_dash_up_0_4">
+  <img class="hidden" src="images/flame_dash_up_0_5.png" alt="flame_dash_up_0_5" data-name="flame_dash_up_0_5">
+  <img class="hidden" src="images/flame_dash_up_0_6.png" alt="flame_dash_up_0_6" data-name="flame_dash_up_0_6">
+  <img class="hidden" src="images/flame_dash_up_0_7.png" alt="flame_dash_up_0_7" data-name="flame_dash_up_0_7">
+  <img class="hidden" src="images/flame_dash_up_1_0.png" alt="flame_dash_up_1_0" data-name="flame_dash_up_1_0">
+  <img class="hidden" src="images/flame_dash_up_1_1.png" alt="flame_dash_up_1_1" data-name="flame_dash_up_1_1">
+  <img class="hidden" src="images/flame_dash_up_1_2.png" alt="flame_dash_up_1_2" data-name="flame_dash_up_1_2">
+  <img class="hidden" src="images/flame_dash_up_1_3.png" alt="flame_dash_up_1_3" data-name="flame_dash_up_1_3">
+  <img class="hidden" src="images/flame_dash_up_1_4.png" alt="flame_dash_up_1_4" data-name="flame_dash_up_1_4">
+  <img class="hidden" src="images/flame_dash_up_1_5.png" alt="flame_dash_up_1_5" data-name="flame_dash_up_1_5">
+  <img class="hidden" src="images/flame_dash_up_1_6.png" alt="flame_dash_up_1_6" data-name="flame_dash_up_1_6">
+  <img class="hidden" src="images/flame_dash_up_1_7.png" alt="flame_dash_up_1_7" data-name="flame_dash_up_1_7">
+  <img class="hidden" src="images/flame_dash_up_horizontal_0_0.png" alt="flame_dash_up_horizontal_0_0" data-name="flame_dash_up_horizontal_0_0">
+  <img class="hidden" src="images/flame_dash_up_horizontal_0_1.png" alt="flame_dash_up_horizontal_0_1" data-name="flame_dash_up_horizontal_0_1">
+  <img class="hidden" src="images/flame_dash_up_horizontal_0_2.png" alt="flame_dash_up_horizontal_0_2" data-name="flame_dash_up_horizontal_0_2">
+  <img class="hidden" src="images/flame_dash_up_horizontal_0_3.png" alt="flame_dash_up_horizontal_0_3" data-name="flame_dash_up_horizontal_0_3">
+  <img class="hidden" src="images/flame_dash_up_horizontal_0_4.png" alt="flame_dash_up_horizontal_0_4" data-name="flame_dash_up_horizontal_0_4">
+  <img class="hidden" src="images/flame_dash_up_horizontal_0_5.png" alt="flame_dash_up_horizontal_0_5" data-name="flame_dash_up_horizontal_0_5">
+  <img class="hidden" src="images/flame_dash_up_horizontal_0_6.png" alt="flame_dash_up_horizontal_0_6" data-name="flame_dash_up_horizontal_0_6">
+  <img class="hidden" src="images/flame_dash_up_horizontal_0_7.png" alt="flame_dash_up_horizontal_0_7" data-name="flame_dash_up_horizontal_0_7">
+  <img class="hidden" src="images/flame_dash_up_horizontal_1_0.png" alt="flame_dash_up_horizontal_1_0" data-name="flame_dash_up_horizontal_1_0">
+  <img class="hidden" src="images/flame_dash_up_horizontal_1_1.png" alt="flame_dash_up_horizontal_1_1" data-name="flame_dash_up_horizontal_1_1">
+  <img class="hidden" src="images/flame_dash_up_horizontal_1_2.png" alt="flame_dash_up_horizontal_1_2" data-name="flame_dash_up_horizontal_1_2">
+  <img class="hidden" src="images/flame_dash_up_horizontal_1_3.png" alt="flame_dash_up_horizontal_1_3" data-name="flame_dash_up_horizontal_1_3">
+  <img class="hidden" src="images/flame_dash_up_horizontal_1_4.png" alt="flame_dash_up_horizontal_1_4" data-name="flame_dash_up_horizontal_1_4">
+  <img class="hidden" src="images/flame_dash_up_horizontal_1_5.png" alt="flame_dash_up_horizontal_1_5" data-name="flame_dash_up_horizontal_1_5">
+  <img class="hidden" src="images/flame_dash_up_horizontal_1_6.png" alt="flame_dash_up_horizontal_1_6" data-name="flame_dash_up_horizontal_1_6">
+  <img class="hidden" src="images/flame_dash_up_horizontal_1_7.png" alt="flame_dash_up_horizontal_1_7" data-name="flame_dash_up_horizontal_1_7">
+  <img class="hidden" src="images/flame_jump_0_0.png" alt="flame_jump_0_0" data-name="flame_jump_0_0">
+  <img class="hidden" src="images/flame_jump_0_1.png" alt="flame_jump_0_1" data-name="flame_jump_0_1">
+  <img class="hidden" src="images/flame_jump_0_2.png" alt="flame_jump_0_2" data-name="flame_jump_0_2">
+  <img class="hidden" src="images/flame_jump_0_3.png" alt="flame_jump_0_3" data-name="flame_jump_0_3">
+  <img class="hidden" src="images/flame_jump_0_4.png" alt="flame_jump_0_4" data-name="flame_jump_0_4">
+  <img class="hidden" src="images/flame_jump_0_5.png" alt="flame_jump_0_5" data-name="flame_jump_0_5">
+  <img class="hidden" src="images/flame_jump_0_6.png" alt="flame_jump_0_6" data-name="flame_jump_0_6">
+  <img class="hidden" src="images/flame_jump_0_7.png" alt="flame_jump_0_7" data-name="flame_jump_0_7">
+  <img class="hidden" src="images/flame_jump_1_0.png" alt="flame_jump_1_0" data-name="flame_jump_1_0">
+  <img class="hidden" src="images/flame_jump_1_1.png" alt="flame_jump_1_1" data-name="flame_jump_1_1">
+  <img class="hidden" src="images/flame_jump_1_2.png" alt="flame_jump_1_2" data-name="flame_jump_1_2">
+  <img class="hidden" src="images/flame_jump_1_3.png" alt="flame_jump_1_3" data-name="flame_jump_1_3">
+  <img class="hidden" src="images/flame_jump_1_4.png" alt="flame_jump_1_4" data-name="flame_jump_1_4">
+  <img class="hidden" src="images/flame_jump_1_5.png" alt="flame_jump_1_5" data-name="flame_jump_1_5">
+  <img class="hidden" src="images/flame_jump_1_6.png" alt="flame_jump_1_6" data-name="flame_jump_1_6">
+  <img class="hidden" src="images/flame_jump_1_7.png" alt="flame_jump_1_7" data-name="flame_jump_1_7">
+  <img class="hidden" src="images/flame_run_0_0.png" alt="flame_run_0_0" data-name="flame_run_0_0">
+  <img class="hidden" src="images/flame_run_0_1.png" alt="flame_run_0_1" data-name="flame_run_0_1">
+  <img class="hidden" src="images/flame_run_0_2.png" alt="flame_run_0_2" data-name="flame_run_0_2">
+  <img class="hidden" src="images/flame_run_0_3.png" alt="flame_run_0_3" data-name="flame_run_0_3">
+  <img class="hidden" src="images/flame_run_0_4.png" alt="flame_run_0_4" data-name="flame_run_0_4">
+  <img class="hidden" src="images/flame_run_0_5.png" alt="flame_run_0_5" data-name="flame_run_0_5">
+  <img class="hidden" src="images/flame_run_0_6.png" alt="flame_run_0_6" data-name="flame_run_0_6">
+  <img class="hidden" src="images/flame_run_0_7.png" alt="flame_run_0_7" data-name="flame_run_0_7">
+  <img class="hidden" src="images/flame_run_1_0.png" alt="flame_run_1_0" data-name="flame_run_1_0">
+  <img class="hidden" src="images/flame_run_1_1.png" alt="flame_run_1_1" data-name="flame_run_1_1">
+  <img class="hidden" src="images/flame_run_1_2.png" alt="flame_run_1_2" data-name="flame_run_1_2">
+  <img class="hidden" src="images/flame_run_1_3.png" alt="flame_run_1_3" data-name="flame_run_1_3">
+  <img class="hidden" src="images/flame_run_1_4.png" alt="flame_run_1_4" data-name="flame_run_1_4">
+  <img class="hidden" src="images/flame_run_1_5.png" alt="flame_run_1_5" data-name="flame_run_1_5">
+  <img class="hidden" src="images/flame_run_1_6.png" alt="flame_run_1_6" data-name="flame_run_1_6">
+  <img class="hidden" src="images/flame_run_1_7.png" alt="flame_run_1_7" data-name="flame_run_1_7">
+  <img class="hidden" src="images/flame_stand_0.png" alt="flame_stand_0" data-name="flame_stand_0">
+  <img class="hidden" src="images/flame_stand_1.png" alt="flame_stand_1" data-name="flame_stand_1">
+  <img class="hidden" src="images/flame_stand_2.png" alt="flame_stand_2" data-name="flame_stand_2">
+  <img class="hidden" src="images/flame_stand_3.png" alt="flame_stand_3" data-name="flame_stand_3">
+  <img class="hidden" src="images/flame_stand_4.png" alt="flame_stand_4" data-name="flame_stand_4">
+  <img class="hidden" src="images/flame_stand_5.png" alt="flame_stand_5" data-name="flame_stand_5">
+  <img class="hidden" src="images/flame_stand_6.png" alt="flame_stand_6" data-name="flame_stand_6">
+  <img class="hidden" src="images/flame_stand_7.png" alt="flame_stand_7" data-name="flame_stand_7">
+  <img class="hidden" src="images/flame_wall_jump_0_0.png" alt="flame_wall_jump_0_0" data-name="flame_wall_jump_0_0">
+  <img class="hidden" src="images/flame_wall_jump_0_1.png" alt="flame_wall_jump_0_1" data-name="flame_wall_jump_0_1">
+  <img class="hidden" src="images/flame_wall_jump_0_2.png" alt="flame_wall_jump_0_2" data-name="flame_wall_jump_0_2">
+  <img class="hidden" src="images/flame_wall_jump_0_3.png" alt="flame_wall_jump_0_3" data-name="flame_wall_jump_0_3">
+  <img class="hidden" src="images/flame_wall_jump_0_4.png" alt="flame_wall_jump_0_4" data-name="flame_wall_jump_0_4">
+  <img class="hidden" src="images/flame_wall_jump_0_5.png" alt="flame_wall_jump_0_5" data-name="flame_wall_jump_0_5">
+  <img class="hidden" src="images/flame_wall_jump_0_6.png" alt="flame_wall_jump_0_6" data-name="flame_wall_jump_0_6">
+  <img class="hidden" src="images/flame_wall_jump_0_7.png" alt="flame_wall_jump_0_7" data-name="flame_wall_jump_0_7">
+  <img class="hidden" src="images/flame_wall_jump_1_0.png" alt="flame_wall_jump_1_0" data-name="flame_wall_jump_1_0">
+  <img class="hidden" src="images/flame_wall_jump_1_1.png" alt="flame_wall_jump_1_1" data-name="flame_wall_jump_1_1">
+  <img class="hidden" src="images/flame_wall_jump_1_2.png" alt="flame_wall_jump_1_2" data-name="flame_wall_jump_1_2">
+  <img class="hidden" src="images/flame_wall_jump_1_3.png" alt="flame_wall_jump_1_3" data-name="flame_wall_jump_1_3">
+  <img class="hidden" src="images/flame_wall_jump_1_4.png" alt="flame_wall_jump_1_4" data-name="flame_wall_jump_1_4">
+  <img class="hidden" src="images/flame_wall_jump_1_5.png" alt="flame_wall_jump_1_5" data-name="flame_wall_jump_1_5">
+  <img class="hidden" src="images/flame_wall_jump_1_6.png" alt="flame_wall_jump_1_6" data-name="flame_wall_jump_1_6">
+  <img class="hidden" src="images/flame_wall_jump_1_7.png" alt="flame_wall_jump_1_7" data-name="flame_wall_jump_1_7">
+  <img class="hidden" src="images/fly_0_0.png" alt="fly_0_0" data-name="fly_0_0">
+  <img class="hidden" src="images/fly_0_0_hit.png" alt="fly_0_0_hit" data-name="fly_0_0_hit">
+  <img class="hidden" src="images/fly_0_1.png" alt="fly_0_1" data-name="fly_0_1">
+  <img class="hidden" src="images/fly_0_1_hit.png" alt="fly_0_1_hit" data-name="fly_0_1_hit">
+  <img class="hidden" src="images/fly_0_2.png" alt="fly_0_2" data-name="fly_0_2">
+  <img class="hidden" src="images/fly_0_2_hit.png" alt="fly_0_2_hit" data-name="fly_0_2_hit">
+  <img class="hidden" src="images/fly_0_3.png" alt="fly_0_3" data-name="fly_0_3">
+  <img class="hidden" src="images/fly_0_3_hit.png" alt="fly_0_3_hit" data-name="fly_0_3_hit">
+  <img class="hidden" src="images/fly_0_4.png" alt="fly_0_4" data-name="fly_0_4">
+  <img class="hidden" src="images/fly_0_4_hit.png" alt="fly_0_4_hit" data-name="fly_0_4_hit">
+  <img class="hidden" src="images/fly_0_5.png" alt="fly_0_5" data-name="fly_0_5">
+  <img class="hidden" src="images/fly_0_5_hit.png" alt="fly_0_5_hit" data-name="fly_0_5_hit">
+  <img class="hidden" src="images/fly_0_6.png" alt="fly_0_6" data-name="fly_0_6">
+  <img class="hidden" src="images/fly_0_6_hit.png" alt="fly_0_6_hit" data-name="fly_0_6_hit">
+  <img class="hidden" src="images/fly_0_7.png" alt="fly_0_7" data-name="fly_0_7">
+  <img class="hidden" src="images/fly_0_7_hit.png" alt="fly_0_7_hit" data-name="fly_0_7_hit">
+  <img class="hidden" src="images/fly_1_0.png" alt="fly_1_0" data-name="fly_1_0">
+  <img class="hidden" src="images/fly_1_0_hit.png" alt="fly_1_0_hit" data-name="fly_1_0_hit">
+  <img class="hidden" src="images/fly_1_1.png" alt="fly_1_1" data-name="fly_1_1">
+  <img class="hidden" src="images/fly_1_1_hit.png" alt="fly_1_1_hit" data-name="fly_1_1_hit">
+  <img class="hidden" src="images/fly_1_2.png" alt="fly_1_2" data-name="fly_1_2">
+  <img class="hidden" src="images/fly_1_2_hit.png" alt="fly_1_2_hit" data-name="fly_1_2_hit">
+  <img class="hidden" src="images/fly_1_3.png" alt="fly_1_3" data-name="fly_1_3">
+  <img class="hidden" src="images/fly_1_3_hit.png" alt="fly_1_3_hit" data-name="fly_1_3_hit">
+  <img class="hidden" src="images/fly_1_4.png" alt="fly_1_4" data-name="fly_1_4">
+  <img class="hidden" src="images/fly_1_4_hit.png" alt="fly_1_4_hit" data-name="fly_1_4_hit">
+  <img class="hidden" src="images/fly_1_5.png" alt="fly_1_5" data-name="fly_1_5">
+  <img class="hidden" src="images/fly_1_5_hit.png" alt="fly_1_5_hit" data-name="fly_1_5_hit">
+  <img class="hidden" src="images/fly_1_6.png" alt="fly_1_6" data-name="fly_1_6">
+  <img class="hidden" src="images/fly_1_6_hit.png" alt="fly_1_6_hit" data-name="fly_1_6_hit">
+  <img class="hidden" src="images/fly_1_7.png" alt="fly_1_7" data-name="fly_1_7">
+  <img class="hidden" src="images/fly_1_7_hit.png" alt="fly_1_7_hit" data-name="fly_1_7_hit">
+  <img class="hidden" src="images/font033.png" alt="font033" data-name="font033">
+  <img class="hidden" src="images/font043.png" alt="font043" data-name="font043">
+  <img class="hidden" src="images/font046.png" alt="font046" data-name="font046">
+  <img class="hidden" src="images/font048.png" alt="font048" data-name="font048">
+  <img class="hidden" src="images/font049.png" alt="font049" data-name="font049">
+  <img class="hidden" src="images/font050.png" alt="font050" data-name="font050">
+  <img class="hidden" src="images/font051.png" alt="font051" data-name="font051">
+  <img class="hidden" src="images/font052.png" alt="font052" data-name="font052">
+  <img class="hidden" src="images/font053.png" alt="font053" data-name="font053">
+  <img class="hidden" src="images/font054.png" alt="font054" data-name="font054">
+  <img class="hidden" src="images/font055.png" alt="font055" data-name="font055">
+  <img class="hidden" src="images/font056.png" alt="font056" data-name="font056">
+  <img class="hidden" src="images/font057.png" alt="font057" data-name="font057">
+  <img class="hidden" src="images/font065.png" alt="font065" data-name="font065">
+  <img class="hidden" src="images/font066.png" alt="font066" data-name="font066">
+  <img class="hidden" src="images/font067.png" alt="font067" data-name="font067">
+  <img class="hidden" src="images/font068.png" alt="font068" data-name="font068">
+  <img class="hidden" src="images/font069.png" alt="font069" data-name="font069">
+  <img class="hidden" src="images/font070.png" alt="font070" data-name="font070">
+  <img class="hidden" src="images/font071.png" alt="font071" data-name="font071">
+  <img class="hidden" src="images/font072.png" alt="font072" data-name="font072">
+  <img class="hidden" src="images/font073.png" alt="font073" data-name="font073">
+  <img class="hidden" src="images/font074.png" alt="font074" data-name="font074">
+  <img class="hidden" src="images/font075.png" alt="font075" data-name="font075">
+  <img class="hidden" src="images/font076.png" alt="font076" data-name="font076">
+  <img class="hidden" src="images/font077.png" alt="font077" data-name="font077">
+  <img class="hidden" src="images/font078.png" alt="font078" data-name="font078">
+  <img class="hidden" src="images/font079.png" alt="font079" data-name="font079">
+  <img class="hidden" src="images/font080.png" alt="font080" data-name="font080">
+  <img class="hidden" src="images/font081.png" alt="font081" data-name="font081">
+  <img class="hidden" src="images/font082.png" alt="font082" data-name="font082">
+  <img class="hidden" src="images/font083.png" alt="font083" data-name="font083">
+  <img class="hidden" src="images/font084.png" alt="font084" data-name="font084">
+  <img class="hidden" src="images/font085.png" alt="font085" data-name="font085">
+  <img class="hidden" src="images/font086.png" alt="font086" data-name="font086">
+  <img class="hidden" src="images/font087.png" alt="font087" data-name="font087">
+  <img class="hidden" src="images/font088.png" alt="font088" data-name="font088">
+  <img class="hidden" src="images/font089.png" alt="font089" data-name="font089">
+  <img class="hidden" src="images/font090.png" alt="font090" data-name="font090">
+  <img class="hidden" src="images/font189.png" alt="font189" data-name="font189">
+  <img class="hidden" src="images/fontbr046.png" alt="fontbr046" data-name="fontbr046">
+  <img class="hidden" src="images/fontbr048.png" alt="fontbr048" data-name="fontbr048">
+  <img class="hidden" src="images/fontbr049.png" alt="fontbr049" data-name="fontbr049">
+  <img class="hidden" src="images/fontbr050.png" alt="fontbr050" data-name="fontbr050">
+  <img class="hidden" src="images/fontbr051.png" alt="fontbr051" data-name="fontbr051">
+  <img class="hidden" src="images/fontbr052.png" alt="fontbr052" data-name="fontbr052">
+  <img class="hidden" src="images/fontbr053.png" alt="fontbr053" data-name="fontbr053">
+  <img class="hidden" src="images/fontbr054.png" alt="fontbr054" data-name="fontbr054">
+  <img class="hidden" src="images/fontbr055.png" alt="fontbr055" data-name="fontbr055">
+  <img class="hidden" src="images/fontbr056.png" alt="fontbr056" data-name="fontbr056">
+  <img class="hidden" src="images/fontbr057.png" alt="fontbr057" data-name="fontbr057">
+  <img class="hidden" src="images/fontlrg046.png" alt="fontlrg046" data-name="fontlrg046">
+  <img class="hidden" src="images/fontlrg048.png" alt="fontlrg048" data-name="fontlrg048">
+  <img class="hidden" src="images/fontlrg049.png" alt="fontlrg049" data-name="fontlrg049">
+  <img class="hidden" src="images/fontlrg050.png" alt="fontlrg050" data-name="fontlrg050">
+  <img class="hidden" src="images/fontlrg051.png" alt="fontlrg051" data-name="fontlrg051">
+  <img class="hidden" src="images/fontlrg052.png" alt="fontlrg052" data-name="fontlrg052">
+  <img class="hidden" src="images/fontlrg053.png" alt="fontlrg053" data-name="fontlrg053">
+  <img class="hidden" src="images/fontlrg054.png" alt="fontlrg054" data-name="fontlrg054">
+  <img class="hidden" src="images/fontlrg055.png" alt="fontlrg055" data-name="fontlrg055">
+  <img class="hidden" src="images/fontlrg056.png" alt="fontlrg056" data-name="fontlrg056">
+  <img class="hidden" src="images/fontlrg057.png" alt="fontlrg057" data-name="fontlrg057">
+  <img class="hidden" src="images/gameover0.png" alt="gameover0" data-name="gameover0">
+  <img class="hidden" src="images/gameover1.png" alt="gameover1" data-name="gameover1">
+  <img class="hidden" src="images/gameover10.png" alt="gameover10" data-name="gameover10">
+  <img class="hidden" src="images/gameover11.png" alt="gameover11" data-name="gameover11">
+  <img class="hidden" src="images/gameover12.png" alt="gameover12" data-name="gameover12">
+  <img class="hidden" src="images/gameover13.png" alt="gameover13" data-name="gameover13">
+  <img class="hidden" src="images/gameover2.png" alt="gameover2" data-name="gameover2">
+  <img class="hidden" src="images/gameover3.png" alt="gameover3" data-name="gameover3">
+  <img class="hidden" src="images/gameover4.png" alt="gameover4" data-name="gameover4">
+  <img class="hidden" src="images/gameover5.png" alt="gameover5" data-name="gameover5">
+  <img class="hidden" src="images/gameover6.png" alt="gameover6" data-name="gameover6">
+  <img class="hidden" src="images/gameover7.png" alt="gameover7" data-name="gameover7">
+  <img class="hidden" src="images/gameover8.png" alt="gameover8" data-name="gameover8">
+  <img class="hidden" src="images/gameover9.png" alt="gameover9" data-name="gameover9">
+  <img class="hidden" src="images/gem1_0.png" alt="gem1_0" data-name="gem1_0">
+  <img class="hidden" src="images/gem1_1.png" alt="gem1_1" data-name="gem1_1">
+  <img class="hidden" src="images/gem1_2.png" alt="gem1_2" data-name="gem1_2">
+  <img class="hidden" src="images/gem1_3.png" alt="gem1_3" data-name="gem1_3">
+  <img class="hidden" src="images/gem1_4.png" alt="gem1_4" data-name="gem1_4">
+  <img class="hidden" src="images/gem1_5.png" alt="gem1_5" data-name="gem1_5">
+  <img class="hidden" src="images/gem1_6.png" alt="gem1_6" data-name="gem1_6">
+  <img class="hidden" src="images/gem1_7.png" alt="gem1_7" data-name="gem1_7">
+  <img class="hidden" src="images/gem2_0.png" alt="gem2_0" data-name="gem2_0">
+  <img class="hidden" src="images/gem2_1.png" alt="gem2_1" data-name="gem2_1">
+  <img class="hidden" src="images/gem2_2.png" alt="gem2_2" data-name="gem2_2">
+  <img class="hidden" src="images/gem2_3.png" alt="gem2_3" data-name="gem2_3">
+  <img class="hidden" src="images/gem2_4.png" alt="gem2_4" data-name="gem2_4">
+  <img class="hidden" src="images/gem2_5.png" alt="gem2_5" data-name="gem2_5">
+  <img class="hidden" src="images/gem2_6.png" alt="gem2_6" data-name="gem2_6">
+  <img class="hidden" src="images/gem2_7.png" alt="gem2_7" data-name="gem2_7">
+  <img class="hidden" src="images/gem3_0.png" alt="gem3_0" data-name="gem3_0">
+  <img class="hidden" src="images/gem3_1.png" alt="gem3_1" data-name="gem3_1">
+  <img class="hidden" src="images/gem3_2.png" alt="gem3_2" data-name="gem3_2">
+  <img class="hidden" src="images/gem3_3.png" alt="gem3_3" data-name="gem3_3">
+  <img class="hidden" src="images/gem3_4.png" alt="gem3_4" data-name="gem3_4">
+  <img class="hidden" src="images/gem3_5.png" alt="gem3_5" data-name="gem3_5">
+  <img class="hidden" src="images/gem3_6.png" alt="gem3_6" data-name="gem3_6">
+  <img class="hidden" src="images/gem3_7.png" alt="gem3_7" data-name="gem3_7">
+  <img class="hidden" src="images/gem4_0.png" alt="gem4_0" data-name="gem4_0">
+  <img class="hidden" src="images/gem4_1.png" alt="gem4_1" data-name="gem4_1">
+  <img class="hidden" src="images/gem4_2.png" alt="gem4_2" data-name="gem4_2">
+  <img class="hidden" src="images/gem4_3.png" alt="gem4_3" data-name="gem4_3">
+  <img class="hidden" src="images/gem4_4.png" alt="gem4_4" data-name="gem4_4">
+  <img class="hidden" src="images/gem4_5.png" alt="gem4_5" data-name="gem4_5">
+  <img class="hidden" src="images/gem4_6.png" alt="gem4_6" data-name="gem4_6">
+  <img class="hidden" src="images/gem4_7.png" alt="gem4_7" data-name="gem4_7">
+  <img class="hidden" src="images/ghost_change_dir_0_0.png" alt="ghost_change_dir_0_0" data-name="ghost_change_dir_0_0">
+  <img class="hidden" src="images/ghost_change_dir_1_0.png" alt="ghost_change_dir_1_0" data-name="ghost_change_dir_1_0">
+  <img class="hidden" src="images/ghost_climb_0_0.png" alt="ghost_climb_0_0" data-name="ghost_climb_0_0">
+  <img class="hidden" src="images/ghost_climb_0_1.png" alt="ghost_climb_0_1" data-name="ghost_climb_0_1">
+  <img class="hidden" src="images/ghost_climb_1_0.png" alt="ghost_climb_1_0" data-name="ghost_climb_1_0">
+  <img class="hidden" src="images/ghost_climb_1_1.png" alt="ghost_climb_1_1" data-name="ghost_climb_1_1">
+  <img class="hidden" src="images/ghost_dash_down_0_0.png" alt="ghost_dash_down_0_0" data-name="ghost_dash_down_0_0">
+  <img class="hidden" src="images/ghost_dash_down_0_1.png" alt="ghost_dash_down_0_1" data-name="ghost_dash_down_0_1">
+  <img class="hidden" src="images/ghost_dash_down_0_2.png" alt="ghost_dash_down_0_2" data-name="ghost_dash_down_0_2">
+  <img class="hidden" src="images/ghost_dash_down_1_0.png" alt="ghost_dash_down_1_0" data-name="ghost_dash_down_1_0">
+  <img class="hidden" src="images/ghost_dash_down_1_1.png" alt="ghost_dash_down_1_1" data-name="ghost_dash_down_1_1">
+  <img class="hidden" src="images/ghost_dash_down_1_2.png" alt="ghost_dash_down_1_2" data-name="ghost_dash_down_1_2">
+  <img class="hidden" src="images/ghost_dash_down_horizontal_0_0.png" alt="ghost_dash_down_horizontal_0_0" data-name="ghost_dash_down_horizontal_0_0">
+  <img class="hidden" src="images/ghost_dash_down_horizontal_0_1.png" alt="ghost_dash_down_horizontal_0_1" data-name="ghost_dash_down_horizontal_0_1">
+  <img class="hidden" src="images/ghost_dash_down_horizontal_0_2.png" alt="ghost_dash_down_horizontal_0_2" data-name="ghost_dash_down_horizontal_0_2">
+  <img class="hidden" src="images/ghost_dash_down_horizontal_1_0.png" alt="ghost_dash_down_horizontal_1_0" data-name="ghost_dash_down_horizontal_1_0">
+  <img class="hidden" src="images/ghost_dash_down_horizontal_1_1.png" alt="ghost_dash_down_horizontal_1_1" data-name="ghost_dash_down_horizontal_1_1">
+  <img class="hidden" src="images/ghost_dash_down_horizontal_1_2.png" alt="ghost_dash_down_horizontal_1_2" data-name="ghost_dash_down_horizontal_1_2">
+  <img class="hidden" src="images/ghost_dash_horizontal_0_0.png" alt="ghost_dash_horizontal_0_0" data-name="ghost_dash_horizontal_0_0">
+  <img class="hidden" src="images/ghost_dash_horizontal_0_1.png" alt="ghost_dash_horizontal_0_1" data-name="ghost_dash_horizontal_0_1">
+  <img class="hidden" src="images/ghost_dash_horizontal_0_2.png" alt="ghost_dash_horizontal_0_2" data-name="ghost_dash_horizontal_0_2">
+  <img class="hidden" src="images/ghost_dash_horizontal_1_0.png" alt="ghost_dash_horizontal_1_0" data-name="ghost_dash_horizontal_1_0">
+  <img class="hidden" src="images/ghost_dash_horizontal_1_1.png" alt="ghost_dash_horizontal_1_1" data-name="ghost_dash_horizontal_1_1">
+  <img class="hidden" src="images/ghost_dash_horizontal_1_2.png" alt="ghost_dash_horizontal_1_2" data-name="ghost_dash_horizontal_1_2">
+  <img class="hidden" src="images/ghost_dash_start_0.png" alt="ghost_dash_start_0" data-name="ghost_dash_start_0">
+  <img class="hidden" src="images/ghost_dash_start_1.png" alt="ghost_dash_start_1" data-name="ghost_dash_start_1">
+  <img class="hidden" src="images/ghost_dash_up_0_0.png" alt="ghost_dash_up_0_0" data-name="ghost_dash_up_0_0">
+  <img class="hidden" src="images/ghost_dash_up_0_1.png" alt="ghost_dash_up_0_1" data-name="ghost_dash_up_0_1">
+  <img class="hidden" src="images/ghost_dash_up_0_2.png" alt="ghost_dash_up_0_2" data-name="ghost_dash_up_0_2">
+  <img class="hidden" src="images/ghost_dash_up_1_0.png" alt="ghost_dash_up_1_0" data-name="ghost_dash_up_1_0">
+  <img class="hidden" src="images/ghost_dash_up_1_1.png" alt="ghost_dash_up_1_1" data-name="ghost_dash_up_1_1">
+  <img class="hidden" src="images/ghost_dash_up_1_2.png" alt="ghost_dash_up_1_2" data-name="ghost_dash_up_1_2">
+  <img class="hidden" src="images/ghost_dash_up_horizontal_0_0.png" alt="ghost_dash_up_horizontal_0_0" data-name="ghost_dash_up_horizontal_0_0">
+  <img class="hidden" src="images/ghost_dash_up_horizontal_0_1.png" alt="ghost_dash_up_horizontal_0_1" data-name="ghost_dash_up_horizontal_0_1">
+  <img class="hidden" src="images/ghost_dash_up_horizontal_0_2.png" alt="ghost_dash_up_horizontal_0_2" data-name="ghost_dash_up_horizontal_0_2">
+  <img class="hidden" src="images/ghost_dash_up_horizontal_1_0.png" alt="ghost_dash_up_horizontal_1_0" data-name="ghost_dash_up_horizontal_1_0">
+  <img class="hidden" src="images/ghost_dash_up_horizontal_1_1.png" alt="ghost_dash_up_horizontal_1_1" data-name="ghost_dash_up_horizontal_1_1">
+  <img class="hidden" src="images/ghost_dash_up_horizontal_1_2.png" alt="ghost_dash_up_horizontal_1_2" data-name="ghost_dash_up_horizontal_1_2">
+  <img class="hidden" src="images/ghost_die_0.png" alt="ghost_die_0" data-name="ghost_die_0">
+  <img class="hidden" src="images/ghost_die_1.png" alt="ghost_die_1" data-name="ghost_die_1">
+  <img class="hidden" src="images/ghost_die_2.png" alt="ghost_die_2" data-name="ghost_die_2">
+  <img class="hidden" src="images/ghost_die_3.png" alt="ghost_die_3" data-name="ghost_die_3">
+  <img class="hidden" src="images/ghost_die_4.png" alt="ghost_die_4" data-name="ghost_die_4">
+  <img class="hidden" src="images/ghost_die_5.png" alt="ghost_die_5" data-name="ghost_die_5">
+  <img class="hidden" src="images/ghost_fall_0_0.png" alt="ghost_fall_0_0" data-name="ghost_fall_0_0">
+  <img class="hidden" src="images/ghost_fall_0_1.png" alt="ghost_fall_0_1" data-name="ghost_fall_0_1">
+  <img class="hidden" src="images/ghost_fall_1_0.png" alt="ghost_fall_1_0" data-name="ghost_fall_1_0">
+  <img class="hidden" src="images/ghost_fall_1_1.png" alt="ghost_fall_1_1" data-name="ghost_fall_1_1">
+  <img class="hidden" src="images/ghost_jump_0_0.png" alt="ghost_jump_0_0" data-name="ghost_jump_0_0">
+  <img class="hidden" src="images/ghost_jump_0_1.png" alt="ghost_jump_0_1" data-name="ghost_jump_0_1">
+  <img class="hidden" src="images/ghost_jump_0_2.png" alt="ghost_jump_0_2" data-name="ghost_jump_0_2">
+  <img class="hidden" src="images/ghost_jump_0_3.png" alt="ghost_jump_0_3" data-name="ghost_jump_0_3">
+  <img class="hidden" src="images/ghost_jump_0_4.png" alt="ghost_jump_0_4" data-name="ghost_jump_0_4">
+  <img class="hidden" src="images/ghost_jump_0_5.png" alt="ghost_jump_0_5" data-name="ghost_jump_0_5">
+  <img class="hidden" src="images/ghost_jump_1_0.png" alt="ghost_jump_1_0" data-name="ghost_jump_1_0">
+  <img class="hidden" src="images/ghost_jump_1_1.png" alt="ghost_jump_1_1" data-name="ghost_jump_1_1">
+  <img class="hidden" src="images/ghost_jump_1_2.png" alt="ghost_jump_1_2" data-name="ghost_jump_1_2">
+  <img class="hidden" src="images/ghost_jump_1_3.png" alt="ghost_jump_1_3" data-name="ghost_jump_1_3">
+  <img class="hidden" src="images/ghost_jump_1_4.png" alt="ghost_jump_1_4" data-name="ghost_jump_1_4">
+  <img class="hidden" src="images/ghost_jump_1_5.png" alt="ghost_jump_1_5" data-name="ghost_jump_1_5">
+  <img class="hidden" src="images/ghost_run_0_0.png" alt="ghost_run_0_0" data-name="ghost_run_0_0">
+  <img class="hidden" src="images/ghost_run_0_1.png" alt="ghost_run_0_1" data-name="ghost_run_0_1">
+  <img class="hidden" src="images/ghost_run_0_2.png" alt="ghost_run_0_2" data-name="ghost_run_0_2">
+  <img class="hidden" src="images/ghost_run_0_3.png" alt="ghost_run_0_3" data-name="ghost_run_0_3">
+  <img class="hidden" src="images/ghost_run_0_4.png" alt="ghost_run_0_4" data-name="ghost_run_0_4">
+  <img class="hidden" src="images/ghost_run_0_5.png" alt="ghost_run_0_5" data-name="ghost_run_0_5">
+  <img class="hidden" src="images/ghost_run_0_6.png" alt="ghost_run_0_6" data-name="ghost_run_0_6">
+  <img class="hidden" src="images/ghost_run_0_7.png" alt="ghost_run_0_7" data-name="ghost_run_0_7">
+  <img class="hidden" src="images/ghost_run_1_0.png" alt="ghost_run_1_0" data-name="ghost_run_1_0">
+  <img class="hidden" src="images/ghost_run_1_1.png" alt="ghost_run_1_1" data-name="ghost_run_1_1">
+  <img class="hidden" src="images/ghost_run_1_2.png" alt="ghost_run_1_2" data-name="ghost_run_1_2">
+  <img class="hidden" src="images/ghost_run_1_3.png" alt="ghost_run_1_3" data-name="ghost_run_1_3">
+  <img class="hidden" src="images/ghost_run_1_4.png" alt="ghost_run_1_4" data-name="ghost_run_1_4">
+  <img class="hidden" src="images/ghost_run_1_5.png" alt="ghost_run_1_5" data-name="ghost_run_1_5">
+  <img class="hidden" src="images/ghost_run_1_6.png" alt="ghost_run_1_6" data-name="ghost_run_1_6">
+  <img class="hidden" src="images/ghost_run_1_7.png" alt="ghost_run_1_7" data-name="ghost_run_1_7">
+  <img class="hidden" src="images/ghost_stand_front.png" alt="ghost_stand_front" data-name="ghost_stand_front">
+  <img class="hidden" src="images/ghost_wall_jump_0_0.png" alt="ghost_wall_jump_0_0" data-name="ghost_wall_jump_0_0">
+  <img class="hidden" src="images/ghost_wall_jump_0_1.png" alt="ghost_wall_jump_0_1" data-name="ghost_wall_jump_0_1">
+  <img class="hidden" src="images/ghost_wall_jump_0_2.png" alt="ghost_wall_jump_0_2" data-name="ghost_wall_jump_0_2">
+  <img class="hidden" src="images/ghost_wall_jump_1_0.png" alt="ghost_wall_jump_1_0" data-name="ghost_wall_jump_1_0">
+  <img class="hidden" src="images/ghost_wall_jump_1_1.png" alt="ghost_wall_jump_1_1" data-name="ghost_wall_jump_1_1">
+  <img class="hidden" src="images/ghost_wall_jump_1_2.png" alt="ghost_wall_jump_1_2" data-name="ghost_wall_jump_1_2">
+  <img class="hidden" src="images/jump_0_0.png" alt="jump_0_0" data-name="jump_0_0">
+  <img class="hidden" src="images/jump_0_1.png" alt="jump_0_1" data-name="jump_0_1">
+  <img class="hidden" src="images/jump_0_2.png" alt="jump_0_2" data-name="jump_0_2">
+  <img class="hidden" src="images/jump_0_3.png" alt="jump_0_3" data-name="jump_0_3">
+  <img class="hidden" src="images/jump_0_4.png" alt="jump_0_4" data-name="jump_0_4">
+  <img class="hidden" src="images/jump_0_5.png" alt="jump_0_5" data-name="jump_0_5">
+  <img class="hidden" src="images/jump_1_0.png" alt="jump_1_0" data-name="jump_1_0">
+  <img class="hidden" src="images/jump_1_1.png" alt="jump_1_1" data-name="jump_1_1">
+  <img class="hidden" src="images/jump_1_2.png" alt="jump_1_2" data-name="jump_1_2">
+  <img class="hidden" src="images/jump_1_3.png" alt="jump_1_3" data-name="jump_1_3">
+  <img class="hidden" src="images/jump_1_4.png" alt="jump_1_4" data-name="jump_1_4">
+  <img class="hidden" src="images/jump_1_5.png" alt="jump_1_5" data-name="jump_1_5">
+  <img class="hidden" src="images/loselife_0.png" alt="loselife_0" data-name="loselife_0">
+  <img class="hidden" src="images/loselife_1.png" alt="loselife_1" data-name="loselife_1">
+  <img class="hidden" src="images/loselife_2.png" alt="loselife_2" data-name="loselife_2">
+  <img class="hidden" src="images/loselife_3.png" alt="loselife_3" data-name="loselife_3">
+  <img class="hidden" src="images/loselife_4.png" alt="loselife_4" data-name="loselife_4">
+  <img class="hidden" src="images/loselife_5.png" alt="loselife_5" data-name="loselife_5">
+  <img class="hidden" src="images/loselife_6.png" alt="loselife_6" data-name="loselife_6">
+  <img class="hidden" src="images/loselife_7.png" alt="loselife_7" data-name="loselife_7">
+  <img class="hidden" src="images/mghost_0_0.png" alt="mghost_0_0" data-name="mghost_0_0">
+  <img class="hidden" src="images/mghost_0_0_hit.png" alt="mghost_0_0_hit" data-name="mghost_0_0_hit">
+  <img class="hidden" src="images/mghost_0_1.png" alt="mghost_0_1" data-name="mghost_0_1">
+  <img class="hidden" src="images/mghost_0_1_hit.png" alt="mghost_0_1_hit" data-name="mghost_0_1_hit">
+  <img class="hidden" src="images/mghost_0_2.png" alt="mghost_0_2" data-name="mghost_0_2">
+  <img class="hidden" src="images/mghost_0_2_hit.png" alt="mghost_0_2_hit" data-name="mghost_0_2_hit">
+  <img class="hidden" src="images/mghost_0_3.png" alt="mghost_0_3" data-name="mghost_0_3">
+  <img class="hidden" src="images/mghost_0_3_hit.png" alt="mghost_0_3_hit" data-name="mghost_0_3_hit">
+  <img class="hidden" src="images/mghost_0_4.png" alt="mghost_0_4" data-name="mghost_0_4">
+  <img class="hidden" src="images/mghost_0_4_hit.png" alt="mghost_0_4_hit" data-name="mghost_0_4_hit">
+  <img class="hidden" src="images/mghost_0_5.png" alt="mghost_0_5" data-name="mghost_0_5">
+  <img class="hidden" src="images/mghost_0_5_hit.png" alt="mghost_0_5_hit" data-name="mghost_0_5_hit">
+  <img class="hidden" src="images/mghost_0_6.png" alt="mghost_0_6" data-name="mghost_0_6">
+  <img class="hidden" src="images/mghost_0_6_hit.png" alt="mghost_0_6_hit" data-name="mghost_0_6_hit">
+  <img class="hidden" src="images/mghost_0_7.png" alt="mghost_0_7" data-name="mghost_0_7">
+  <img class="hidden" src="images/mghost_0_7_hit.png" alt="mghost_0_7_hit" data-name="mghost_0_7_hit">
+  <img class="hidden" src="images/mghost_1_0.png" alt="mghost_1_0" data-name="mghost_1_0">
+  <img class="hidden" src="images/mghost_1_0_hit.png" alt="mghost_1_0_hit" data-name="mghost_1_0_hit">
+  <img class="hidden" src="images/mghost_1_1.png" alt="mghost_1_1" data-name="mghost_1_1">
+  <img class="hidden" src="images/mghost_1_1_hit.png" alt="mghost_1_1_hit" data-name="mghost_1_1_hit">
+  <img class="hidden" src="images/mghost_1_2.png" alt="mghost_1_2" data-name="mghost_1_2">
+  <img class="hidden" src="images/mghost_1_2_hit.png" alt="mghost_1_2_hit" data-name="mghost_1_2_hit">
+  <img class="hidden" src="images/mghost_1_3.png" alt="mghost_1_3" data-name="mghost_1_3">
+  <img class="hidden" src="images/mghost_1_3_hit.png" alt="mghost_1_3_hit" data-name="mghost_1_3_hit">
+  <img class="hidden" src="images/mghost_1_4.png" alt="mghost_1_4" data-name="mghost_1_4">
+  <img class="hidden" src="images/mghost_1_4_hit.png" alt="mghost_1_4_hit" data-name="mghost_1_4_hit">
+  <img class="hidden" src="images/mghost_1_5.png" alt="mghost_1_5" data-name="mghost_1_5">
+  <img class="hidden" src="images/mghost_1_5_hit.png" alt="mghost_1_5_hit" data-name="mghost_1_5_hit">
+  <img class="hidden" src="images/mghost_1_6.png" alt="mghost_1_6" data-name="mghost_1_6">
+  <img class="hidden" src="images/mghost_1_6_hit.png" alt="mghost_1_6_hit" data-name="mghost_1_6_hit">
+  <img class="hidden" src="images/mghost_1_7.png" alt="mghost_1_7" data-name="mghost_1_7">
+  <img class="hidden" src="images/mghost_1_7_hit.png" alt="mghost_1_7_hit" data-name="mghost_1_7_hit">
+  <img class="hidden" src="images/newrecord0.png" alt="newrecord0" data-name="newrecord0">
+  <img class="hidden" src="images/newrecord1.png" alt="newrecord1" data-name="newrecord1">
+  <img class="hidden" src="images/newrecord2.png" alt="newrecord2" data-name="newrecord2">
+  <img class="hidden" src="images/newrecord3.png" alt="newrecord3" data-name="newrecord3">
+  <img class="hidden" src="images/newrecord4.png" alt="newrecord4" data-name="newrecord4">
+  <img class="hidden" src="images/newrecord5.png" alt="newrecord5" data-name="newrecord5">
+  <img class="hidden" src="images/newrecord6.png" alt="newrecord6" data-name="newrecord6">
+  <img class="hidden" src="images/newrecord7.png" alt="newrecord7" data-name="newrecord7">
+  <img class="hidden" src="images/over.png" alt="over" data-name="over">
+  <img class="hidden" src="images/pickup_0.png" alt="pickup_0" data-name="pickup_0">
+  <img class="hidden" src="images/pickup_1.png" alt="pickup_1" data-name="pickup_1">
+  <img class="hidden" src="images/pickup_2.png" alt="pickup_2" data-name="pickup_2">
+  <img class="hidden" src="images/pickup_3.png" alt="pickup_3" data-name="pickup_3">
+  <img class="hidden" src="images/pickup_4.png" alt="pickup_4" data-name="pickup_4">
+  <img class="hidden" src="images/pickup_5.png" alt="pickup_5" data-name="pickup_5">
+  <img class="hidden" src="images/pickup_6.png" alt="pickup_6" data-name="pickup_6">
+  <img class="hidden" src="images/pickup_7.png" alt="pickup_7" data-name="pickup_7">
+  <img class="hidden" src="images/press_to_start.png" alt="press_to_start" data-name="press_to_start">
+  <img class="hidden" src="images/robot0_0.png" alt="robot0_0" data-name="robot0_0">
+  <img class="hidden" src="images/robot0_0_hit.png" alt="robot0_0_hit" data-name="robot0_0_hit">
+  <img class="hidden" src="images/robot0_1.png" alt="robot0_1" data-name="robot0_1">
+  <img class="hidden" src="images/robot0_1_hit.png" alt="robot0_1_hit" data-name="robot0_1_hit">
+  <img class="hidden" src="images/robot0_2.png" alt="robot0_2" data-name="robot0_2">
+  <img class="hidden" src="images/robot0_2_hit.png" alt="robot0_2_hit" data-name="robot0_2_hit">
+  <img class="hidden" src="images/robot0_3.png" alt="robot0_3" data-name="robot0_3">
+  <img class="hidden" src="images/robot0_3_hit.png" alt="robot0_3_hit" data-name="robot0_3_hit">
+  <img class="hidden" src="images/robot0_4.png" alt="robot0_4" data-name="robot0_4">
+  <img class="hidden" src="images/robot0_4_hit.png" alt="robot0_4_hit" data-name="robot0_4_hit">
+  <img class="hidden" src="images/robot0_5.png" alt="robot0_5" data-name="robot0_5">
+  <img class="hidden" src="images/robot0_5_hit.png" alt="robot0_5_hit" data-name="robot0_5_hit">
+  <img class="hidden" src="images/robot0_6.png" alt="robot0_6" data-name="robot0_6">
+  <img class="hidden" src="images/robot0_6_hit.png" alt="robot0_6_hit" data-name="robot0_6_hit">
+  <img class="hidden" src="images/robot0_7.png" alt="robot0_7" data-name="robot0_7">
+  <img class="hidden" src="images/robot0_7_hit.png" alt="robot0_7_hit" data-name="robot0_7_hit">
+  <img class="hidden" src="images/robot1_0.png" alt="robot1_0" data-name="robot1_0">
+  <img class="hidden" src="images/robot1_0_hit.png" alt="robot1_0_hit" data-name="robot1_0_hit">
+  <img class="hidden" src="images/robot1_1.png" alt="robot1_1" data-name="robot1_1">
+  <img class="hidden" src="images/robot1_1_hit.png" alt="robot1_1_hit" data-name="robot1_1_hit">
+  <img class="hidden" src="images/robot1_2.png" alt="robot1_2" data-name="robot1_2">
+  <img class="hidden" src="images/robot1_2_hit.png" alt="robot1_2_hit" data-name="robot1_2_hit">
+  <img class="hidden" src="images/robot1_3.png" alt="robot1_3" data-name="robot1_3">
+  <img class="hidden" src="images/robot1_3_hit.png" alt="robot1_3_hit" data-name="robot1_3_hit">
+  <img class="hidden" src="images/robot1_4.png" alt="robot1_4" data-name="robot1_4">
+  <img class="hidden" src="images/robot1_4_hit.png" alt="robot1_4_hit" data-name="robot1_4_hit">
+  <img class="hidden" src="images/robot1_5.png" alt="robot1_5" data-name="robot1_5">
+  <img class="hidden" src="images/robot1_5_hit.png" alt="robot1_5_hit" data-name="robot1_5_hit">
+  <img class="hidden" src="images/robot1_6.png" alt="robot1_6" data-name="robot1_6">
+  <img class="hidden" src="images/robot1_6_hit.png" alt="robot1_6_hit" data-name="robot1_6_hit">
+  <img class="hidden" src="images/robot1_7.png" alt="robot1_7" data-name="robot1_7">
+  <img class="hidden" src="images/robot1_7_hit.png" alt="robot1_7_hit" data-name="robot1_7_hit">
+  <img class="hidden" src="images/robot2_0_0.png" alt="robot2_0_0" data-name="robot2_0_0">
+  <img class="hidden" src="images/robot2_0_0_hit.png" alt="robot2_0_0_hit" data-name="robot2_0_0_hit">
+  <img class="hidden" src="images/robot2_0_1.png" alt="robot2_0_1" data-name="robot2_0_1">
+  <img class="hidden" src="images/robot2_0_1_hit.png" alt="robot2_0_1_hit" data-name="robot2_0_1_hit">
+  <img class="hidden" src="images/robot2_0_2.png" alt="robot2_0_2" data-name="robot2_0_2">
+  <img class="hidden" src="images/robot2_0_2_hit.png" alt="robot2_0_2_hit" data-name="robot2_0_2_hit">
+  <img class="hidden" src="images/robot2_0_3.png" alt="robot2_0_3" data-name="robot2_0_3">
+  <img class="hidden" src="images/robot2_0_3_hit.png" alt="robot2_0_3_hit" data-name="robot2_0_3_hit">
+  <img class="hidden" src="images/robot2_0_4.png" alt="robot2_0_4" data-name="robot2_0_4">
+  <img class="hidden" src="images/robot2_0_4_hit.png" alt="robot2_0_4_hit" data-name="robot2_0_4_hit">
+  <img class="hidden" src="images/robot2_0_5.png" alt="robot2_0_5" data-name="robot2_0_5">
+  <img class="hidden" src="images/robot2_0_5_hit.png" alt="robot2_0_5_hit" data-name="robot2_0_5_hit">
+  <img class="hidden" src="images/robot2_0_6.png" alt="robot2_0_6" data-name="robot2_0_6">
+  <img class="hidden" src="images/robot2_0_6_hit.png" alt="robot2_0_6_hit" data-name="robot2_0_6_hit">
+  <img class="hidden" src="images/robot2_0_7.png" alt="robot2_0_7" data-name="robot2_0_7">
+  <img class="hidden" src="images/robot2_0_7_hit.png" alt="robot2_0_7_hit" data-name="robot2_0_7_hit">
+  <img class="hidden" src="images/robot2_1_0.png" alt="robot2_1_0" data-name="robot2_1_0">
+  <img class="hidden" src="images/robot2_1_0_hit.png" alt="robot2_1_0_hit" data-name="robot2_1_0_hit">
+  <img class="hidden" src="images/robot2_1_1.png" alt="robot2_1_1" data-name="robot2_1_1">
+  <img class="hidden" src="images/robot2_1_1_hit.png" alt="robot2_1_1_hit" data-name="robot2_1_1_hit">
+  <img class="hidden" src="images/robot2_1_2.png" alt="robot2_1_2" data-name="robot2_1_2">
+  <img class="hidden" src="images/robot2_1_2_hit.png" alt="robot2_1_2_hit" data-name="robot2_1_2_hit">
+  <img class="hidden" src="images/robot2_1_3.png" alt="robot2_1_3" data-name="robot2_1_3">
+  <img class="hidden" src="images/robot2_1_3_hit.png" alt="robot2_1_3_hit" data-name="robot2_1_3_hit">
+  <img class="hidden" src="images/robot2_1_4.png" alt="robot2_1_4" data-name="robot2_1_4">
+  <img class="hidden" src="images/robot2_1_4_hit.png" alt="robot2_1_4_hit" data-name="robot2_1_4_hit">
+  <img class="hidden" src="images/robot2_1_5.png" alt="robot2_1_5" data-name="robot2_1_5">
+  <img class="hidden" src="images/robot2_1_5_hit.png" alt="robot2_1_5_hit" data-name="robot2_1_5_hit">
+  <img class="hidden" src="images/robot2_1_6.png" alt="robot2_1_6" data-name="robot2_1_6">
+  <img class="hidden" src="images/robot2_1_6_hit.png" alt="robot2_1_6_hit" data-name="robot2_1_6_hit">
+  <img class="hidden" src="images/robot2_1_7.png" alt="robot2_1_7" data-name="robot2_1_7">
+  <img class="hidden" src="images/robot2_1_7_hit.png" alt="robot2_1_7_hit" data-name="robot2_1_7_hit">
+  <img class="hidden" src="images/robot3_0_0.png" alt="robot3_0_0" data-name="robot3_0_0">
+  <img class="hidden" src="images/robot3_0_0_hit.png" alt="robot3_0_0_hit" data-name="robot3_0_0_hit">
+  <img class="hidden" src="images/robot3_0_1.png" alt="robot3_0_1" data-name="robot3_0_1">
+  <img class="hidden" src="images/robot3_0_1_hit.png" alt="robot3_0_1_hit" data-name="robot3_0_1_hit">
+  <img class="hidden" src="images/robot3_0_2.png" alt="robot3_0_2" data-name="robot3_0_2">
+  <img class="hidden" src="images/robot3_0_2_hit.png" alt="robot3_0_2_hit" data-name="robot3_0_2_hit">
+  <img class="hidden" src="images/robot3_0_3.png" alt="robot3_0_3" data-name="robot3_0_3">
+  <img class="hidden" src="images/robot3_0_3_hit.png" alt="robot3_0_3_hit" data-name="robot3_0_3_hit">
+  <img class="hidden" src="images/robot3_0_4.png" alt="robot3_0_4" data-name="robot3_0_4">
+  <img class="hidden" src="images/robot3_0_4_hit.png" alt="robot3_0_4_hit" data-name="robot3_0_4_hit">
+  <img class="hidden" src="images/robot3_0_5.png" alt="robot3_0_5" data-name="robot3_0_5">
+  <img class="hidden" src="images/robot3_0_5_hit.png" alt="robot3_0_5_hit" data-name="robot3_0_5_hit">
+  <img class="hidden" src="images/robot3_0_6.png" alt="robot3_0_6" data-name="robot3_0_6">
+  <img class="hidden" src="images/robot3_0_6_hit.png" alt="robot3_0_6_hit" data-name="robot3_0_6_hit">
+  <img class="hidden" src="images/robot3_0_7.png" alt="robot3_0_7" data-name="robot3_0_7">
+  <img class="hidden" src="images/robot3_0_7_hit.png" alt="robot3_0_7_hit" data-name="robot3_0_7_hit">
+  <img class="hidden" src="images/robot3_1_0.png" alt="robot3_1_0" data-name="robot3_1_0">
+  <img class="hidden" src="images/robot3_1_0_hit.png" alt="robot3_1_0_hit" data-name="robot3_1_0_hit">
+  <img class="hidden" src="images/robot3_1_1.png" alt="robot3_1_1" data-name="robot3_1_1">
+  <img class="hidden" src="images/robot3_1_1_hit.png" alt="robot3_1_1_hit" data-name="robot3_1_1_hit">
+  <img class="hidden" src="images/robot3_1_2.png" alt="robot3_1_2" data-name="robot3_1_2">
+  <img class="hidden" src="images/robot3_1_2_hit.png" alt="robot3_1_2_hit" data-name="robot3_1_2_hit">
+  <img class="hidden" src="images/robot3_1_3.png" alt="robot3_1_3" data-name="robot3_1_3">
+  <img class="hidden" src="images/robot3_1_3_hit.png" alt="robot3_1_3_hit" data-name="robot3_1_3_hit">
+  <img class="hidden" src="images/robot3_1_4.png" alt="robot3_1_4" data-name="robot3_1_4">
+  <img class="hidden" src="images/robot3_1_4_hit.png" alt="robot3_1_4_hit" data-name="robot3_1_4_hit">
+  <img class="hidden" src="images/robot3_1_5.png" alt="robot3_1_5" data-name="robot3_1_5">
+  <img class="hidden" src="images/robot3_1_5_hit.png" alt="robot3_1_5_hit" data-name="robot3_1_5_hit">
+  <img class="hidden" src="images/robot3_1_6.png" alt="robot3_1_6" data-name="robot3_1_6">
+  <img class="hidden" src="images/robot3_1_6_hit.png" alt="robot3_1_6_hit" data-name="robot3_1_6_hit">
+  <img class="hidden" src="images/robot3_1_7.png" alt="robot3_1_7" data-name="robot3_1_7">
+  <img class="hidden" src="images/robot3_1_7_hit.png" alt="robot3_1_7_hit" data-name="robot3_1_7_hit">
+  <img class="hidden" src="images/run_0_0.png" alt="run_0_0" data-name="run_0_0">
+  <img class="hidden" src="images/run_0_1.png" alt="run_0_1" data-name="run_0_1">
+  <img class="hidden" src="images/run_0_2.png" alt="run_0_2" data-name="run_0_2">
+  <img class="hidden" src="images/run_0_3.png" alt="run_0_3" data-name="run_0_3">
+  <img class="hidden" src="images/run_0_4.png" alt="run_0_4" data-name="run_0_4">
+  <img class="hidden" src="images/run_0_5.png" alt="run_0_5" data-name="run_0_5">
+  <img class="hidden" src="images/run_0_6.png" alt="run_0_6" data-name="run_0_6">
+  <img class="hidden" src="images/run_0_7.png" alt="run_0_7" data-name="run_0_7">
+  <img class="hidden" src="images/run_1_0.png" alt="run_1_0" data-name="run_1_0">
+  <img class="hidden" src="images/run_1_1.png" alt="run_1_1" data-name="run_1_1">
+  <img class="hidden" src="images/run_1_2.png" alt="run_1_2" data-name="run_1_2">
+  <img class="hidden" src="images/run_1_3.png" alt="run_1_3" data-name="run_1_3">
+  <img class="hidden" src="images/run_1_4.png" alt="run_1_4" data-name="run_1_4">
+  <img class="hidden" src="images/run_1_5.png" alt="run_1_5" data-name="run_1_5">
+  <img class="hidden" src="images/run_1_6.png" alt="run_1_6" data-name="run_1_6">
+  <img class="hidden" src="images/run_1_7.png" alt="run_1_7" data-name="run_1_7">
+  <img class="hidden" src="images/stand_0_0.png" alt="stand_0_0" data-name="stand_0_0">
+  <img class="hidden" src="images/stand_front.png" alt="stand_front" data-name="stand_front">
+  <img class="hidden" src="images/start0.png" alt="start0" data-name="start0">
+  <img class="hidden" src="images/start1.png" alt="start1" data-name="start1">
+  <img class="hidden" src="images/start10.png" alt="start10" data-name="start10">
+  <img class="hidden" src="images/start2.png" alt="start2" data-name="start2">
+  <img class="hidden" src="images/start3.png" alt="start3" data-name="start3">
+  <img class="hidden" src="images/start4.png" alt="start4" data-name="start4">
+  <img class="hidden" src="images/start5.png" alt="start5" data-name="start5">
+  <img class="hidden" src="images/start6.png" alt="start6" data-name="start6">
+  <img class="hidden" src="images/start7.png" alt="start7" data-name="start7">
+  <img class="hidden" src="images/start8.png" alt="start8" data-name="start8">
+  <img class="hidden" src="images/start9.png" alt="start9" data-name="start9">
+  <img class="hidden" src="images/status_back.png" alt="status_back" data-name="status_back">
+  <img class="hidden" src="images/survived_for_mins_seconds.png" alt="survived_for_mins_seconds" data-name="survived_for_mins_seconds">
+  <img class="hidden" src="images/survived_for_seconds.png" alt="survived_for_seconds" data-name="survived_for_seconds">
+  <img class="hidden" src="images/text_area_frame.png" alt="text_area_frame" data-name="text_area_frame">
+  <img class="hidden" src="images/tiles_castle.png" alt="tiles_castle" data-name="tiles_castle">
+  <img class="hidden" src="images/tiles_forest.png" alt="tiles_forest" data-name="tiles_forest">
+  <img class="hidden" src="images/timer_plus_1_0.png" alt="timer_plus_1_0" data-name="timer_plus_1_0">
+  <img class="hidden" src="images/timer_plus_1_1.png" alt="timer_plus_1_1" data-name="timer_plus_1_1">
+  <img class="hidden" src="images/timer_plus_1_10.png" alt="timer_plus_1_10" data-name="timer_plus_1_10">
+  <img class="hidden" src="images/timer_plus_1_11.png" alt="timer_plus_1_11" data-name="timer_plus_1_11">
+  <img class="hidden" src="images/timer_plus_1_12.png" alt="timer_plus_1_12" data-name="timer_plus_1_12">
+  <img class="hidden" src="images/timer_plus_1_13.png" alt="timer_plus_1_13" data-name="timer_plus_1_13">
+  <img class="hidden" src="images/timer_plus_1_2.png" alt="timer_plus_1_2" data-name="timer_plus_1_2">
+  <img class="hidden" src="images/timer_plus_1_3.png" alt="timer_plus_1_3" data-name="timer_plus_1_3">
+  <img class="hidden" src="images/timer_plus_1_4.png" alt="timer_plus_1_4" data-name="timer_plus_1_4">
+  <img class="hidden" src="images/timer_plus_1_5.png" alt="timer_plus_1_5" data-name="timer_plus_1_5">
+  <img class="hidden" src="images/timer_plus_1_6.png" alt="timer_plus_1_6" data-name="timer_plus_1_6">
+  <img class="hidden" src="images/timer_plus_1_7.png" alt="timer_plus_1_7" data-name="timer_plus_1_7">
+  <img class="hidden" src="images/timer_plus_1_8.png" alt="timer_plus_1_8" data-name="timer_plus_1_8">
+  <img class="hidden" src="images/timer_plus_1_9.png" alt="timer_plus_1_9" data-name="timer_plus_1_9">
+  <img class="hidden" src="images/timer_plus_2_0.png" alt="timer_plus_2_0" data-name="timer_plus_2_0">
+  <img class="hidden" src="images/timer_plus_2_1.png" alt="timer_plus_2_1" data-name="timer_plus_2_1">
+  <img class="hidden" src="images/timer_plus_2_10.png" alt="timer_plus_2_10" data-name="timer_plus_2_10">
+  <img class="hidden" src="images/timer_plus_2_11.png" alt="timer_plus_2_11" data-name="timer_plus_2_11">
+  <img class="hidden" src="images/timer_plus_2_12.png" alt="timer_plus_2_12" data-name="timer_plus_2_12">
+  <img class="hidden" src="images/timer_plus_2_13.png" alt="timer_plus_2_13" data-name="timer_plus_2_13">
+  <img class="hidden" src="images/timer_plus_2_2.png" alt="timer_plus_2_2" data-name="timer_plus_2_2">
+  <img class="hidden" src="images/timer_plus_2_3.png" alt="timer_plus_2_3" data-name="timer_plus_2_3">
+  <img class="hidden" src="images/timer_plus_2_4.png" alt="timer_plus_2_4" data-name="timer_plus_2_4">
+  <img class="hidden" src="images/timer_plus_2_5.png" alt="timer_plus_2_5" data-name="timer_plus_2_5">
+  <img class="hidden" src="images/timer_plus_2_6.png" alt="timer_plus_2_6" data-name="timer_plus_2_6">
+  <img class="hidden" src="images/timer_plus_2_7.png" alt="timer_plus_2_7" data-name="timer_plus_2_7">
+  <img class="hidden" src="images/timer_plus_2_8.png" alt="timer_plus_2_8" data-name="timer_plus_2_8">
+  <img class="hidden" src="images/timer_plus_2_9.png" alt="timer_plus_2_9" data-name="timer_plus_2_9">
+  <img class="hidden" src="images/timer_plus_3_0.png" alt="timer_plus_3_0" data-name="timer_plus_3_0">
+  <img class="hidden" src="images/timer_plus_3_1.png" alt="timer_plus_3_1" data-name="timer_plus_3_1">
+  <img class="hidden" src="images/timer_plus_3_10.png" alt="timer_plus_3_10" data-name="timer_plus_3_10">
+  <img class="hidden" src="images/timer_plus_3_11.png" alt="timer_plus_3_11" data-name="timer_plus_3_11">
+  <img class="hidden" src="images/timer_plus_3_12.png" alt="timer_plus_3_12" data-name="timer_plus_3_12">
+  <img class="hidden" src="images/timer_plus_3_13.png" alt="timer_plus_3_13" data-name="timer_plus_3_13">
+  <img class="hidden" src="images/timer_plus_3_2.png" alt="timer_plus_3_2" data-name="timer_plus_3_2">
+  <img class="hidden" src="images/timer_plus_3_3.png" alt="timer_plus_3_3" data-name="timer_plus_3_3">
+  <img class="hidden" src="images/timer_plus_3_4.png" alt="timer_plus_3_4" data-name="timer_plus_3_4">
+  <img class="hidden" src="images/timer_plus_3_5.png" alt="timer_plus_3_5" data-name="timer_plus_3_5">
+  <img class="hidden" src="images/timer_plus_3_6.png" alt="timer_plus_3_6" data-name="timer_plus_3_6">
+  <img class="hidden" src="images/timer_plus_3_7.png" alt="timer_plus_3_7" data-name="timer_plus_3_7">
+  <img class="hidden" src="images/timer_plus_3_8.png" alt="timer_plus_3_8" data-name="timer_plus_3_8">
+  <img class="hidden" src="images/timer_plus_3_9.png" alt="timer_plus_3_9" data-name="timer_plus_3_9">
+  <img class="hidden" src="images/timer_plus_half_0.png" alt="timer_plus_half_0" data-name="timer_plus_half_0">
+  <img class="hidden" src="images/timer_plus_half_1.png" alt="timer_plus_half_1" data-name="timer_plus_half_1">
+  <img class="hidden" src="images/timer_plus_half_10.png" alt="timer_plus_half_10" data-name="timer_plus_half_10">
+  <img class="hidden" src="images/timer_plus_half_11.png" alt="timer_plus_half_11" data-name="timer_plus_half_11">
+  <img class="hidden" src="images/timer_plus_half_12.png" alt="timer_plus_half_12" data-name="timer_plus_half_12">
+  <img class="hidden" src="images/timer_plus_half_13.png" alt="timer_plus_half_13" data-name="timer_plus_half_13">
+  <img class="hidden" src="images/timer_plus_half_2.png" alt="timer_plus_half_2" data-name="timer_plus_half_2">
+  <img class="hidden" src="images/timer_plus_half_3.png" alt="timer_plus_half_3" data-name="timer_plus_half_3">
+  <img class="hidden" src="images/timer_plus_half_4.png" alt="timer_plus_half_4" data-name="timer_plus_half_4">
+  <img class="hidden" src="images/timer_plus_half_5.png" alt="timer_plus_half_5" data-name="timer_plus_half_5">
+  <img class="hidden" src="images/timer_plus_half_6.png" alt="timer_plus_half_6" data-name="timer_plus_half_6">
+  <img class="hidden" src="images/timer_plus_half_7.png" alt="timer_plus_half_7" data-name="timer_plus_half_7">
+  <img class="hidden" src="images/timer_plus_half_8.png" alt="timer_plus_half_8" data-name="timer_plus_half_8">
+  <img class="hidden" src="images/timer_plus_half_9.png" alt="timer_plus_half_9" data-name="timer_plus_half_9">
+  <img class="hidden" src="images/title.png" alt="title" data-name="title">
+  <img class="hidden" src="images/triffid_0.png" alt="triffid_0" data-name="triffid_0">
+  <img class="hidden" src="images/triffid_0_hit.png" alt="triffid_0_hit" data-name="triffid_0_hit">
+  <img class="hidden" src="images/triffid_1.png" alt="triffid_1" data-name="triffid_1">
+  <img class="hidden" src="images/triffid_1_hit.png" alt="triffid_1_hit" data-name="triffid_1_hit">
+  <img class="hidden" src="images/triffid_2.png" alt="triffid_2" data-name="triffid_2">
+  <img class="hidden" src="images/triffid_2_hit.png" alt="triffid_2_hit" data-name="triffid_2_hit">
+  <img class="hidden" src="images/triffid_3.png" alt="triffid_3" data-name="triffid_3">
+  <img class="hidden" src="images/triffid_3_hit.png" alt="triffid_3_hit" data-name="triffid_3_hit">
+  <img class="hidden" src="images/triffid_4.png" alt="triffid_4" data-name="triffid_4">
+  <img class="hidden" src="images/triffid_4_hit.png" alt="triffid_4_hit" data-name="triffid_4_hit">
+  <img class="hidden" src="images/triffid_5.png" alt="triffid_5" data-name="triffid_5">
+  <img class="hidden" src="images/triffid_5_hit.png" alt="triffid_5_hit" data-name="triffid_5_hit">
+  <img class="hidden" src="images/triffid_6.png" alt="triffid_6" data-name="triffid_6">
+  <img class="hidden" src="images/triffid_6_hit.png" alt="triffid_6_hit" data-name="triffid_6_hit">
+  <img class="hidden" src="images/triffid_7.png" alt="triffid_7" data-name="triffid_7">
+  <img class="hidden" src="images/triffid_7_hit.png" alt="triffid_7_hit" data-name="triffid_7_hit">
+  <img class="hidden" src="images/wall_jump_0_0.png" alt="wall_jump_0_0" data-name="wall_jump_0_0">
+  <img class="hidden" src="images/wall_jump_0_1.png" alt="wall_jump_0_1" data-name="wall_jump_0_1">
+  <img class="hidden" src="images/wall_jump_0_2.png" alt="wall_jump_0_2" data-name="wall_jump_0_2">
+  <img class="hidden" src="images/wall_jump_1_0.png" alt="wall_jump_1_0" data-name="wall_jump_1_0">
+  <img class="hidden" src="images/wall_jump_1_1.png" alt="wall_jump_1_1" data-name="wall_jump_1_1">
+  <img class="hidden" src="images/wall_jump_1_2.png" alt="wall_jump_1_2" data-name="wall_jump_1_2">
+  <img class="hidden" src="images/xb_a.png" alt="xb_a" data-name="xb_a">
+  <img class="hidden" src="images/xb_b.png" alt="xb_b" data-name="xb_b">
+</section>
+<section id="soundLoader" class="hidden">
+  <audio class="hidden" controls preload="auto" src="sounds/collect0.ogg" data-name="collect0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/enemy_death0.ogg" data-name="enemy_death0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/enemy_death1.ogg" data-name="enemy_death1">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/enemy_death2.ogg" data-name="enemy_death2">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/enemy_death3.ogg" data-name="enemy_death3">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/enemy_death4.ogg" data-name="enemy_death4">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/enemy_take_damage0.ogg" data-name="enemy_take_damage0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/enemy_take_damage1.ogg" data-name="enemy_take_damage1">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/enemy_take_damage2.ogg" data-name="enemy_take_damage2">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/enemy_take_damage3.ogg" data-name="enemy_take_damage3">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/enemy_take_damage4.ogg" data-name="enemy_take_damage4">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/gameover0.ogg" data-name="gameover0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/jump0.ogg" data-name="jump0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/jump_long0.ogg" data-name="jump_long0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/jump_long1.ogg" data-name="jump_long1">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/jump_long2.ogg" data-name="jump_long2">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/jump_long3.ogg" data-name="jump_long3">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/jump_long4.ogg" data-name="jump_long4">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/new_wave0.ogg" data-name="new_wave0">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="sounds/player_death0.ogg" data-name="player_death0">Your browser does not support the audio element.</audio>
+</section>
+<section id="musicLoader" class="hidden">
+  <audio class="hidden" controls preload="auto" src="music/ingame_theme.ogg" data-name="ingame_theme">Your browser does not support the audio element.</audio>
+  <audio class="hidden" controls preload="auto" src="music/title_theme.ogg" data-name="title_theme">Your browser does not support the audio element.</audio>
+</section>
+
+<main>
+<h1>eggzy</h1>
+
+<canvas id="screen">
+The game screen appears here if your browser supports the Canvas API.
+</canvas>
+<section id="controls">
+  <button type="button" id="reset">Reset</button>
+  <button type="button" id="pause">Pause</button>
+</section>
+
+<h2>Attribution</h2>
+
+<p><a href="https://store.rpipress.cc/products/code-the-classics-volume-ii">Code the Classics – Volume 2</a>.</p>
+
+<p>Licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/legalcode">Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported</a>.</p>
+
+<h2>Original Python code</h2>
+
+<pre id="original"><code>
+# Eggzy - Code the Classics Volume 2
+# Code by Andrew Gillett and Eben Upton
+# Graphics by Dan Malone
+# Music and sound effects by Allister Brimble
+# https://github.com/raspberrypipress/Code-the-Classics-Vol2.git
+# https://store.rpipress.cc/products/code-the-classics-volume-ii
+
+import pygame, pgzero, pgzrun, sys, os
+import xml.etree.ElementTree as ET
+from abc import ABC, abstractmethod
+from enum import Enum
+from random import randint
+
+# On Windows, if the window is too big for the screen and you are using display scaling, you can uncomment
+# the following two lines to fix the issue
+# import ctypes
+# ctypes.windll.user32.SetProcessDPIAware()
+
+# Check Python version number. sys.version_info gives version as a tuple, e.g. if (3,7,2,&#x27;final&#x27;,0) for version 3.7.2.
+# Unlike many languages, Python can compare two tuples in the same way that you can compare numbers.
+if sys.version_info &lt; (3,6):
+    print(&quot;This game requires at least version 3.6 of Python. Please download it from www.python.org&quot;)
+    sys.exit()
+
+# Check Pygame Zero version. This is a bit trickier because Pygame Zero only lets us get its version number as a string.
+# So we have to split the string into a list, using &#x27;.&#x27; as the character to split on. We convert each element of the
+# version number into an integer - but only if the string contains numbers and nothing else, because it&#x27;s possible for
+# a component of the version to contain letters as well as numbers (e.g. &#x27;2.0.dev0&#x27;)
+# This uses a Python feature called list comprehension
+pgzero_version = [int(s) if s.isnumeric() else s for s in pgzero.__version__.split(&#x27;.&#x27;)]
+if pgzero_version &lt; [1,2]:
+    print(f&quot;This game requires at least version 1.2 of Pygame Zero. You have version {pgzero.__version__}. Please upgrade using the command &#x27;pip3 install --upgrade pgzero&#x27;&quot;)
+    sys.exit()
+
+# Set up constants
+WIDTH = 825
+HEIGHT = 550
+TITLE = &quot;Eggzy&quot;
+
+LEVEL_SEQUENCE = (&quot;starter1.tmx&quot;, &quot;starter2.tmx&quot;, &quot;starter3.tmx&quot;, &quot;starter4.tmx&quot;,
+                  &quot;forest1.tmx&quot;, &quot;forest2.tmx&quot;, &quot;forest3.tmx&quot;, &quot;forest4.tmx&quot;, &quot;forest9.tmx&quot;,
+                  &quot;castle1.tmx&quot;, &quot;castle2.tmx&quot;, &quot;castle3.tmx&quot;, &quot;castle4.tmx&quot;,
+                  &quot;castle5.tmx&quot;, &quot;castle6.tmx&quot;, &quot;castle7.tmx&quot;, &quot;castle8.tmx&quot;,
+                  &quot;forest5.tmx&quot;, &quot;forest6.tmx&quot;, &quot;forest7.tmx&quot;, &quot;forest8.tmx&quot;)
+
+GRID_BLOCK_SIZE = 25
+LEVEL_Y_BOUNDARY = -100
+
+# Change to 1, 2 or 3 to start with enemies/more enemies and less bonus time for gems
+INITIAL_LEVEL_CYCLE = 0
+
+INITIAL_TIME_REMAINING = 15
+INITIAL_PICKUP_TIME_BONUS = 2
+STOMP_ENEMY_TIME_BONUS = 3
+
+# Constants affecting player movement
+COYOTE_TIME = 6
+JUMP_VEL_Y = -10
+WALL_JUMP_X_VEL = 8
+WALL_JUMP_COYOTE_TIME = 15
+CACHE_JUMP_INPUT_TIME = 5
+PLAYER_WIDTH = 20   # Width of player for the purpose of collisions - slightly smaller than the bounds of the sprite
+PLAYER_HEIGHT = 40  # For player head collision with ceilings
+
+ANCHOR_CENTRE = (&quot;center&quot;, &quot;center&quot;)
+ANCHOR_CENTRE_BOTTOM = (&quot;center&quot;, &quot;bottom&quot;)
+ANCHOR_PLAYER = (&quot;center&quot;, 60)                # Feet of player sprite are not at the bottom
+ANCHOR_FLAME = (&quot;center&quot;, 78)
+ANCHOR_FLAME_DASH = (&quot;center&quot;, 130)
+
+class Biome(Enum):
+    FOREST = 0
+    CASTLE = 1
+
+# There are eight types of enemy - four per biome. Some properties are the same between the forest/castle equivalents,
+# some are different
+
+ENEMY_SPRITE_NAMES = {Biome.CASTLE: [&quot;robot0&quot;, &quot;robot1&quot;, &quot;robot2&quot;, &quot;robot3&quot;],
+                      Biome.FOREST: [&quot;fly&quot;, &quot;mghost&quot;, &quot;triffid&quot;, &quot;bigbloom&quot;]}
+
+ENEMY_TYPES_FLYING = {Biome.CASTLE: [True, True, False, False], Biome.FOREST: [True, True, False, True]}
+
+ENEMY_TYPES_WIDTH_OVERRIDES = {Biome.CASTLE: [30, 50, 48, 50], Biome.FOREST: [30, 50, 50, 50]}
+ENEMY_TYPES_HEIGHT_OVERRIDES = {Biome.CASTLE: [40, 40, 60, 120], Biome.FOREST: [30, 65, 70, 90]}
+
+ENEMY_TYPES_ANCHOR_POINTS = {Biome.CASTLE: [(&quot;center&quot;, 40),(&quot;center&quot;, 40),(&quot;center&quot;, 95),(&quot;center&quot;, &quot;bottom&quot;)],
+                             Biome.FOREST: [(&quot;center&quot;, 60),(&quot;center&quot;, &quot;bottom&quot;),(&quot;center&quot;, &quot;bottom&quot;),(&quot;center&quot;, &quot;bottom&quot;)]}
+
+ENEMY_TYPES_HEALTH = [1, 3, 1, 3]
+ENEMY_TYPES_SPEED = [2, 1, 2, 1]
+
+REPLAY_FILENAME = &quot;eggzy-replays&quot;
+MAX_REPLAYS = 10
+
+DEBUG_SHOW_PLAYER_COLLISION_RECT = False
+DEBUG_SHOW_ENEMY_COLLISION_RECTS = False
+DEBUG_SHOW_BLOCK_COLLISION_RECTS = False
+DEBUG_SHOW_FRAME_NUMBER = False
+DEBUG_MOVEMENT = False
+DEBUG_SLOWMO = 1        # Set to 2 or higher to run in slow motion, useful for testing animations
+
+# These symbols substitute for the controller button images when displaying text.
+# The symbols representing these images must be ones that aren&#x27;t actually used themselves, e.g. we don&#x27;t use the
+# percent sign in text
+SPECIAL_FONT_SYMBOLS = {&#x27;xb_a&#x27;:&#x27;%&#x27;, &#x27;xb_b&#x27;:&#x27;#&#x27;}
+
+# Create a version of SPECIAL_FONT_SYMBOLS where the keys and values are swapped
+SPECIAL_FONT_SYMBOLS_INVERSE = dict((v,k) for k,v in SPECIAL_FONT_SYMBOLS.items())
+
+def move_towards(n, target, speed):
+    if n &lt; target:
+        return min(n + speed, target)
+    else:
+        return max(n - speed, target)
+
+def sign(x):
+    # Returns 1, 0 or -1 depending on whether number is positive, zero or negative
+    if x == 0:
+        return 0
+    else:
+        return -1 if x &lt; 0 else 1
+
+# ABC = abstract base class - a class which is only there to serve as a base class, not to be instantiated directly
+class Controls(ABC):
+    NUM_BUTTONS = 2
+
+    def __init__(self):
+        self.button_previously_down = [False for i in range(Controls.NUM_BUTTONS)]
+        self.is_button_pressed = [False for i in range(Controls.NUM_BUTTONS)]
+
+    def update(self):
+        # Call each frame to update button status
+        for button in range(Controls.NUM_BUTTONS):
+            button_down = self.button_down(button)
+            self.is_button_pressed[button] = button_down and not self.button_previously_down[button]
+            self.button_previously_down[button] = button_down
+
+    @abstractmethod
+    def get_x(self):
+        # Overridden by subclasses
+        pass
+
+    @abstractmethod
+    def get_y(self):
+        # Overridden by subclasses
+        pass
+
+    @abstractmethod
+    def button_down(self, button):
+        # Overridden by subclasses
+        pass
+
+    def button_pressed(self, button):
+        return self.is_button_pressed[button]
+
+    @abstractmethod
+    def button_name(self, button):
+        return &quot;?&quot;
+
+class KeyboardControls(Controls):
+    def get_x(self):
+        if keyboard.left:
+            return -1
+        elif keyboard.right:
+            return 1
+        else:
+            return 0
+
+    def get_y(self):
+        if keyboard.up:
+            return -1
+        elif keyboard.down:
+            return 1
+        else:
+            return 0
+
+    def button_down(self, button):
+        if button == 0:
+            return keyboard.space
+        else:
+            return keyboard.z
+
+    def button_name(self, button):
+        if button == &quot;dash&quot;:
+            return &quot;Z&quot;
+        elif button == &quot;jump&quot;:
+            return &quot;SPACE&quot;
+        else:
+            return &quot;?&quot;
+
+class JoystickControls(Controls):
+    def __init__(self, joystick):
+        super().__init__()
+        self.joystick = joystick
+        joystick.init() # Not necessary in Pygame 2.0.0 onwards
+
+    def get_axis(self, axis_num):
+        if self.joystick.get_numhats() &gt; 0 and self.joystick.get_hat(0)[axis_num] != 0:
+            # For some reason, dpad up/down are inverted when getting inputs from
+            # an Xbox controller, so need to negate the value if axis_num is 1
+            return self.joystick.get_hat(0)[axis_num] * (-1 if axis_num == 1 else 1)
+
+        axis_value = self.joystick.get_axis(axis_num)
+        if abs(axis_value) &lt; 0.6:
+            # Dead-zone
+            return 0
+        else:
+            # digital movement
+            return 1 if axis_value &gt; 0 else -1
+
+    def get_x(self):
+        return self.get_axis(0)
+
+    def get_y(self):
+        return self.get_axis(1)
+
+    def button_down(self, button):
+        # Before checking button, check to make sure that the controller actually has enough buttons
+        # There are some weird devices out there which could cause a crash if this check were not present
+        if self.joystick.get_numbuttons() &lt;= button:
+            print(&quot;Warning: controller does not have enough buttons!&quot;)
+            return False
+        return self.joystick.get_button(button) != 0
+
+    def button_name(self, button):
+        if button == &quot;dash&quot;:
+            return SPECIAL_FONT_SYMBOLS[&quot;xb_b&quot;]
+        elif button == &quot;jump&quot;:
+            return SPECIAL_FONT_SYMBOLS[&quot;xb_a&quot;]
+        else:
+            return &quot;?&quot;
+
+# Class for gem pickups
+class Gem(Actor):
+    # This is a class variable, equivalent to what is known in other languages as a static variable
+    # The variable belongs to the class as a whole rather than any one particular instance (object) of the class
+    next_type = 1
+
+    def __init__(self, pos):
+        super().__init__(&quot;blank&quot;, pos, ANCHOR_CENTRE_BOTTOM)
+
+        # Choose which type of gem we&#x27;re going to be.
+        self.type = Gem.next_type
+
+        # Set the type of the next gem
+        Gem.next_type += 1
+        if Gem.next_type &gt;= 5:
+            Gem.next_type = 1
+
+        self.collected = False
+
+    def update(self):
+        # Does the player exist, and are they colliding with us?
+        if game.player is not None and game.player.collidepoint(self.center):
+            game.gain_time(game.time_pickup_bonus, self.centerx, self.centery)
+            game.play_sound(&quot;collect&quot;)
+            self.collected = True  # Disappear
+
+        anim_frame = str((game.timer // 6) % 4)
+        self.image = f&quot;gem{self.type}_{anim_frame}&quot;
+
+    @staticmethod
+    def new_game():
+        Gem.next_type = 1
+
+# The door prevents the player from leaving a level until all gems have been collected
+class Door(Actor):
+    def __init__(self, pos, biome=&quot;castle&quot;, variant=0, already_open=False):
+        self.biome = biome
+        self.variant = variant
+        self.opening = already_open
+        self.last_frame = 15 if biome == &quot;castle&quot; else 13
+        self.frame = self.last_frame if already_open else 0
+        super().__init__(f&quot;door_{biome}_{variant}_{self.frame}&quot;, pos, anchor=(0,0))
+
+    def update(self):
+        if self.opening and self.frame &lt; self.last_frame and game.timer % 3 == 0:
+            self.frame += 1
+            self.image = f&quot;door_{self.biome}_{self.variant}_{self.frame}&quot;
+
+    def open(self):
+        self.opening = True
+
+    def is_fully_open(self):
+        return self.frame == self.last_frame
+
+# Used for animations such as those that appear when you pick up a gem or lose a life
+class Animation(Actor):
+    def __init__(self, pos, image_format_str, num_frames, frame_interval, anchor=ANCHOR_CENTRE, initial_delay=0, rise_time=-1):
+        super().__init__(&quot;blank&quot;, pos, anchor)
+        self.image_format_str = image_format_str
+        self.num_frames = num_frames
+        self.frame_interval = frame_interval
+        self.timer = -initial_delay
+        self.rise_time = rise_time
+        self.update_image()
+
+    def update(self):
+        self.timer += 1
+        self.update_image()
+
+        # Some animations start rising up after a certain time
+        if self.rise_time &gt; -1 and self.timer &gt; self.rise_time:
+            self.y -= 1
+
+    def update_image(self):
+        if self.timer &lt; 0:
+            self.image = &quot;blank&quot;
+        else:
+            frame = min(self.timer // self.frame_interval, self.num_frames - 1)
+            self.image = self.image_format_str.format(frame)
+
+    def finished(self):
+        return self.timer // self.frame_interval &gt;= self.num_frames
+
+class DashTrail(Animation):
+    def __init__(self, pos, image):
+        # Receive&#x27;s the player&#x27;s current sprite, uses the trail version of that sprite
+        super().__init__(pos, image + &quot;_trail_{0}&quot;, 6, 5, ANCHOR_PLAYER)
+
+# Base class for objects which move around the level and collide with walls, such as the player and enemies
+class CollideActor(Actor):
+    def __init__(self, pos, anchor=ANCHOR_CENTRE):
+        super().__init__(&quot;blank&quot;, pos, anchor)
+
+    def move(self, dx, dy, speed):
+        # Returns true if move was blocked
+        # One of dx or dy will be 0
+
+        new_x, new_y = self.x, self.y
+
+        # Movement is done 1 pixel at a time, which ensures we don&#x27;t get embedded into a wall we&#x27;re moving towards
+        for i in range(speed):
+            new_x, new_y = new_x + dx, new_y + dy
+
+            # Get the player rectangle as it would be if the position were changed to new_x, new_y
+            rect = self.get_rect(new_x, new_y)
+
+            # Does this proposed new position overlap with any of the collidable tiles, or the exit door?
+            if game.position_blocked(rect):
+                #print(&quot; blocked&quot;)
+                return True
+
+            # We only update the object&#x27;s position if there wasn&#x27;t a block there.
+            self.pos = new_x, new_y
+            #print(&quot; moved&quot;)
+
+        # Didn&#x27;t collide with anything
+        return False
+
+    def get_rect(self, centre_x=None, bottom_y=None):
+        # Returns a rectangle representing this actor, assuming it were positioned at the specified x and y coordinates
+        # (If None, we default to the actual X/Y pos of the actor)
+        # We don&#x27;t use the standard Pygame Zero practice of just using the sprite bounds as the rectangle, as for the
+        # player enemies we want the collidable size to be a bit smaller than the sprite
+        if centre_x is None:
+            centre_x = self.x
+        if bottom_y is None:
+            bottom_y = self.y
+        w, h = self.get_collidable_width(), self.get_collidable_height()
+        return Rect(centre_x - (w // 2), bottom_y - h, w, h)
+
+    def get_collidable_width(self):
+        # Overridden for Player and Enemy
+        image_surface = getattr(images, self.image)
+        return image_surface.get_width()
+
+    def get_collidable_height(self):
+        # Overridden for Player and Enemy
+        image_surface = getattr(images, self.image)
+        return image_surface.get_height()
+
+
+# An actor who is subject to gravity, this includes the player and non-flying enemies
+# The flying enemies do actually use this too, but disable it by setting gravity_enabled to false,
+# demonstrating a drawback of inheritance in object-oriented programming! In a component-based
+# system such as Unity, objects which want gravity could instead have a gravity component.
+class GravityActor(CollideActor):
+    MAX_FALL_SPEED = 7
+
+    class FallState(Enum):
+        LANDED = 0
+        FALLING = 1
+        JUMPING = 2
+        WALL_JUMPING = 3
+
+    def __init__(self, pos, gravity_enabled=True, anchor=ANCHOR_CENTRE_BOTTOM):
+        super().__init__(pos, anchor)
+
+        self.gravity_enabled = gravity_enabled
+        self.vel_y = 0
+        self.fall_state = GravityActor.FallState.FALLING
+        self.lower_gravity_timer = 0
+
+    def update(self, detect=True):
+        if not self.gravity_enabled:
+            return
+
+        self.lower_gravity_timer -= 1
+
+        # Apply change to Y velocity
+        if game.timer % (3 if self.lower_gravity_timer &gt; 0 else 2) == 0:
+            self.vel_y = min(self.vel_y + 1, GravityActor.MAX_FALL_SPEED)
+
+        # Apply gravity, without going over the maximum fall speed
+        # The detect parameter indicates whether we should check for collisions with blocks as we fall. Normally we
+        # want this to be the case - hence why this parameter is optional, and is True by default. If the player is
+        # in the process of losing a life, however, we want them to just fall out of the level, so False is passed
+        # in this case.
+        if detect and self.vel_y != 0:
+            # Move vertically in the appropriate direction, at the appropriate speed
+            # Set landed to false, if we&#x27;re on the floor it&#x27;ll be set to true again below, otherwise it will remain
+            # false
+            if DEBUG_MOVEMENT:
+                print(&quot;{0} detect: landed false, {1}&quot;.format(game.timer, self.vel_y))
+            if self.fall_state == GravityActor.FallState.LANDED:
+                self.fall_state = GravityActor.FallState.FALLING
+            if self.move(0, sign(self.vel_y), abs(self.vel_y)):
+                if DEBUG_MOVEMENT:
+                    print(&quot;move returned true&quot;)
+                # If move returned True, we must have either landed or hit our head on the ceiling
+                if self.vel_y &gt; 0:
+                    self.vel_y = 0
+                    self.fall_state = GravityActor.FallState.LANDED
+                    if DEBUG_MOVEMENT:
+                        print(&quot;detect: landed true&quot;)
+
+        else:
+            # Collision detection disabled - just update the Y coordinate without any further checks
+            self.y += self.vel_y
+
+    def landed(self):
+        return self.fall_state == GravityActor.FallState.LANDED
+
+
+class Player(GravityActor):
+    DASH_TIME = 18
+    DASH_SPEED = 10
+    DASH_PAUSE_TIME = 5
+    DASH_TRAIL_INTERVAL = 3
+    DASH_TIMER_TRAIL_CUTOFF = -10
+    MAX_X_RUN_SPEED = 5
+
+    def __init__(self, controls):
+        # Call constructor of parent class. Initial pos is 0,0 but Game.next_level will set the actual starting position
+        super().__init__((0, 0), anchor=ANCHOR_PLAYER)
+
+        self.controls = controls
+
+        # Actor for the flame on the character&#x27;s head
+        self.flame = Actor(&quot;flame_stand_0&quot;, self.pos, anchor=ANCHOR_FLAME)
+
+        self.vel_x = 0
+        self.facing_x = 1
+        self.hurt = False
+        self.dash_timer = Player.DASH_TIMER_TRAIL_CUTOFF    # Counts down
+        self.dash_animation_timer = 0                       # Counts up
+        self.dash_allowed = False
+        self.grabbed_wall = 0
+        self.coyote_time = 0
+        self.fall_timer = 0                 # Number of frames since we started falling or jumping
+        self.wall_jump_coyote_time = 0
+        self.cached_jump_input_timer = 0
+        self.enemy_stomped_timer = 0
+        self.change_direction_timer = 0
+        self.last_dash_sprite = &quot;dash_horizontal_0_0&quot;   # Used for dash trails
+
+        self.replay_data = []
+
+    def new_level(self, start_pos):
+        self.start_pos = start_pos
+        self.reset()
+
+    def reset(self):
+        self.pos = self.start_pos
+        self.vel_x = 0
+        self.vel_y = 0
+        self.facing_x = 1            # -1 = left, 1 = right
+        self.hurt = False
+        self.dash_timer = Player.DASH_TIMER_TRAIL_CUTOFF
+        self.gravity_enabled = True
+        self.grabbed_wall = 0
+        self.coyote_time = 0
+        self.wall_jump_coyote_time = 0
+        self.cached_jump_input_timer = 0
+        self.enemy_stomped_timer = 0
+
+        # Ensure that when we spawn or respawn, there are no enemies at or near that position - treat it
+        # as if we&#x27;d stomped on their heads
+        # Need to check for game being None because player is constructed during Game construction, and the
+        # game global won&#x27;t be set until construction is complete
+        if game is not None:
+            for enemy in game.enemies:
+                if self.distance_to(enemy) &lt; 150:  # 150 pixel radius, to be safe
+                    enemy.destroy()
+                    game.play_sound(&quot;enemy_death&quot;, 5)
+
+    def hit_test(self, other):
+        # Check for collision between player and enemy - called from Player.update
+        return self.get_rect(self.x, self.y).colliderect(other.get_rect()) and not self.hurt
+
+    def get_colliding_enemies(self):
+        return [enemy for enemy in game.enemies if not enemy.dying and self.hit_test(enemy)]
+
+    def update(self):
+        # Call GravityActor.update - parameter is whether we want to perform collision detection as we fall
+        was_landed = self.landed()
+        super().update(not self.hurt)
+
+        if was_landed and not self.landed():
+            # We must have walked off a platform. Set coyote time timer
+            self.coyote_time = COYOTE_TIME
+            self.fall_timer = 0
+
+        if self.top &gt;= HEIGHT:
+            self.reset()
+
+        # Check for collisions with enemies, including landing on their heads
+        stomped_any = False
+        for enemy in self.get_colliding_enemies():
+            # Die or stomp? Are we within the top 20% of the enemy collision rectangle?
+            # If we&#x27;re moving downward, increase the threshold to the top 50% of the collision rectangle
+            # We&#x27;re fairly forgiving about this - otherwise some of the deaths seem unfair
+            enemy_rect = enemy.get_rect()
+            threshold = enemy_rect.top + (enemy_rect.bottom - enemy_rect.top) * (0.5 if self.vel_y &gt; 0 else 0.2)
+            # If the player stomps an enemy due to downward motion they&#x27;ll now be moving up, so unless they&#x27;re within
+            # the top 20% of the sprite, they&#x27;ll get hit by it on the next frame. Prevent this using stomped_last_frame
+            if self.y &lt; threshold or self.stomped_last_frame:
+                enemy.stomped()
+                stomped_any = True
+                self.vel_y = -6
+                self.enemy_stomped_timer = 3
+                self.dash_allowed = True
+                if DEBUG_MOVEMENT:
+                    print(game.timer, &quot;stomp&quot;, self.y, threshold)
+            else:
+                # Die and respawn
+                self.hurt = True
+                self.vel_y = -12
+                self.fall_state = GravityActor.FallState.FALLING
+                self.fall_timer = 0
+                self.dash_timer = Player.DASH_TIMER_TRAIL_CUTOFF
+                game.play_sound(&quot;player_death&quot;)
+                game.animations.append(Animation(self.pos, &quot;loselife_{0}&quot;, 8, 4))
+                if DEBUG_MOVEMENT:
+                    print(game.timer, &quot;DIE&quot;, self.y, threshold)
+                break
+
+        self.stomped_last_frame = stomped_any
+
+        if self.landed():
+            self.dash_allowed = True
+
+        self.dash_timer -= 1
+        self.dash_animation_timer += 1
+        self.cached_jump_input_timer -= 1
+        self.coyote_time -= 1
+        self.wall_jump_coyote_time -= 1
+
+        if self.dash_timer &gt; Player.DASH_TIMER_TRAIL_CUTOFF:
+            if self.dash_timer % Player.DASH_TRAIL_INTERVAL == 0:
+                game.animations.append(DashTrail(self.pos, self.last_dash_sprite))
+
+        dx = 0  # X direction we tried to move this frame, zero if we are standing still
+
+        jump_pressed = self.controls.button_pressed(0)
+
+        if jump_pressed and DEBUG_MOVEMENT:
+            print(game.timer, &quot;jump pressed&quot;)
+
+        #print(game.timer, self.cached_jump_input_timer, self.wall_jump_coyote_time)
+
+        if self.hurt:
+            # We&#x27;ve just been hurt. We&#x27;re dropping out of the level, so check for our sprite reaching a certain Y
+            # coordinate before setting hurt to False. Code further down will make the player respawn.
+            self.gravity_enabled = True
+            if self.top &gt;= HEIGHT:
+                self.hurt = False
+
+        elif self.dash_timer &gt; 0:
+            # Update dash
+            # For first few frames of dash, equating to dash_timer being above DASH_TIME, player doesn&#x27;t move
+            if self.dash_timer &lt; Player.DASH_TIME:
+                if self.dash_timer % Player.DASH_TRAIL_INTERVAL == 0:
+                    game.animations.append(DashTrail(self.pos, self.last_dash_sprite))
+
+                # A dash may be vertical, horizontal or diagonal
+                # The horizontal and vertical components of the velocity are applied separately, to improve how
+                # collision detection works
+
+                # Apply vertical component of dash
+                self.move(0, sign(self.vel_y), abs(self.vel_y))
+
+                # Apply horizontal component of dash
+                if self.move(sign(self.vel_x), 0, abs(self.vel_x)) and self.vel_y &gt;= 0:
+                    # If we hit a wall, and are not travelling up, end the dash
+                    self.dash_timer = 0
+                    self.grabbed_wall = self.facing_x
+
+        else:
+            # We&#x27;re not hurt or dashing
+            # We&#x27;re either on a wall, jumping/falling or walking
+
+            # Get keyboard input. dx represents the direction the player is facing
+            dx = self.controls.get_x()
+
+            def jump():
+                if DEBUG_MOVEMENT:
+                    print(game.timer, &quot;JUMP&quot;)
+                self.vel_y = JUMP_VEL_Y
+                self.fall_state = GravityActor.FallState.JUMPING
+                self.coyote_time = 0
+                self.cached_jump_input_timer = 0
+                self.lower_gravity_timer = 5
+                self.fall_timer = 0
+                game.play_sound(&quot;jump&quot;)
+
+            def wall_jump(wall_direction):
+                if DEBUG_MOVEMENT:
+                    print(game.timer, &quot;WALL JUMP&quot;, wall_direction)
+                self.vel_y = JUMP_VEL_Y
+                self.fall_state = GravityActor.FallState.WALL_JUMPING
+                self.vel_x = -wall_direction * WALL_JUMP_X_VEL
+                self.facing_x = -wall_direction
+                self.grabbed_wall = 0
+                self.previous_grabbed_wall = 0
+                self.wall_jump_coyote_time = 0
+                self.cached_jump_input_timer = 0
+                self.fall_timer = 0
+                game.play_sound(&quot;jump&quot;)
+
+            # Non-zero means we&#x27;re grabbing a wall
+            if self.grabbed_wall != 0:
+                # Wall slide
+                self.gravity_enabled = False
+
+                # Check for wall jump
+                if jump_pressed or self.cached_jump_input_timer &gt; 0:
+                    if DEBUG_MOVEMENT:
+                        print(game.timer, &quot;wall jump&quot;, self.vel_x)
+                    wall_jump(self.grabbed_wall)
+
+                # Check if player is pushing away from the wall
+                elif dx == -self.grabbed_wall:
+                    if DEBUG_MOVEMENT:
+                        print(game.timer, &quot;ungrab wall&quot;, self.grabbed_wall)
+                    self.previous_grabbed_wall = self.grabbed_wall
+                    self.wall_jump_coyote_time = WALL_JUMP_COYOTE_TIME
+                    self.grabbed_wall = 0
+
+                else:
+                    # Slowly slide down wall, stop grabbing if we hit the floor or the wall is no longer there (because
+                    # we slid off the bottom of it)
+                    if DEBUG_MOVEMENT:
+                        print(game.timer, &quot;slide&quot;, self.grabbed_wall)
+
+                    rect = self.get_rect(self.x + self.grabbed_wall, self.y)
+
+                    if self.move(0, 1, 1) or not game.position_blocked(rect):
+                        self.grabbed_wall = 0
+                        if DEBUG_MOVEMENT:
+                            print(game.timer, &quot;slide landed or wall gone&quot;)
+
+            else:
+                # Not grabbing a wall
+                # Check for coyote time wall jump, i.e. a wall jump just after we let go of the wall
+
+                # debug
+                if DEBUG_MOVEMENT and self.wall_jump_coyote_time &gt; 0:
+                    print(game.timer, &quot;remaining wall_jump_coyote_time&quot;, self.wall_jump_coyote_time)
+
+                if jump_pressed and self.wall_jump_coyote_time &gt; 0:
+                    if DEBUG_MOVEMENT:
+                        print(game.timer, &quot;coyote wall jump&quot;)
+                    wall_jump(self.previous_grabbed_wall)
+
+                else:
+                    # Normal movement
+                    self.gravity_enabled = True
+                    if dx == 0:
+                        # No horizontal input - come to a halt over several frames
+                        self.vel_x = move_towards(self.vel_x, 0, 1)
+                    else:
+                        # Horizontal input - apply to x velocity
+                        self.facing_x = dx
+                        self.vel_x = move_towards(self.vel_x, Player.MAX_X_RUN_SPEED * dx, 1)
+
+                    # Apply x velocity
+                    # Start grabbing wall if we hit a wall and our y velocity is downwards
+                    # Note: order of checks matters, self.move may cause us to move so must come before vel_y check
+                    if self.vel_x != 0 and self.move(sign(self.vel_x), 0, abs(self.vel_x)) and self.vel_y &gt; 0:
+                        if DEBUG_MOVEMENT:
+                            print(game.timer, &quot;grab&quot;)
+                        self.grabbed_wall = sign(self.vel_x)
+
+                        # Cancel horizontal velocity on hitting wall
+                        self.vel_x = 0
+
+                    if (jump_pressed or self.cached_jump_input_timer &gt; 0) and (self.landed() or self.coyote_time &gt; 0):
+                        # Jump
+                        if DEBUG_MOVEMENT:
+                            if not jump_pressed:
+                                print(game.timer, &quot;cached jump&quot;)
+                            if not self.landed():
+                                print(game.timer, f&quot;coyote time jump {self.coyote_time}&quot;)
+                        jump()
+
+                    elif jump_pressed and not self.landed():
+                        # Cache jump input for a few frames, so that if the player lands just after pressing jump,
+                        # a jump will be initiated
+                        self.cached_jump_input_timer = CACHE_JUMP_INPUT_TIME
+
+                    elif not self.landed() and self.vel_y &lt; 0 and not self.controls.button_down(0) and self.dash_timer &lt; -10 and self.enemy_stomped_timer &lt;= 0:
+                        # In the air and moving up, haven&#x27;t finished dashing in last few frames
+                        # Upward velocity drops off faster if player has let go of the jump button (unless they just
+                        # stomped an enemy)
+                        self.vel_y = min(self.vel_y + 1, 0)
+
+                    if self.dash_allowed and self.controls.button_pressed(1):
+                        # Dash
+                        dy = self.controls.get_y()
+                        if dx != 0 or dy != 0:
+                            if DEBUG_MOVEMENT:
+                                print(game.timer, &quot;dash&quot;)
+                            v = pygame.math.Vector2(dx, dy).normalize() * Player.DASH_SPEED
+                            self.vel_x = int(v.x)
+                            self.vel_y = int(v.y)
+                            self.gravity_enabled = False
+                            self.dash_allowed = False
+                            self.dash_timer = Player.DASH_TIME + Player.DASH_PAUSE_TIME
+                            self.dash_animation_timer = 0
+                            self.fall_state = GravityActor.FallState.FALLING
+                            self.wall_jump_coyote_time = 0
+                            game.play_sound(&quot;jump_long&quot;, 5)
+
+        # When we change direction, our X velocity will be different from our facing direction (dx)
+        # We set a change direction timer which then counts down, while it&#x27;s above zero we play the change
+        # direction animation
+        if sign(dx) != sign(self.vel_x) and self.dash_timer &lt;= 0:
+            self.change_direction_timer = 5
+        else:
+            self.change_direction_timer -= 1
+
+        # Update sprite
+        self.determine_sprite(dx)
+
+        # Update fall timer after choosing sprite so that we don&#x27;t just skip frame 0
+        # Don&#x27;t increase fall timer if we&#x27;re dashing
+        if not self.landed() and self.dash_timer &lt;= 0:
+            self.fall_timer += 1
+
+        # Update replay data
+        self.replay_data.append( (self.pos, game.level_index, self.image) )
+
+    def determine_sprite(self, dx):
+        # Set sprite image. If we&#x27;re currently hurt, the sprite will flash on and off on alternate frames.
+        # dx is X direction we tried to move this frame, zero if there was no control input
+        self.image = self.flame.image = &quot;blank&quot;
+        # Flame has different anchor point depending on whether we&#x27;re dashing
+        self.flame.anchor = ANCHOR_FLAME
+        if not self.hurt or game.timer % 2 == 1:
+            # Example sprite name: &quot;run_0_3&quot; - first number is direction (0 right, 1 left), second is the frame number
+            dir_index = &quot;1&quot; if self.facing_x &lt; 0 else &quot;0&quot;
+            if self.hurt:
+                # no flame for this animatoin
+                frame = min(self.fall_timer // 8, 5)
+                self.image = f&quot;die_{frame}&quot;
+                self.flame_image = &quot;blank&quot;
+
+            elif self.grabbed_wall != 0 and self.vel_y &gt;= 0:
+                # We don&#x27;t do wall slide animation if we&#x27;re moving upward
+                self.image = f&quot;climb_{dir_index}_1&quot;
+                self.flame.image = f&quot;flame_climb_{dir_index}_1&quot;
+
+            elif not self.landed():
+                # In air
+                if self.fall_state == GravityActor.FallState.JUMPING:
+                    frame = min(self.fall_timer // 3, 5)
+                    flame_frame = min(self.fall_timer // 3, 5) + 1
+                    self.image = f&quot;jump_{dir_index}_{frame}&quot;
+                    self.flame.image = f&quot;flame_jump_{dir_index}_{flame_frame}&quot;
+                elif self.fall_state == GravityActor.FallState.WALL_JUMPING:
+                    frame = min(self.fall_timer // 8, 2)
+                    flame_frame = min(self.fall_timer // 4, 6)
+                    self.image = f&quot;wall_jump_{dir_index}_{frame}&quot;
+                    self.flame.image = f&quot;flame_wall_jump_{dir_index}_{flame_frame}&quot;
+                elif self.dash_timer &gt; 0:
+                    # Choose a dash sprite and update self.last_dash_image
+                    # Initially all dash directions use dash_start_0/1 (depending on facing direction), before
+                    # switching to specific frames for different dash directions
+                    if self.dash_animation_timer &lt; 4:
+                        flame_frame = self.dash_animation_timer // 2
+                        self.image = self.last_dash_sprite = &quot;dash_start_&quot; + dir_index
+                        self.flame.image = f&quot;flame_dash_start_{dir_index}_{flame_frame}&quot;
+                        self.flame.anchor = ANCHOR_FLAME
+                    else:
+                        timer = self.dash_animation_timer - 4
+                        frame = min(timer // 3, 2)
+                        flame_frame = min(timer // 3, 7)
+                        sprite = &quot;dash_&quot;
+                        if self.vel_y &lt; 0:
+                            sprite += &quot;up_&quot;
+                        elif self.vel_y &gt; 0:
+                            sprite += &quot;down_&quot;
+                        if self.vel_x != 0:
+                            sprite += &quot;horizontal_&quot;
+                        self.image = self.last_dash_sprite = f&quot;{sprite}{dir_index}_{frame}&quot;
+                        self.flame.image = f&quot;flame_{sprite}{dir_index}_{flame_frame}&quot;
+                        self.flame.anchor = ANCHOR_FLAME_DASH
+                else:
+                    # For flame, use frames 4 and 5 of wall jump
+                    frame = min(self.fall_timer // 8, 1)
+                    flame_frame = min(self.fall_timer // 8, 1) + 4
+                    self.image = f&quot;fall_{dir_index}_{frame}&quot;
+                    self.flame.image = f&quot;flame_wall_jump_{dir_index}_{flame_frame}&quot;
+
+            elif dx == 0:
+                self.image = &quot;stand_front&quot;
+                self.flame.image = f&quot;flame_stand_{(game.timer // 4) % 8}&quot;
+
+            elif self.change_direction_timer &gt; 0:
+                # If change_direction_timer is positive, use change direction frame
+                self.image = f&quot;change_dir_{dir_index}_0&quot;
+                self.flame.image = f&quot;flame_change_dir_{dir_index}_{(game.timer // 4) % 3}&quot;
+            else:
+                # 8 frames of the run animation, switch animation frame every 4 game frames
+                frame = (game.timer // 4) % 8
+                self.image = f&quot;run_{dir_index}_{frame}&quot;
+                self.flame.image = f&quot;flame_run_{dir_index}_{(game.timer // 4) % 8}&quot;
+
+    def draw(self):
+        super().draw()
+
+        self.flame.pos = self.pos
+        self.flame.draw()
+
+        if DEBUG_SHOW_PLAYER_COLLISION_RECT:
+            # Show collision rectangle
+            screen.draw.rect(self.get_rect(), (255,255,255))
+
+    def get_collidable_width(self):
+        return PLAYER_WIDTH
+
+    def get_collidable_height(self):
+        return PLAYER_HEIGHT
+
+class GhostPlayer(Actor):
+    def __init__(self, replay_data):
+        super().__init__(&quot;blank&quot;, replay_data[0][0], ANCHOR_PLAYER)
+        self.replay_data = replay_data
+        self.replay_frame = 0
+        self.level = 0
+
+    def update(self):
+        self.replay_frame += 1
+        if self.replay_frame &lt; len(self.replay_data):
+            self.pos, self.level, sprite = self.replay_data[self.replay_frame]
+            if sprite == &quot;blank&quot;:
+                self.image = &quot;blank&quot;
+            else:
+                self.image = &quot;ghost_&quot; + sprite
+
+    def draw(self):
+        # Only draw if we&#x27;re on the same level as the actual player
+        if self.level == game.level_index:
+            super().draw()
+
+class Enemy(GravityActor):
+    def __init__(self, pos, type, biome, direction_x=1, appearance_count=1):
+        # Type must be a number from 0 to 3. 0 and 1 are both flying robots which don&#x27;t have different frames for facing
+        # left or right. 2 and 3 are non-flying robots which do have left/right facing frames.
+
+        super().__init__(pos, gravity_enabled=not ENEMY_TYPES_FLYING[biome][type], anchor=ENEMY_TYPES_ANCHOR_POINTS[biome][type])
+
+        self.direction_x = direction_x
+        self.type = type
+        self.biome = biome
+
+        self.health = ENEMY_TYPES_HEALTH[type]
+        self.speed = ENEMY_TYPES_SPEED[type]
+
+        # Flying enemies which are on their third appearance will move diagonally
+        self.direction_y = 1 if appearance_count &gt;= 3 and not self.gravity_enabled else 0
+
+        # Robot types 2 and 3, and fly/ghost have different sprites for facing left/right
+        self.use_directional_sprites = (self.biome == Biome.CASTLE and self.type &gt;= 2) or (self.biome == Biome.FOREST and self.type &lt; 2)
+
+        self.dying = False
+        self.stomped_timer = 0
+
+    def update(self):
+        super().update(detect=not self.dying)
+
+        if not self.dying:
+            self.stomped_timer -= 1
+
+            # Don&#x27;t move on x axis if falling. Flying enemies are always counted as falling by GravityActor, they
+            # should move regardless.
+            if not self.gravity_enabled or self.fall_state != GravityActor.FallState.FALLING:
+                # Move in current direction - turn around if we hit a wall
+                if self.move(self.direction_x, 0, self.speed):
+                    self.direction_x = -self.direction_x
+                if self.direction_y != 0 and self.move(0, self.direction_y, self.speed):
+                    self.direction_y = -self.direction_y
+
+        # Choose and set sprite image
+        image = ENEMY_SPRITE_NAMES[self.biome][self.type]
+        if self.use_directional_sprites:
+            direction_idx = &quot;1&quot; if self.direction_x &gt; 0 else &quot;0&quot;
+            image += &quot;_&quot; + str(direction_idx)
+        image += &quot;_&quot; + str((game.timer // 4) % 8) # 8 frames of animation
+        if self.stomped_timer &gt; 0 or self.dying:
+            image += &quot;_hit&quot;
+        self.image = image
+
+    def stomped(self):
+        # Don&#x27;t lose health or play sound effect if we&#x27;re being stomped multiple frames in a row
+        if self.stomped_timer &lt;= 0:
+            self.health -= 1
+            if self.health &lt;= 0:
+                self.destroy()
+                game.play_sound(&quot;enemy_death&quot;, 5)
+            else:
+                game.play_sound(&quot;enemy_take_damage&quot;, 5)
+        self.stomped_timer = 2
+
+    def destroy(self):
+        self.dying = True
+        self.gravity_enabled = True
+
+        # Create explosion animation. Do this before gain_time so it appears underneath gain time animation
+        explosion_sprite = &quot;explosion&quot; if self.type &gt; 1 else &quot;air_explosion&quot;
+        game.animations.append(Animation(self.pos, explosion_sprite + &quot;_{0}&quot;, 12, 4, ANCHOR_CENTRE_BOTTOM))
+
+        # Destroying an enemy always gains 3 seconds of time
+        game.gain_time(STOMP_ENEMY_TIME_BONUS, self.centerx, self.centery)
+
+    def get_collidable_width(self):
+        return ENEMY_TYPES_WIDTH_OVERRIDES[self.biome][self.type]
+
+    def get_collidable_height(self):
+        return ENEMY_TYPES_HEIGHT_OVERRIDES[self.biome][self.type]
+
+    def draw(self):
+        super().draw()
+
+        if DEBUG_SHOW_ENEMY_COLLISION_RECTS:
+            # Show collision rectangle
+            screen.draw.rect(self.get_rect(), (255,255,255))
+
+class Game:
+    def __init__(self, player=None, replays=None):
+        self.player = player
+
+        # Gem class is told via a static method that a new game has started, so it can reset the next gem type variable
+        Gem.new_game()
+
+        self.ghost_players = []
+        if replays is not None:
+            for replay in replays:
+                self.ghost_players.append(GhostPlayer(replay))
+
+        self.timer = 0
+        self.time_remaining = INITIAL_TIME_REMAINING * 60
+        self.time_pickup_bonus = INITIAL_PICKUP_TIME_BONUS
+        self.gained_time_timer = 0
+
+        self.level_index = (INITIAL_LEVEL_CYCLE * len(LEVEL_SEQUENCE)) - 1
+
+        self.level_text = &quot;&quot;
+
+        # These are set during load_level
+        self.grid = None
+        self.tileset_image = None
+        self.background_image = None
+        self.background_y_offset = 0
+
+        self.next_level()
+
+    def next_level(self):
+        self.level_index += 1
+
+        # If the new level is a repeat of the first level, reduce self.time_pickup_bonus by 1 (to a minimum of 0.5)
+        if self.level_index != 0 and self.level_index % len(LEVEL_SEQUENCE) == 0:
+            if self.time_pickup_bonus &gt; 1:
+                self.time_pickup_bonus -= 1
+            elif self.time_pickup_bonus == 1:
+                self.time_pickup_bonus = 0.5
+
+        self.block_rects = []
+        self.doors = []
+        self.gems = []
+        self.enemies = []
+        self.animations = []
+        self.level_text = &quot;&quot;
+
+        # Set up level
+        level_filename = LEVEL_SEQUENCE[self.level_index % len(LEVEL_SEQUENCE)]
+        player_start_pos = self.load_level(level_filename)
+
+        self.exit_open = False
+
+        if self.player is not None:
+            self.player.new_level(player_start_pos)
+
+        # Generate collidable areas
+        self.generate_block_rects()
+
+        if self.player:
+            self.player.reset()
+
+        self.play_sound(&quot;new_wave&quot;)
+
+    def load_level(self, filename):
+        # Returns player start pos, or (0,0) if none is found
+        player_start_pos = (0, 0)
+
+        # 0 for first time through the levels, 1 for second, etc
+        level_cycle = self.level_index // len(LEVEL_SEQUENCE)
+
+        # sys.path[0] gets the folder containing the Python file we&#x27;re running
+        # This is necessary because we could be running in an IDE where the default working folders is not the script
+        # folder but is instead the parent folder, or we could be running preinstalled on a Raspberry Pi in which case
+        # the current working folder is the user&#x27;s home folder
+        path = os.path.join(sys.path[0], &quot;tilemaps&quot;)
+
+        # The map and tileset files are XML files. We&#x27;re using Python&#x27;s built in ElementTree module (aliased here as ET)
+        # to access the tags/nodes within the XML files.
+        map_tree = ET.parse(os.path.join(path, filename))
+        map_root = map_tree.getroot()
+
+        # Load background
+        properties_node = map_root.find(&quot;properties&quot;)
+        self.background_image = properties_node.find(&quot;./property[@name=&#x27;Background&#x27;]&quot;).attrib[&quot;value&quot;]
+        bg_offset_node = properties_node.find(&quot;./property[@name=&#x27;Background Offset Y&#x27;]&quot;)
+        self.background_y_offset = int(bg_offset_node.attrib[&quot;value&quot;]) if bg_offset_node is not None else 0
+
+        # Load biome (used for determining which types of enemies and doors to generate)
+        biome_node = properties_node.find(&quot;./property[@name=&#x27;biome&#x27;]&quot;)
+        biome_name = biome_node.attrib[&quot;value&quot;] if biome_node is not None else &quot;&quot;
+        biome = Biome[biome_name.upper()]
+
+        # Default level name text - may be replaced by tutorial text below
+        self.level_text = &quot;LEVEL &quot; + str(self.level_index + 1)
+
+        # Set up level tutorial text - only the first time we go round the levels.
+        # Some text will have parts which we need to substitute
+        # Use blank level text if there is no player object (i.e. we&#x27;re on the main menu)
+        tutorial_text_node = properties_node.find(&quot;./property[@name=&#x27;TutorialText&#x27;]&quot;)
+        if self.player is not None and tutorial_text_node is not None:
+            tutorial_text = tutorial_text_node.attrib[&quot;value&quot;]
+            if level_cycle == 0 and len(tutorial_text) &gt; 0:
+                dash_button_name = self.player.controls.button_name(&quot;dash&quot;)
+                jump_button_name = self.player.controls.button_name(&quot;jump&quot;)
+                self.level_text = tutorial_text.replace(&quot;{DASH}&quot;, dash_button_name).replace(&quot;{JUMP}&quot;, jump_button_name)
+
+        # The map data consists of a comma-separated list of integers specifying tile IDs
+        # The XML path is map/layer/data
+        layer_node = map_root.find(&quot;layer&quot;)
+        map_width = int(layer_node.attrib.get(&quot;width&quot;))
+        map_height = int(layer_node.attrib.get(&quot;height&quot;))
+        map_data = layer_node.find(&quot;data&quot;).text.split(&quot;,&quot;)
+
+        # Convert map data from CSV into a 2D list of ints
+        # We subtract 1 from each tile ID because we want the tile IDs to start from 0 (signifying the top left of the
+        # tileset image) rather than 1. This means that empty tile will now have an ID of -1
+        self.grid = []
+        for row in range(map_height):
+            # Extract each row from the map data
+            row_start_index = row * map_width
+            current_row = [int(tile) - 1 for tile in map_data[row_start_index:row_start_index+map_width]]
+            self.grid.append(current_row)
+
+        # Read object layer, which specifies things like the player start position, gems and enemies
+        object_group_node = map_root.find(&quot;objectgroup&quot;)
+        if object_group_node is not None:
+            for object_node in object_group_node.findall(&quot;object&quot;):
+                object_name = object_node.attrib[&quot;name&quot;]
+
+                # Extract the object position. Why do we write &#x27;int(float(...))&#x27;? Because the number is read from the
+                # file as a string, and we&#x27;d like it as an int, but we also want to ignore anything after the
+                # decimal point, which we don&#x27;t care about. We can&#x27;t convert directly from string to int because
+                # that would fail when it encountered a number with a decimal point.
+                object_pos = (int(float(object_node.attrib[&quot;x&quot;])), int(float(object_node.attrib[&quot;y&quot;])))
+                if object_name == &quot;PlayerStart&quot;:
+                    player_start_pos = object_pos
+
+                elif object_name == &quot;Gem&quot;:
+                    self.gems.append(Gem(object_pos))
+
+                elif &quot;Enemy&quot; in object_name:
+                    # Enemies have names such as &quot;EnemyR00&quot; where L/R indicate their initial facing direction, the
+                    # first number indicates the enemy type (0 to 3), and the final number indicates the level cycle
+                    # during which they first show up. Some enemies only show up on the second or third cycle through
+                    # the levels
+                    enemy_level_cycle = int(object_name[-1])
+                    appearance_count = (level_cycle - enemy_level_cycle) + 1
+                    if appearance_count &gt;= 1:
+                        facing = 1 if object_name[-3] == &quot;R&quot; else -1
+                        enemy_type = int(object_name[-2])
+                        self.enemies.append(Enemy(object_pos, enemy_type, biome, facing, appearance_count))
+
+                elif &quot;Door&quot; in object_name:
+                    variant_node = object_node.find(&quot;./properties/property[@name=&#x27;Variant&#x27;]&quot;)
+                    biome_node = object_node.find(&quot;./properties/property[@name=&#x27;Biome&#x27;]&quot;)
+                    variant = variant_node.attrib[&quot;value&quot;] if variant_node is not None else 0
+                    door_biome_name = biome_node.attrib[&quot;value&quot;] if biome_node is not None else biome_name
+                    entrance = &quot;Entrance&quot; in object_name
+                    self.doors.append(Door(object_pos, door_biome_name, variant, entrance))
+
+        # For the purpose of simplicity we assume that each map file only uses one tileset, which will be either the
+        # forest or castle tileset. The tileset filename is specified in the &#x27;tileset&#x27; tag within the root node
+        tileset_filename = map_root.find(&quot;tileset&quot;).attrib.get(&quot;source&quot;)
+
+        # Read tileset file, which specifies which tiles are collidable
+        self.collision_tiles = set()
+        tileset_xml = ET.parse(os.path.join(path, tileset_filename))
+        for tile_node in tileset_xml.getroot().findall(&quot;tile&quot;):
+            # For now we&#x27;ll just assume that any tile which has a node, has collision
+            self.collision_tiles.add(int(tile_node.attrib[&quot;id&quot;]))
+
+        # Load tileset image (if we haven&#x27;t loaded it already)
+        tileset_image_filename = tileset_xml.getroot().find(&quot;image&quot;).attrib[&quot;source&quot;]
+        if tileset_image_filename not in tileset_images:
+            tileset_images[tileset_image_filename] = pygame.image.load(os.path.join(path, tileset_image_filename))
+        self.tileset_image = tileset_images[tileset_image_filename]
+
+        return player_start_pos
+
+    def generate_block_rects(self):
+        self.block_rects = []
+        current_rect = None
+
+        def add():
+            nonlocal current_rect
+            self.block_rects.append(current_rect)
+            current_rect = None
+
+        # Horizontal rows
+        for gy in range(len(self.grid)):
+            row = self.grid[gy]
+            for gx in range(len(row)):
+                if row[gx] in self.collision_tiles:
+                    pos_x = gx * GRID_BLOCK_SIZE
+                    pos_y = gy * GRID_BLOCK_SIZE
+                    # Is this the start of a new block rect?
+                    if current_rect is None:
+                        current_rect = Rect(pos_x, pos_y, GRID_BLOCK_SIZE, GRID_BLOCK_SIZE)
+                    else:
+                        # Continue existing rect
+                        current_rect.w += GRID_BLOCK_SIZE
+
+                elif current_rect is not None:
+                    add()
+            if current_rect is not None:
+                add()
+
+        # Now consolidate vertically
+        # Keep joining rectangles with rectangles of equal width directly below, until there are no more such
+        # matches
+
+        def find_equal_width_block_below(current):
+            # Returns a block with the same X coordinate and width, which is immediately below the current block,
+            # or None if no such block exists
+            result = [rect for rect in self.block_rects if rect.x == current.x and rect.w == current.w and rect.y == current.y + current.h]
+            return result[0] if len(result) &gt; 0 else None
+
+        any_found = True
+        while any_found:
+            any_found = False
+            for current in self.block_rects:
+                equal_below = find_equal_width_block_below(current)
+                if equal_below is not None:
+                    # Extend the height of the current block and remove the one below
+                    current.h += equal_below.h
+                    self.block_rects.remove(equal_below)
+                    any_found = True
+                    break
+
+        # Final step: any block rects aligning with the top of the level have their height increased so it extends
+        # above the level, to prevent standing on top of the trees off the top of the screen
+        for rect in self.block_rects:
+            if rect.top == 0:
+                height = rect.height
+                rect.top = LEVEL_Y_BOUNDARY
+                rect.height = height + -LEVEL_Y_BOUNDARY
+
+    def update(self):
+        self.timer += 1
+        self.gained_time_timer -= 1
+
+        if self.time_remaining &gt; 0:
+            self.time_remaining -= 1
+
+        # Update all objects
+        for obj in [self.player] + self.doors + self.animations + self.gems + self.enemies + self.ghost_players:
+            if obj:
+                obj.update()
+
+        # Remove expired enemies, dash trails, gems and animations
+        self.enemies = [enemy for enemy in self.enemies if enemy.top &lt; HEIGHT]
+        self.animations = [anim for anim in self.animations if not anim.finished()]
+        self.gems = [gem for gem in self.gems if not gem.collected]
+
+        # Check stuff to do with opening exit door and exiting level (but not if we&#x27;re on the main menu)
+        if self.player is not None:
+            if self.exit_open:
+                # Check for the player leaving the level
+                if self.player.centerx &gt;= WIDTH:
+                    self.next_level()
+
+            elif len(self.gems) == 0:
+                # All gems collected, open the exit door
+                self.exit_open = True
+                for door in self.doors:
+                    door.open()
+
+    def draw(self):
+        # Draw appropriate background for this level
+        screen.blit(self.background_image, (0, self.background_y_offset))
+
+        # Draw level tiles
+        tileset_w = self.tileset_image.get_width()
+        tileset_grid_w = tileset_w // GRID_BLOCK_SIZE
+        for row_y in range(len(self.grid)):
+            row = self.grid[row_y]
+            x = 0
+            for tile in row:
+                if tile &gt;= 0:
+                    # Get sprite from tileset based on ID
+                    tileset_grid_y = tile // tileset_grid_w
+                    tileset_grid_x = tile % tileset_grid_w
+                    # Have to use screen.surface.blit instead of screen.blit as the latter is a Pygame Zero method which
+                    # passes through to the Pygame version but doesn&#x27;t support the optional area parameter
+                    tile_rect = Rect(tileset_grid_x * GRID_BLOCK_SIZE, tileset_grid_y * GRID_BLOCK_SIZE, GRID_BLOCK_SIZE, GRID_BLOCK_SIZE)
+                    screen.surface.blit(self.tileset_image, (x, row_y * GRID_BLOCK_SIZE), area=tile_rect)
+                x += GRID_BLOCK_SIZE
+
+        # Draw all objects, in this order
+        for obj in self.ghost_players + self.doors + self.animations + [self.player] + self.gems + self.enemies:
+            if obj is not None:
+                obj.draw()
+
+        # DEBUG - draw block rects
+        if DEBUG_SHOW_BLOCK_COLLISION_RECTS:
+            for rect in self.block_rects:
+                screen.draw.rect(rect, (255,255,255))
+
+        self.draw_ui()
+
+    def draw_ui(self):
+        # Display level text and background
+        pygame.draw.rect(screen.surface, (0,54,255), Rect(0,500,WIDTH, 50))
+        screen.blit(&quot;text_area_frame&quot;, (0, 500))
+        draw_text(self.level_text, WIDTH // 2, 508, align=TextAlign.CENTRE)
+
+        # Show background sprite for time remaining
+        screen.blit(&quot;status_back&quot;, (WIDTH // 2 - 297 // 2, 0))
+
+        # Show time remaining
+        # Use bright font if player has just gained time
+        font = &quot;font&quot; if self.gained_time_timer &lt; 0 else &quot;fontbr&quot;
+        draw_text(f&quot;{self.time_remaining / 60:.1f}&quot;, WIDTH // 2, 10, align=TextAlign.CENTRE, font=font)
+
+        if DEBUG_SHOW_FRAME_NUMBER:
+            draw_text(str(game.timer), WIDTH // 2, 0, align=TextAlign.CENTRE)
+
+    def gain_time(self, time, x, y):
+        game.time_remaining += time * 60
+        time_added_id = &quot;half&quot; if time == 0.5 else str(time)
+        format_str = &quot;timer_plus_&quot; + time_added_id + &quot;_{0}&quot;
+        game.animations.append(Animation((x,y), format_str, 14, 4, initial_delay=5, rise_time=34))
+        game.animations.append(Animation((x,y), &quot;pickup_{0}&quot;, 8, 4))
+        self.gained_time_timer = 20
+
+    def position_blocked(self, rect):
+        # Check collision with block tiles
+        for block_rect in self.block_rects:
+            if rect.colliderect(block_rect):
+                # print(&quot; blocked&quot;)
+                return True
+
+        # Check collision with door
+        for door in self.doors:
+            if not door.is_fully_open() and door.colliderect(rect):
+                return True
+
+        # Don&#x27;t allow going off left side of screen, or above vertical boundary
+        # We do need to allow player to go off right side of screen so they can go
+        # through the exit door
+        if rect.left &lt;= 0 or rect.top &lt; LEVEL_Y_BOUNDARY:
+            return True
+
+        return False
+
+    def play_sound(self, name, count=1):
+        # Some sounds have multiple varieties. If count &gt; 1, we&#x27;ll randomly choose one from those
+        # We don&#x27;t play any sounds if there is no player (e.g. if we&#x27;re on the menu)
+        if self.player:
+            try:
+                # Pygame Zero allows you to write things like &#x27;sounds.explosion.play()&#x27;
+                # This automatically loads and plays a file named &#x27;explosion.wav&#x27; (or .ogg) from the sounds folder (if
+                # such a file exists)
+                # But what if you have files named &#x27;explosion0.ogg&#x27; to &#x27;explosion5.ogg&#x27; and want to randomly choose
+                # one of them to play? You can generate a string such as &#x27;explosion3&#x27;, but to use such a string
+                # to access an attribute of Pygame Zero&#x27;s sounds object, we must use Python&#x27;s built-in function getattr
+                sound = getattr(sounds, name + str(randint(0, count - 1)))
+                sound.play()
+            except Exception as e:
+                # If no sound file of that name was found, print the error that Pygame Zero provides, which
+                # includes the filename.
+                # Also occurs if sound fails to play for another reason (e.g. if this machine has no sound hardware)
+                print(e)
+
+def get_char_image_and_width(char, font):
+    # Return width of given character. ord() gives the Unicode code for the given character.
+    if char == &quot; &quot;:
+        return None, 22
+    else:
+        if char in SPECIAL_FONT_SYMBOLS_INVERSE:
+            image = getattr(images, SPECIAL_FONT_SYMBOLS_INVERSE[char])
+        else:
+            # Format character code to always be 3 digits, with zeroes on the left - e.g. 65 becomes 065
+            image = getattr(images, f&quot;{font}{ord(char):03d}&quot;)
+        return image, image.get_width()
+
+def text_width(text, font):
+    return sum([get_char_image_and_width(c, font)[1] for c in text])
+
+class TextAlign(Enum):
+    LEFT = 0
+    CENTRE = 1
+    RIGHT = 2
+
+def draw_text(text, x, y, align=TextAlign.LEFT, font=&quot;font&quot;):
+    if align == TextAlign.CENTRE:
+        x -= text_width(text, font) // 2
+    elif align == TextAlign.RIGHT:
+        x -= text_width(text, font)
+
+    for char in text:
+        image, width = get_char_image_and_width(char, font)
+        if image is not None:
+            screen.blit(image, (x, y))
+        x += width
+
+class State(Enum):
+    TITLE = 1
+    CONTROLS = 2
+    PLAY = 3
+    GAME_OVER = 4
+
+def get_joystick_if_exists():
+    return pygame.joystick.Joystick(0) if pygame.joystick.get_count() &gt; 0 else None
+
+def setup_joystick_controls():
+    # We call this on startup, and keep calling it if no controller is present,
+    # so a controller can be connected while the game is open
+    global joystick_controls
+    joystick = get_joystick_if_exists()
+    joystick_controls = JoystickControls(joystick) if joystick is not None else None
+
+def update_controls():
+    keyboard_controls.update()
+    # Allow a controller to be connected while the game is open
+    if joystick_controls is None:
+        setup_joystick_controls()
+    if joystick_controls is not None:
+        joystick_controls.update()
+
+def get_save_folder():
+    # By default, we save to the same folder as the Python file
+    # But if the current working folder is the same as the user&#x27;s home folder, write save data to a subfolder of that,
+    # because the folder containing the Python file may not be writeable. This is relevant when the games are run from
+    # the pre-installed versions which come with Raspberry Pi OS
+    # On Windows, the home folder is C:\Users\&lt;username&gt;\
+    current_working_folder = os.getcwd()
+    home_folder = os.path.expanduser(&#x27;~&#x27;)
+    if current_working_folder != home_folder:
+        return sys.path[0]
+    else:
+        # Get a location within the user&#x27;s home folder, then ensure the folder exists
+        path = os.path.expanduser(&#x27;~/.code-the-classics-vol-2&#x27;)
+        if not os.path.exists(path):
+            os.makedirs(path)
+        return path
+
+def save_replays(replays):
+    # We&#x27;ll save one replay per line, with entries separated by commas
+    try:
+        with open(os.path.join(get_save_folder(), REPLAY_FILENAME), &quot;w&quot;) as file:
+            for replay in replays:
+                line = &quot;&quot;
+                for entry in replay:
+                    # Each entry consists of a position (X and Y in a tuple), level number and sprite
+                    # We&#x27;ll separate the items using commas and the entries using semicolons. It doesn&#x27;t matter what
+                    # the symbols are as long as they don&#x27;t occur within the data
+                    # Open the replays file to see what it looks like!
+                    line += f&quot;{int(entry[0][0])},{int(entry[0][1])},{entry[1]},{entry[2]};&quot;
+
+                # Write the string for the current replay to the file, removing the trailing symbol from the end, and
+                # adding a new line on the end
+                file.write(line[0:-1] + &quot;\n&quot;)
+    except Exception as e:
+        print(f&quot;Error while saving replays: {e}&quot;)
+
+def load_replays():
+    # Returns list of replays and high score
+    replays = []
+    try:
+        path = os.path.join(get_save_folder(), REPLAY_FILENAME)
+        if os.path.exists(path):
+            with open(path) as file:
+                for line in file:
+                    current_replay = []
+
+                    # Remove the newline symbol from the end of the line
+                    line = line.rstrip()
+
+                    # Split the string on semicolon to get a list of all entries for this replay
+                    entries = line.split(&quot;;&quot;)
+
+                    for entry in entries:
+                        # Within each entry, split on comma and convert each element to the correct type
+                        elements = entry.split(&quot;,&quot;)
+
+                        pos = (float(elements[0]), float(elements[1]))
+
+                        current_replay.append( (pos, int(elements[2]), elements[3]) )
+
+                    replays.append(current_replay)
+
+    except Exception as e:
+        # In case of error (eg missing file or formatting error), just return an empty list, and high score of zero
+        print(&quot;Error while loading replays: &#x27;&quot; + str(e) + &quot;&#x27;. Replay data will be reset&quot;)
+        return [], 0
+
+    # The high score is stored as the total number of frames of data in the replay with the longest length
+    high_score = 0 if len(replays) == 0 else len(max(replays, key=lambda replay: len(replay)))
+
+    return replays, high_score
+
+# Pygame Zero calls the update and draw functions each frame
+
+def update():
+    global state, game, high_score, game_over_state_timer, all_replays, total_frames
+
+    # Run in slow motion if DEBUG_SLOWMO is higher than 1
+    total_frames += 1
+    if total_frames % DEBUG_SLOWMO != 0:
+        return
+
+    update_controls()
+
+    def button_pressed_controls(button_num):
+        # Local function for detecting button 0 being pressed on either keyboard or controller, returns the controls
+        # object which was used to press it, or None if button was not pressed
+        for controls in (keyboard_controls, joystick_controls):
+            # Check for fire button being pressed on each controls object
+            # joystick_controls will be None if there no controller was connected on game startup,
+            # so must check for that
+            if controls is not None and controls.button_pressed(button_num):
+                return controls
+        return None
+
+    if state == State.TITLE:
+        # Check for player starting game with either keyboard or controller
+        if button_pressed_controls(0) is not None:
+            state = State.CONTROLS
+
+    elif state == State.CONTROLS:
+        # Check for start game
+        controls = button_pressed_controls(0)
+        if controls is not None:
+            # Switch to play state, and create a new Game object, passing it a new Player object to use
+            state = State.PLAY
+            game = Game(Player(controls), all_replays)
+            play_music(&quot;ingame_theme&quot;, 0.2)
+
+    elif state == State.PLAY:
+        if game.time_remaining &lt;= 0:
+            game.play_sound(&quot;gameover&quot;)
+            state = State.GAME_OVER
+            game_over_state_timer = 0
+
+            # Add the replay data for this game to all_replays
+            all_replays.append(game.player.replay_data)
+
+            # Ensure that all_replays never has more than 10 replays, otherwise there could be performance issues
+            if len(all_replays) &gt; MAX_REPLAYS:
+                # Sort replays by length, longest first
+                all_replays.sort(key=lambda replay: len(replay), reverse=True)
+
+                # Recreate the list, consisting of only the first 10
+                all_replays = all_replays[:MAX_REPLAYS]
+
+            save_replays(all_replays)
+        else:
+            game.update()
+
+    elif state == State.GAME_OVER:
+        # Don&#x27;t allow the player to press a button to go back to the main menu until one second has passed
+        # This prevents the issue of accidentally skipping the game over screen because the player was just starting
+        # to press the jump button as the time ran out
+        game_over_state_timer += 1
+        if game_over_state_timer &gt; 60 and button_pressed_controls(0) is not None:
+            # Update high score variable at this point
+            if game.timer &gt; high_score:
+                high_score = game.timer
+
+            # Switch to title screen state
+            state = State.TITLE
+            play_music(&quot;title_theme&quot;)
+
+def draw():
+    if state == State.TITLE:
+        # Draw title screen
+        screen.blit(&quot;title&quot;, (0, 0))
+        screen.blit(&quot;press_to_start&quot;, (0, 0))
+
+        # Draw &quot;start&quot; animation, which has 11 frames numbered 0 to 10
+        anim_frame = (total_frames // 6) % 11
+        screen.blit(&quot;start&quot; + str(anim_frame), (WIDTH//2 - 150, 360))
+
+    elif state == State.CONTROLS:
+        screen.fill((0, 0, 0))
+        screen.blit(&quot;controls&quot;, (0, 0))
+
+    elif state == State.PLAY:
+        game.draw()
+
+    elif state == State.GAME_OVER:
+        screen.fill((0,54,255))
+
+        # Display &quot;Game Over&quot; images
+        # 625 is the width of the game over images
+        anim_frame = (total_frames // 5) % 14
+        screen.blit(f&quot;gameover{anim_frame}&quot;, (WIDTH//2 - 625//2, 100))
+
+        seconds = int(game.timer / 60)
+        if seconds &gt;= 60:
+            screen.blit(&quot;survived_for_mins_seconds&quot;, (0, 0))
+            draw_text(f&quot;{seconds // 60}&quot;, 180, 270, align=TextAlign.RIGHT, font=&quot;fontlrg&quot;)
+            draw_text(f&quot;{seconds % 60}&quot;, 470, 270, align=TextAlign.CENTRE, font=&quot;fontlrg&quot;)
+        else:
+            screen.blit(&quot;survived_for_seconds&quot;, (0, 0))
+            draw_text(f&quot;{seconds}&quot;, 300, 310, align=TextAlign.RIGHT, font=&quot;fontlrg&quot;)
+
+        if game.timer &gt; high_score:
+            # Show &quot;NEW RECORD!&quot;
+            # 575 is the width of the new record images
+            anim_frame = (total_frames // 5) % 8
+            screen.blit(f&quot;newrecord{anim_frame}&quot;, (WIDTH // 2 - 575 // 2, 380))
+
+def play_music(name, volume=0.3):
+    try:
+        music.play(name)
+        music.set_volume(volume)
+    except Exception:
+        # If an error occurs (e.g. no sound hardware), ignore it
+        pass
+
+##############################################################################
+
+# Set up sound system and start music
+try:
+    # Restart the Pygame audio mixer which Pygame Zero sets up by default. We find that the default settings
+    # cause issues with delayed or non-playing sounds on some devices
+    pygame.mixer.quit()
+    pygame.mixer.init(48000, -16, 2, 1024)
+
+    play_music(&quot;title_theme&quot;)
+except Exception:
+    # If an error occurs (e.g. no sound hardware), ignore it
+    pass
+
+# Dictionary mapping tileset image filename to the loaded images, will be filled in as we load levels
+tileset_images = {}
+
+# Set up controls
+keyboard_controls = KeyboardControls()
+setup_joystick_controls()
+
+all_replays, high_score = load_replays()
+
+# Set the initial game state
+state = State.TITLE
+game = None
+
+# How long have we been in the game over state?
+game_over_state_timer = 0
+
+total_frames = 0
+
+# Tell Pygame Zero to take over
+pgzrun.go()
+</code></pre>
+</main>
+
+<script>
+window.addEventListener('load', (event) => {
+  screen.init();
+});
+</script>
+</body>
+
+</html>
