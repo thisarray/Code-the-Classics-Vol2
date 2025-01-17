@@ -4767,6 +4767,85 @@ Vecta.prototype.toString = function () {
   return `[${ this.x }, ${ this.y }]`;
 }
 
+// Set up constants
+WIDTH = 825;
+HEIGHT = 550;
+TITLE = "Eggzy";
+
+const LEVEL_SEQUENCE = ["starter1.tmx", "starter2.tmx", "starter3.tmx", "starter4.tmx",
+                        "forest1.tmx", "forest2.tmx", "forest3.tmx", "forest4.tmx", "forest9.tmx",
+                        "castle1.tmx", "castle2.tmx", "castle3.tmx", "castle4.tmx",
+                        "castle5.tmx", "castle6.tmx", "castle7.tmx", "castle8.tmx",
+                        "forest5.tmx", "forest6.tmx", "forest7.tmx", "forest8.tmx"];
+
+const GRID_BLOCK_SIZE = 25;
+const LEVEL_Y_BOUNDARY = -100;
+
+// Change to 1, 2 or 3 to start with enemies/more enemies and less bonus time for gems
+const INITIAL_LEVEL_CYCLE = 0;
+
+const INITIAL_TIME_REMAINING = 15;
+const INITIAL_PICKUP_TIME_BONUS = 2;
+const STOMP_ENEMY_TIME_BONUS = 3;
+
+// Constants affecting player movement
+const COYOTE_TIME = 6;
+const JUMP_VEL_Y = -10;
+const WALL_JUMP_X_VEL = 8;
+const WALL_JUMP_COYOTE_TIME = 15;
+const CACHE_JUMP_INPUT_TIME = 5;
+const PLAYER_WIDTH = 20;   // Width of player for the purpose of collisions - slightly smaller than the bounds of the sprite
+const PLAYER_HEIGHT = 40;  // For player head collision with ceilings
+
+const ANCHOR_CENTRE = ["center", "center"];
+const ANCHOR_CENTRE_BOTTOM = ["center", "bottom"];
+const ANCHOR_PLAYER = ["center", 60];                // Feet of player sprite are not at the bottom
+const ANCHOR_FLAME = ["center", 78];
+const ANCHOR_FLAME_DASH = ["center", 130];
+
+const Biome = Object.freeze({
+  FOREST: 0,
+  CASTLE: 1
+});
+
+// There are eight types of enemy - four per biome. Some properties are the same between the forest/castle equivalents,
+// some are different
+
+const ENEMY_SPRITE_NAMES = new Map([[Biome.CASTLE, ["robot0", "robot1", "robot2", "robot3"]],
+                                    [Biome.FOREST, ["fly", "mghost", "triffid", "bigbloom"]]]);
+
+const ENEMY_TYPES_FLYING = new Map([[Biome.CASTLE, [true, true, false, false]], [Biome.FOREST, [true, true, false, true]]]);
+
+const ENEMY_TYPES_WIDTH_OVERRIDES = new Map([[Biome.CASTLE, [30, 50, 48, 50]], [Biome.FOREST, [30, 50, 50, 50]]]);
+const ENEMY_TYPES_HEIGHT_OVERRIDES = new Map([[Biome.CASTLE, [40, 40, 60, 120]], [Biome.FOREST, [30, 65, 70, 90]]]);
+
+const ENEMY_TYPES_ANCHOR_POINTS = new Map([[Biome.CASTLE, [["center", 40], ["center", 40], ["center", 95], ["center", "bottom"]]],
+                                           [Biome.FOREST, [["center", 60], ["center", "bottom"], ["center", "bottom"], ["center", "bottom"]]]]);
+
+const ENEMY_TYPES_HEALTH = [1, 3, 1, 3];
+const ENEMY_TYPES_SPEED = [2, 1, 2, 1];
+
+const REPLAY_FILENAME = "eggzy-replays";
+const MAX_REPLAYS = 10;
+
+const DEBUG_SHOW_PLAYER_COLLISION_RECT = false;
+const DEBUG_SHOW_ENEMY_COLLISION_RECTS = false;
+const DEBUG_SHOW_BLOCK_COLLISION_RECTS = false;
+const DEBUG_SHOW_FRAME_NUMBER = false;
+const DEBUG_MOVEMENT = false;
+const DEBUG_SLOWMO = 1;        // Set to 2 or higher to run in slow motion, useful for testing animations
+
+// These symbols substitute for the controller button images when displaying text.
+// The symbols representing these images must be ones that aren't actually used themselves, e.g. we don't use the
+// percent sign in text
+const SPECIAL_FONT_SYMBOLS = new Map([['xb_a', '%'], ['xb_b', '#']]);
+
+// Create a version of SPECIAL_FONT_SYMBOLS where the keys and values are swapped
+const SPECIAL_FONT_SYMBOLS_INVERSE = new Map();
+for (let [k, v] of SPECIAL_FONT_SYMBOLS) {
+  SPECIAL_FONT_SYMBOLS_INVERSE.set(v, k);
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
