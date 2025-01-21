@@ -5057,6 +5057,25 @@ const FOREST_IDS = [
   3713, 3714, 3715, 3721, 3722, 3727, 3728, 3733, 3734
 ];
 
+function move_towards(n, target, speed) {
+  if (n < target) {
+    return Math.min(n + speed, target);
+  }
+  else {
+    return Math.max(n - speed, target);
+  }
+}
+
+function sign(x) {
+  // Returns 1, 0 or -1 depending on whether number is positive, zero or negative
+  if (x === 0) {
+    return 0;
+  }
+  else {
+    return (x < 0) ? -1 : 1;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
