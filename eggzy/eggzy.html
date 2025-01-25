@@ -5213,6 +5213,47 @@ class JoystickControls extends Controls {
   }
 }
 
+/*
+ * Class for gem pickups
+ */
+class Gem extends Actor {
+  // This is a class variable, equivalent to what is known in other languages as a static variable
+  // The variable belongs to the class as a whole rather than any one particular instance (object) of the class
+  static next_type = 1;
+
+  constructor(pos) {
+    super("blank");
+    this.anchor = ANCHOR_CENTRE_BOTTOM;
+    this.pos = pos;
+
+    // Choose which type of gem we're going to be.
+    this.type = Gem.next_type;
+
+    // Set the type of the next gem
+    Gem.next_type += 1;
+    if (Gem.next_type >= 5) {
+      Gem.next_type = 1;
+    }
+
+    this.collected = false;
+  }
+
+  update() {
+    // Does the player exist, and are they colliding with us?
+    if ((game.player != null) && game.player.collidepoint(this.center)) {
+      game.gain_time(game.time_pickup_bonus, this.centerx, this.centery);
+      game.play_sound("collect");
+      this.collected = true;  // Disappear
+    }
+
+    this.name = `gem${ this.type }_${ Math.floor(game.timer / 6) % 4 }`;
+  }
+
+  static new_game() {
+    Gem.next_type = 1;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
