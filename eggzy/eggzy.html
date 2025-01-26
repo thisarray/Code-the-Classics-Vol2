@@ -5254,6 +5254,40 @@ class Gem extends Actor {
   }
 }
 
+/*
+ * The door prevents the player from leaving a level until all gems have been collected
+ */
+class Door extends Actor {
+  constructor(pos, biome = "castle", variant = 0, already_open = false) {
+    let last_frame = (biome === "castle") ? 15 : 13,
+        frame = already_open ? last_frame : 0;
+    super(`door_${ biome }_${ variant }_${ frame }`);
+    this.anchor = [0, 0];
+    this.pos = pos;
+
+    this.biome = biome;
+    this.variant = variant;
+    this.opening = already_open;
+    this.last_frame = last_frame;
+    this.frame = frame;
+  }
+
+  update() {
+    if (this.opening && (this.frame < this.last_frame) && ((game.timer % 3) === 0)) {
+      this.frame += 1;
+      this.name = `door_${ this.biome }_${ this.variant }_${ this.frame }`;
+    }
+  }
+
+  open() {
+    this.opening = true;
+  }
+
+  is_fully_open() {
+    return (this.frame === this.last_frame);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
