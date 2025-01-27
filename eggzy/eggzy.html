@@ -5288,6 +5288,56 @@ class Door extends Actor {
   }
 }
 
+/*
+ * Used for animations such as those that appear when you pick up a gem or lose a life
+ *
+ * It cannot be named "Animation" because the Web Animation API already uses that name.
+ */
+class Animator extends Actor {
+  constructor(pos, image_format_str, num_frames, frame_interval, anchor = ANCHOR_CENTRE, initial_delay = 0, rise_time = -1) {
+    super("blank");
+    this.anchor = anchor;
+    this.pos = pos;
+    this.image_format_str = image_format_str;
+    this.num_frames = num_frames;
+    this.frame_interval = frame_interval;
+    this.timer = -initial_delay;
+    this.rise_time = rise_time;
+    this.update_image();
+  }
+
+  update() {
+    this.timer += 1;
+    this.update_image();
+
+    // Some animations start rising up after a certain time
+    if ((this.rise_time > -1) && (this.timer > this.rise_time)) {
+      this.posy -= 1;
+    }
+  }
+
+  update_image() {
+    if (this.timer < 0) {
+      this.name = "blank";
+    }
+    else {
+      let frame = Math.min(Math.floor(this.timer / this.frame_interval), this.num_frames - 1);
+      this.name = this.image_format_str.replace('{0}', frame.toFixed());
+    }
+  }
+
+  finished() {
+    return (Math.floor(this.timer / this.frame_interval) >= this.num_frames);
+  }
+}
+
+class DashTrail extends Animator {
+  constructor(pos, image) {
+    // Receive's the player's current sprite, uses the trail version of that sprite
+    super(pos, image + "_trail_{0}", 6, 5, ANCHOR_PLAYER);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
