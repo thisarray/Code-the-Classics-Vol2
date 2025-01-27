@@ -5338,6 +5338,76 @@ class DashTrail extends Animator {
   }
 }
 
+/*
+ * Base class for objects which move around the level and collide with walls, such as the player and enemies
+ */
+class CollideActor extends Actor {
+  constructor(pos, anchor = ANCHOR_CENTRE) {
+    super("blank");
+    this.anchor = anchor;
+    this.pos = pos;
+  }
+
+  move(dx, dy, speed) {
+    // Returns true if move was blocked
+    // One of dx or dy will be 0
+
+    let new_x = this.posx,
+        new_y = this.posy,
+        rect;
+
+    // Movement is done 1 pixel at a time, which ensures we don't get embedded into a wall we're moving towards
+    for (let i = 0; i < speed; i++) {
+      new_x = new_x + dx;
+      new_y = new_y + dy;
+
+      // Get the player rectangle as it would be if the position were changed to new_x, new_y
+      rect = this.get_rect(new_x, new_y);
+
+      // Does this proposed new position overlap with any of the collidable tiles, or the exit door?
+      if (game.position_blocked(rect)) {
+        //print(" blocked")
+        return true;
+      }
+
+      // We only update the object's position if there wasn't a block there.
+      this.pos = [new_x, new_y];
+      //print(" moved")
+    }
+
+    // Didn't collide with anything
+    return false;
+  }
+
+  get_rect(centre_x = null, bottom_y = null) {
+    // Returns a rectangle representing this actor, assuming it were positioned at the specified x and y coordinates
+    // (If None, we default to the actual X/Y pos of the actor)
+    // We don't use the standard Pygame Zero practice of just using the sprite bounds as the rectangle, as for the
+    // player enemies we want the collidable size to be a bit smaller than the sprite
+    if (centre_x == null) {
+      centre_x = this.posx;
+    }
+    if (bottom_y == null) {
+      bottom_y = this.posy;
+    }
+    let w = this.get_collidable_width(),
+        h = this.get_collidable_height();
+    return new Rect(centre_x - Math.floor(w / 2), bottom_y - h, w, h);
+  }
+
+  get_collidable_width() {
+    // Overridden for Player and Enemy
+    let image_surface = images[this.name];
+    return image_surface.width;
+  }
+
+  get_collidable_height() {
+    // Overridden for Player and Enemy
+    let image_surface = images[this.name];
+    return image_surface.height;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
