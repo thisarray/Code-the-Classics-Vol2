@@ -5408,6 +5408,85 @@ class CollideActor extends Actor {
   }
 }
 
+
+/*
+ * An actor who is subject to gravity, this includes the player and non-flying enemies
+ * The flying enemies do actually use this too, but disable it by setting gravity_enabled to false,
+ * demonstrating a drawback of inheritance in object-oriented programming! In a component-based
+ * system such as Unity, objects which want gravity could instead have a gravity component.
+ */
+class GravityActor extends CollideActor {
+  static MAX_FALL_SPEED = 7;
+
+  static FallState = Object.freeze({
+    LANDED: 0,
+    FALLING: 1,
+    JUMPING: 2,
+    WALL_JUMPING: 3
+  });
+
+  constructor(pos, gravity_enabled = true, anchor = ANCHOR_CENTRE_BOTTOM) {
+    super(pos, anchor);
+
+    this.gravity_enabled = gravity_enabled;
+    this.vel_y = 0;
+    this.fall_state = GravityActor.FallState.FALLING;
+    this.lower_gravity_timer = 0;
+  }
+
+  update(detect = true) {
+    if (!this.gravity_enabled) {
+      return;
+    }
+
+    this.lower_gravity_timer -= 1;
+
+    // Apply change to Y velocity
+    if ((game.timer % ((this.lower_gravity_timer > 0) ? 3 : 2)) === 0) {
+      this.vel_y = Math.min(this.vel_y + 1, GravityActor.MAX_FALL_SPEED);
+    }
+
+    // Apply gravity, without going over the maximum fall speed
+    // The detect parameter indicates whether we should check for collisions with blocks as we fall. Normally we
+    // want this to be the case - hence why this parameter is optional, and is True by default. If the player is
+    // in the process of losing a life, however, we want them to just fall out of the level, so False is passed
+    // in this case.
+    if (detect && (this.vel_y !== 0)) {
+      // Move vertically in the appropriate direction, at the appropriate speed
+      // Set landed to false, if we're on the floor it'll be set to true again below, otherwise it will remain
+      // false
+      if (DEBUG_MOVEMENT) {
+        console.log(`${ game.timer } detect: landed false, ${ this.vel_y }`);
+      }
+      if (this.fall_state === GravityActor.FallState.LANDED) {
+        this.fall_state = GravityActor.FallState.FALLING;
+      }
+      if (this.move(0, sign(this.vel_y), Math.abs(this.vel_y))) {
+        if (DEBUG_MOVEMENT) {
+          console.log("move returned true");
+        }
+        // If move returned True, we must have either landed or hit our head on the ceiling
+        if (this.vel_y > 0) {
+          this.vel_y = 0;
+          this.fall_state = GravityActor.FallState.LANDED;
+          if (DEBUG_MOVEMENT) {
+            console.log("detect: landed true");
+          }
+        }
+      }
+    }
+
+    else {
+      // Collision detection disabled - just update the Y coordinate without any further checks
+      this.posy += this.vel_y;
+    }
+  }
+
+  landed() {
+    return (this.fall_state === GravityActor.FallState.LANDED);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
