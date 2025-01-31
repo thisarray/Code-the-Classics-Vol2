@@ -5487,6 +5487,501 @@ class GravityActor extends CollideActor {
   }
 }
 
+class Player extends GravityActor {
+  static DASH_TIME = 18;
+  static DASH_SPEED = 10;
+  static DASH_PAUSE_TIME = 5;
+  static DASH_TRAIL_INTERVAL = 3;
+  static DASH_TIMER_TRAIL_CUTOFF = -10;
+  static MAX_X_RUN_SPEED = 5;
+
+  constructor(controls) {
+    // Call constructor of parent class. Initial pos is 0,0 but Game.next_level will set the actual starting position
+    super([0, 0], true, ANCHOR_PLAYER);
+
+    this.controls = controls;
+
+    // Actor for the flame on the character's head
+    this.flame = new Actor("flame_stand_0");
+    this.flame.anchor = ANCHOR_FLAME;
+    this.flame.pos = this.pos;
+
+    this.vel_x = 0;
+    this.facing_x = 1;
+    this.hurt = false;
+    this.dash_timer = Player.DASH_TIMER_TRAIL_CUTOFF;    // Counts down
+    this.dash_animation_timer = 0;                       // Counts up
+    this.dash_allowed = false;
+    this.grabbed_wall = 0;
+    this.coyote_time = 0;
+    this.fall_timer = 0;                 // Number of frames since we started falling or jumping
+    this.wall_jump_coyote_time = 0;
+    this.cached_jump_input_timer = 0;
+    this.enemy_stomped_timer = 0;
+    this.change_direction_timer = 0;
+    this.last_dash_sprite = "dash_horizontal_0_0";   // Used for dash trails
+
+    this.replay_data = [];
+  }
+
+  new_level(start_pos) {
+    this.start_pos = start_pos;
+    this.reset();
+  }
+
+  reset() {
+    this.pos = this.start_pos;
+    this.vel_x = 0;
+    this.vel_y = 0;
+    this.facing_x = 1;            // -1 = left, 1 = right
+    this.hurt = false;
+    this.dash_timer = Player.DASH_TIMER_TRAIL_CUTOFF;
+    this.gravity_enabled = true;
+    this.grabbed_wall = 0;
+    this.coyote_time = 0;
+    this.wall_jump_coyote_time = 0;
+    this.cached_jump_input_timer = 0;
+    this.enemy_stomped_timer = 0;
+
+    // Ensure that when we spawn or respawn, there are no enemies at or near that position - treat it
+    // as if we'd stomped on their heads
+    // Need to check for game being None because player is constructed during Game construction, and the
+    // game global won't be set until construction is complete
+    if (game != null) {
+      for (let enemy of game.enemies) {
+        if (this.distance_to(enemy) < 150) {  // 150 pixel radius, to be safe
+          enemy.destroy();
+          game.play_sound("enemy_death", 5);
+        }
+      }
+    }
+  }
+
+  hit_test(other) {
+    // Check for collision between player and enemy - called from Player.update
+    return (this.get_rect(this.posx, this.posy).colliderect(other.get_rect()) && (!this.hurt));
+  }
+
+  get_colliding_enemies() {
+    return game.enemies.filter((enemy) => ((!enemy.dying) && this.hit_test(enemy)));
+  }
+
+  update() {
+    // Call GravityActor.update - parameter is whether we want to perform collision detection as we fall
+    let was_landed = this.landed(),
+        stomped_any = false,
+        enemy_rect, threshold,
+        dx, jump_pressed,
+        dy, v;
+    super.update(!this.hurt);
+
+    if (was_landed && (!this.landed())) {
+      // We must have walked off a platform. Set coyote time timer
+      this.coyote_time = COYOTE_TIME;
+      this.fall_timer = 0;
+    }
+
+    if (this.top >= HEIGHT) {
+      this.reset();
+    }
+
+    // Check for collisions with enemies, including landing on their heads
+    for (let enemy of this.get_colliding_enemies()) {
+      // Die or stomp? Are we within the top 20% of the enemy collision rectangle?
+      // If we're moving downward, increase the threshold to the top 50% of the collision rectangle
+      // We're fairly forgiving about this - otherwise some of the deaths seem unfair
+      enemy_rect = enemy.get_rect();
+      threshold = enemy_rect.top + ((enemy_rect.bottom - enemy_rect.top) * ((this.vel_y > 0) ? 0.5 : 0.2));
+      // If the player stomps an enemy due to downward motion they'll now be moving up, so unless they're within
+      // the top 20% of the sprite, they'll get hit by it on the next frame. Prevent this using stomped_last_frame
+      if ((this.posy < threshold) || this.stomped_last_frame) {
+        enemy.stomped();
+        stomped_any = true;
+        this.vel_y = -6;
+        this.enemy_stomped_timer = 3;
+        this.dash_allowed = true;
+        if (DEBUG_MOVEMENT) {
+          console.log(game.timer, "stomp", this.posy, threshold);
+        }
+      }
+      else {
+        // Die and respawn
+        this.hurt = true;
+        this.vel_y = -12;
+        this.fall_state = GravityActor.FallState.FALLING;
+        this.fall_timer = 0;
+        this.dash_timer = Player.DASH_TIMER_TRAIL_CUTOFF;
+        game.play_sound("player_death");
+        game.animations.push(new Animator(this.pos, "loselife_{0}", 8, 4));
+        if (DEBUG_MOVEMENT) {
+          console.log(game.timer, "DIE", this.posy, threshold);
+        }
+        break;
+      }
+    }
+
+    this.stomped_last_frame = stomped_any;
+
+    if (this.landed()) {
+      this.dash_allowed = true;
+    }
+
+    this.dash_timer -= 1;
+    this.dash_animation_timer += 1;
+    this.cached_jump_input_timer -= 1;
+    this.coyote_time -= 1;
+    this.wall_jump_coyote_time -= 1;
+
+    if (this.dash_timer > Player.DASH_TIMER_TRAIL_CUTOFF) {
+      if ((this.dash_timer % Player.DASH_TRAIL_INTERVAL) === 0) {
+        game.animations.push(new DashTrail(this.pos, this.last_dash_sprite));
+      }
+    }
+
+    dx = 0;  // X direction we tried to move this frame, zero if we are standing still
+
+    jump_pressed = this.controls.button_pressed(0);
+
+    if (jump_pressed && DEBUG_MOVEMENT) {
+      console.log(game.timer, "jump pressed");
+    }
+
+    //print(game.timer, self.cached_jump_input_timer, self.wall_jump_coyote_time)
+
+    if (this.hurt) {
+      // We've just been hurt. We're dropping out of the level, so check for our sprite reaching a certain Y
+      // coordinate before setting hurt to False. Code further down will make the player respawn.
+      this.gravity_enabled = true;
+      if (this.top >= HEIGHT) {
+        this.hurt = false;
+      }
+    }
+
+    else if (this.dash_timer > 0) {
+      // Update dash
+      // For first few frames of dash, equating to dash_timer being above DASH_TIME, player doesn't move
+      if (this.dash_timer < Player.DASH_TIME) {
+        if ((this.dash_timer % Player.DASH_TRAIL_INTERVAL) === 0) {
+          game.animations.push(new DashTrail(this.pos, this.last_dash_sprite));
+        }
+
+        // A dash may be vertical, horizontal or diagonal
+        // The horizontal and vertical components of the velocity are applied separately, to improve how
+        // collision detection works
+
+        // Apply vertical component of dash
+        this.move(0, sign(this.vel_y), Math.abs(this.vel_y));
+
+        // Apply horizontal component of dash
+        if (this.move(sign(this.vel_x), 0, Math.abs(this.vel_x)) && (this.vel_y >= 0)) {
+          // If we hit a wall, and are not travelling up, end the dash
+          this.dash_timer = 0;
+          this.grabbed_wall = this.facing_x;
+        }
+      }
+    }
+
+    else {
+      // We're not hurt or dashing
+      // We're either on a wall, jumping/falling or walking
+
+      // Get keyboard input. dx represents the direction the player is facing
+      dx = this.controls.get_x();
+
+      // Non-zero means we're grabbing a wall
+      if (this.grabbed_wall !== 0) {
+        // Wall slide
+        this.gravity_enabled = false;
+
+        // Check for wall jump
+        if (jump_pressed || (this.cached_jump_input_timer > 0)) {
+          if (DEBUG_MOVEMENT) {
+            console.log(game.timer, "wall jump", this.vel_x);
+          }
+          if (DEBUG_MOVEMENT) {
+            console.log(game.timer, "WALL JUMP", this.grabbed_wall);
+          }
+          this.vel_y = JUMP_VEL_Y;
+          this.fall_state = GravityActor.FallState.WALL_JUMPING;
+          this.vel_x = -this.grabbed_wall * WALL_JUMP_X_VEL;
+          this.facing_x = -this.grabbed_wall;
+          this.grabbed_wall = 0;
+          this.previous_grabbed_wall = 0;
+          this.wall_jump_coyote_time = 0;
+          this.cached_jump_input_timer = 0;
+          this.fall_timer = 0;
+          game.play_sound("jump");
+        }
+
+        // Check if player is pushing away from the wall
+        else if (dx === -this.grabbed_wall) {
+          if (DEBUG_MOVEMENT) {
+            console.log(game.timer, "ungrab wall", this.grabbed_wall);
+          }
+          this.previous_grabbed_wall = this.grabbed_wall;
+          this.wall_jump_coyote_time = WALL_JUMP_COYOTE_TIME;
+          this.grabbed_wall = 0;
+        }
+
+        else {
+          // Slowly slide down wall, stop grabbing if we hit the floor or the wall is no longer there (because
+          // we slid off the bottom of it)
+          if (DEBUG_MOVEMENT) {
+            console.log(game.timer, "slide", this.grabbed_wall);
+          }
+
+          if (this.move(0, 1, 1) || (!game.position_blocked(this.get_rect(this.posx + this.grabbed_wall, this.posy)))) {
+            this.grabbed_wall = 0;
+            if (DEBUG_MOVEMENT) {
+              console.log(game.timer, "slide landed or wall gone");
+            }
+          }
+        }
+      }
+
+      else {
+        // Not grabbing a wall
+        // Check for coyote time wall jump, i.e. a wall jump just after we let go of the wall
+
+        // debug
+        if (DEBUG_MOVEMENT && (this.wall_jump_coyote_time > 0)) {
+          console.log(game.timer, "remaining wall_jump_coyote_time", this.wall_jump_coyote_time);
+        }
+
+        if (jump_pressed && (this.wall_jump_coyote_time > 0)) {
+          if (DEBUG_MOVEMENT) {
+            console.log(game.timer, "coyote wall jump");
+          }
+          if (DEBUG_MOVEMENT) {
+            console.log(game.timer, "WALL JUMP", this.previous_grabbed_wall);
+          }
+          this.vel_y = JUMP_VEL_Y;
+          this.fall_state = GravityActor.FallState.WALL_JUMPING;
+          this.vel_x = -this.previous_grabbed_wall * WALL_JUMP_X_VEL;
+          this.facing_x = -this.previous_grabbed_wall;
+          this.grabbed_wall = 0;
+          this.previous_grabbed_wall = 0;
+          this.wall_jump_coyote_time = 0;
+          this.cached_jump_input_timer = 0;
+          this.fall_timer = 0;
+          game.play_sound("jump");
+        }
+
+        else {
+          // Normal movement
+          this.gravity_enabled = true;
+          if (dx === 0) {
+            // No horizontal input - come to a halt over several frames
+            this.vel_x = move_towards(this.vel_x, 0, 1);
+          }
+          else {
+            // Horizontal input - apply to x velocity
+            this.facing_x = dx;
+            this.vel_x = move_towards(this.vel_x, Player.MAX_X_RUN_SPEED * dx, 1);
+          }
+
+          // Apply x velocity
+          // Start grabbing wall if we hit a wall and our y velocity is downwards
+          // Note: order of checks matters, self.move may cause us to move so must come before vel_y check
+          if ((this.vel_x !== 0) && this.move(sign(this.vel_x), 0, Math.abs(this.vel_x)) && (this.vel_y > 0)) {
+            if (DEBUG_MOVEMENT) {
+              console.log(game.timer, "grab");
+            }
+            this.grabbed_wall = sign(this.vel_x);
+
+            // Cancel horizontal velocity on hitting wall
+            this.vel_x = 0;
+          }
+
+          if ((jump_pressed || (this.cached_jump_input_timer > 0)) && (this.landed() || (this.coyote_time > 0))) {
+            // Jump
+            if (DEBUG_MOVEMENT) {
+              if (!jump_pressed) {
+                console.log(game.timer, "cached jump");
+              }
+              if (!this.landed()) {
+                console.log(game.timer, `coyote time jump ${ this.coyote_time }`);
+              }
+            }
+            if (DEBUG_MOVEMENT) {
+              console.log(game.timer, "JUMP");
+            }
+            this.vel_y = JUMP_VEL_Y;
+            this.fall_state = GravityActor.FallState.JUMPING;
+            this.coyote_time = 0;
+            this.cached_jump_input_timer = 0;
+            this.lower_gravity_timer = 5;
+            this.fall_timer = 0;
+            game.play_sound("jump");
+          }
+
+          else if (jump_pressed && (!this.landed())) {
+            // Cache jump input for a few frames, so that if the player lands just after pressing jump,
+            // a jump will be initiated
+            this.cached_jump_input_timer = CACHE_JUMP_INPUT_TIME;
+          }
+
+          else if ((!this.landed()) && (this.vel_y < 0) && (!this.controls.button_down(0)) && (this.dash_timer < -10) && (this.enemy_stomped_timer <= 0)) {
+            // In the air and moving up, haven't finished dashing in last few frames
+            // Upward velocity drops off faster if player has let go of the jump button (unless they just
+            // stomped an enemy)
+            this.vel_y = Math.min(this.vel_y + 1, 0);
+          }
+
+          if (this.dash_allowed && this.controls.button_pressed(1)) {
+            // Dash
+            dy = this.controls.get_y();
+            if ((dx !== 0) || (dy !== 0)) {
+              if (DEBUG_MOVEMENT) {
+                console.log(game.timer, "dash");
+              }
+              v = (new Vecta(dx, dy)).normalize().multiply(Player.DASH_SPEED);
+              this.vel_x = Math.trunc(v.x);
+              this.vel_y = Math.trunc(v.y);
+              this.gravity_enabled = false;
+              this.dash_allowed = false;
+              this.dash_timer = Player.DASH_TIME + Player.DASH_PAUSE_TIME;
+              this.dash_animation_timer = 0;
+              this.fall_state = GravityActor.FallState.FALLING;
+              this.wall_jump_coyote_time = 0;
+              game.play_sound("jump_long", 5);
+            }
+          }
+        }
+      }
+    }
+
+    // When we change direction, our X velocity will be different from our facing direction (dx)
+    // We set a change direction timer which then counts down, while it's above zero we play the change
+    // direction animation
+    if ((sign(dx) !== sign(this.vel_x)) && (this.dash_timer <= 0)) {
+      this.change_direction_timer = 5;
+    }
+    else {
+      this.change_direction_timer -= 1;
+    }
+
+    // Update sprite
+    this.determine_sprite(dx);
+
+    // Update fall timer after choosing sprite so that we don't just skip frame 0
+    // Don't increase fall timer if we're dashing
+    if ((!this.landed()) && (this.dash_timer <= 0)) {
+      this.fall_timer += 1;
+    }
+
+    // Update replay data
+    this.replay_data.push([this.pos, game.level_index, this.name]);
+  }
+
+  determine_sprite(dx) {
+    // Set sprite image. If we're currently hurt, the sprite will flash on and off on alternate frames.
+    // dx is X direction we tried to move this frame, zero if there was no control input
+    this.name = this.flame.name = "blank";
+    // Flame has different anchor point depending on whether we're dashing
+    this.flame.anchor = ANCHOR_FLAME;
+    if ((!this.hurt) || ((game.timer % 2) === 1)) {
+      // Example sprite name: "run_0_3" - first number is direction (0 right, 1 left), second is the frame number
+      let dir_index = (this.facing_x < 0) ? "1" : "0";
+      if (this.hurt) {
+        // no flame for this animatoin
+        this.name = `die_${ Math.min(Math.floor(this.fall_timer / 8), 5) }`;
+        /*
+         * Note: Kept typo from the original Python code.
+         */
+        this.flame_image = "blank";
+      }
+
+      else if ((this.grabbed_wall !== 0) && (this.vel_y >= 0)) {
+        // We don't do wall slide animation if we're moving upward
+        this.name = `climb_${ dir_index }_1`;
+        this.flame.name = `flame_climb_${ dir_index }_1`;
+      }
+
+      else if (!this.landed()) {
+        // In air
+        if (this.fall_state === GravityActor.FallState.JUMPING) {
+          this.name = `jump_${ dir_index }_${ Math.min(Math.floor(this.fall_timer / 3), 5) }`;
+          this.flame.name = `flame_jump_${ dir_index }_${ Math.min(Math.floor(this.fall_timer / 3), 5) + 1 }`;
+        }
+        else if (this.fall_state === GravityActor.FallState.WALL_JUMPING) {
+          this.name = `wall_jump_${ dir_index }_${ Math.min(Math.floor(this.fall_timer / 8), 2) }`;
+          this.flame.name = `flame_wall_jump_${ dir_index }_${ Math.min(Math.floor(this.fall_timer / 4), 6) }`;
+        }
+        else if (this.dash_timer > 0) {
+          // Choose a dash sprite and update self.last_dash_image
+          // Initially all dash directions use dash_start_0/1 (depending on facing direction), before
+          // switching to specific frames for different dash directions
+          if (this.dash_animation_timer < 4) {
+            this.name = this.last_dash_sprite = "dash_start_" + dir_index;
+            this.flame.name = `flame_dash_start_${ dir_index }_${ Math.floor(this.dash_animation_timer / 2) }`;
+            this.flame.anchor = ANCHOR_FLAME;
+          }
+          else {
+            let timer = this.dash_animation_timer - 4,
+                frame = Math.min(Math.floor(timer / 3), 2),
+                flame_frame = Math.min(Math.floor(timer / 3), 7),
+                sprite = "dash_";
+            if (this.vel_y < 0) {
+              sprite += "up_";
+            }
+            else if (this.vel_y > 0) {
+              sprite += "down_";
+            }
+            if (this.vel_x !== 0) {
+              sprite += "horizontal_";
+            }
+            this.name = this.last_dash_sprite = `${ sprite }${ dir_index }_${ frame }`;
+            this.flame.name = `flame_${ sprite }${ dir_index }_${ flame_frame }`;
+            this.flame.anchor = ANCHOR_FLAME_DASH;
+          }
+        }
+        else {
+          // For flame, use frames 4 and 5 of wall jump
+          this.name = `fall_${ dir_index }_${ Math.min(Math.floor(this.fall_timer / 8), 1) }`;
+          this.flame.name = `flame_wall_jump_${ dir_index }_${ Math.min(Math.floor(this.fall_timer / 8), 1) + 4 }`;
+        }
+      }
+
+      else if (dx === 0) {
+        this.name = "stand_front";
+        this.flame.name = `flame_stand_${ Math.floor(game.timer / 4) % 8 }`;
+      }
+
+      else if (this.change_direction_timer > 0) {
+        // If change_direction_timer is positive, use change direction frame
+        this.name = `change_dir_${ dir_index }_0`;
+        this.flame.name = `flame_change_dir_${ dir_index }_${ Math.floor(game.timer / 4) % 3 }`;
+      }
+      else {
+        // 8 frames of the run animation, switch animation frame every 4 game frames
+        this.name = `run_${ dir_index }_${ Math.floor(game.timer / 4) % 8 }`;
+        this.flame.name = `flame_run_${ dir_index }_${ Math.floor(game.timer / 4) % 8 }`;
+      }
+    }
+  }
+
+  draw() {
+    super.draw();
+
+    this.flame.pos = this.pos;
+    this.flame.draw();
+
+    if (DEBUG_SHOW_PLAYER_COLLISION_RECT) {
+      // Show collision rectangle
+      screen.draw.rect(this.get_rect(), [255, 255, 255]);
+    }
+  }
+
+  get_collidable_width() {
+    return PLAYER_WIDTH;
+  }
+
+  get_collidable_height() {
+    return PLAYER_HEIGHT;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
