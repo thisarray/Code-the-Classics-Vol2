@@ -5982,6 +5982,39 @@ class Player extends GravityActor {
   }
 }
 
+class GhostPlayer extends Actor {
+  constructor(replay_data) {
+    super("blank");
+    this.anchor = ANCHOR_PLAYER;
+    this.pos = replay_data[0][0];
+    this.replay_data = replay_data;
+    this.replay_frame = 0;
+    this.level = 0;
+  }
+
+  update() {
+    this.replay_frame += 1;
+    if (this.replay_frame < this.replay_data.length) {
+      this.pos = this.replay_data[this.replay_frame][0];
+      this.level = this.replay_data[this.replay_frame][1];
+      let sprite = this.replay_data[this.replay_frame][2];
+      if (sprite === "blank") {
+        this.name = "blank";
+      }
+      else {
+        this.name = "ghost_" + sprite;
+      }
+    }
+  }
+
+  draw() {
+    // Only draw if we're on the same level as the actual player
+    if (this.level === game.level_index) {
+      super.draw();
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
