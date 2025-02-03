@@ -6015,6 +6015,106 @@ class GhostPlayer extends Actor {
   }
 }
 
+class Enemy extends GravityActor {
+  constructor(pos, type, biome, direction_x = 1, appearance_count = 1) {
+    // Type must be a number from 0 to 3. 0 and 1 are both flying robots which don't have different frames for facing
+    // left or right. 2 and 3 are non-flying robots which do have left/right facing frames.
+
+    super(pos, !ENEMY_TYPES_FLYING.get(biome)[type], ENEMY_TYPES_ANCHOR_POINTS.get(biome)[type]);
+
+    this.direction_x = direction_x;
+    this.type = type;
+    this.biome = biome;
+
+    this.health = ENEMY_TYPES_HEALTH[type];
+    this.speed = ENEMY_TYPES_SPEED[type];
+
+    // Flying enemies which are on their third appearance will move diagonally
+    this.direction_y = ((appearance_count >= 3) && (!this.gravity_enabled)) ? 1 : 0;
+
+    // Robot types 2 and 3, and fly/ghost have different sprites for facing left/right
+    this.use_directional_sprites = ((this.biome === Biome.CASTLE) && (this.type >= 2)) || ((this.biome === Biome.FOREST) && (this.type < 2));
+
+    this.dying = false;
+    this.stomped_timer = 0;
+  }
+
+  update() {
+    super.update(!this.dying);
+
+    if (!this.dying) {
+      this.stomped_timer -= 1;
+
+      // Don't move on x axis if falling. Flying enemies are always counted as falling by GravityActor, they
+      // should move regardless.
+      if ((!this.gravity_enabled) || (this.fall_state !== GravityActor.FallState.FALLING)) {
+        // Move in current direction - turn around if we hit a wall
+        if (this.move(this.direction_x, 0, this.speed)) {
+          this.direction_x = -this.direction_x;
+        }
+        if ((this.direction_y !== 0) && this.move(0, this.direction_y, this.speed)) {
+          this.direction_y = -this.direction_y;
+        }
+      }
+    }
+
+    // Choose and set sprite image
+    let image = ENEMY_SPRITE_NAMES.get(this.biome)[this.type];
+    if (this.use_directional_sprites) {
+      image += "_" + ((this.direction_x > 0) ? "1" : "0");
+    }
+    image += "_" + (Math.floor(game.timer / 4) % 8); // 8 frames of animation
+    if ((this.stomped_timer > 0) || this.dying) {
+      image += "_hit";
+    }
+    this.name = image;
+  }
+
+  stomped() {
+    // Don't lose health or play sound effect if we're being stomped multiple frames in a row
+    if (this.stomped_timer <= 0) {
+      this.health -= 1;
+      if (this.health <= 0) {
+        this.destroy();
+        game.play_sound("enemy_death", 5);
+      }
+      else {
+        game.play_sound("enemy_take_damage", 5);
+      }
+    }
+    this.stomped_timer = 2;
+  }
+
+  destroy() {
+    this.dying = true;
+    this.gravity_enabled = true;
+
+    // Create explosion animation. Do this before gain_time so it appears underneath gain time animation
+    let explosion_sprite = (this.type > 1) ? "explosion" : "air_explosion";
+    game.animations.push(new Animator(this.pos, explosion_sprite + "_{0}", 12, 4, ANCHOR_CENTRE_BOTTOM));
+
+    // Destroying an enemy always gains 3 seconds of time
+    game.gain_time(STOMP_ENEMY_TIME_BONUS, this.centerx, this.centery);
+  }
+
+  get_collidable_width() {
+    return ENEMY_TYPES_WIDTH_OVERRIDES.get(this.biome)[this.type];
+  }
+
+  get_collidable_height() {
+    return ENEMY_TYPES_HEIGHT_OVERRIDES.get(this.biome)[this.type];
+  }
+
+  draw() {
+    super.draw();
+
+    if (DEBUG_SHOW_ENEMY_COLLISION_RECTS) {
+      // Show collision rectangle
+      screen.draw.rect(this.get_rect(), [255, 255, 255]);
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
