@@ -6348,6 +6348,72 @@ class Game {
 
     return player_start_pos;
   }
+
+  generate_block_rects() {
+    this.block_rects = [];
+    let current_rect = null,
+        row, pos_x, pos_y,
+        any_found = true,
+        equal_below;
+
+    // Horizontal rows
+    for (let gy = 0; gy < this.grid.length; gy++) {
+      row = this.grid[gy];
+      for (let gx = 0; gx < row.length; gx++) {
+        if (this.collision_tiles.has(row[gx])) {
+          pos_x = gx * GRID_BLOCK_SIZE;
+          pos_y = gy * GRID_BLOCK_SIZE;
+          // Is this the start of a new block rect?
+          if (current_rect == null) {
+            current_rect = new Rect(pos_x, pos_y, GRID_BLOCK_SIZE, GRID_BLOCK_SIZE);
+          }
+          else {
+            // Continue existing rect
+            current_rect.width += GRID_BLOCK_SIZE;
+          }
+        }
+
+        else if (current_rect != null) {
+          this.block_rects.push(current_rect);
+          current_rect = null;
+        }
+      }
+      if (current_rect != null) {
+        this.block_rects.push(current_rect);
+        current_rect = null;
+      }
+    }
+
+    // Now consolidate vertically
+    // Keep joining rectangles with rectangles of equal width directly below, until there are no more such
+    // matches
+
+    while (any_found) {
+      any_found = false;
+      for (let current of this.block_rects) {
+        // Returns a block with the same X coordinate and width, which is immediately below the current block,
+        // or None if no such block exists
+        equal_below = this.block_rects.filter((rect) => ((rect.x === current.x) && (rect.width === current.width) && (rect.y === (current.y + current.height))));
+        equal_below = (equal_below.length > 0) ? equal_below[0] : null;
+        if (equal_below != null) {
+          // Extend the height of the current block and remove the one below
+          current.height += equal_below.height;
+          this.block_rects = this.block_rects.filter((rect) => (rect != equal_below));
+          any_found = true;
+          break;
+        }
+      }
+    }
+
+    // Final step: any block rects aligning with the top of the level have their height increased so it extends
+    // above the level, to prevent standing on top of the trees off the top of the screen
+    for (let rect of this.block_rects) {
+      if (rect.top === 0) {
+        rect.top = LEVEL_Y_BOUNDARY;
+        rect.height = rect.height + -LEVEL_Y_BOUNDARY;
+      }
+    }
+  }
 }
 
 window.addEventListener('load', (event) => {
