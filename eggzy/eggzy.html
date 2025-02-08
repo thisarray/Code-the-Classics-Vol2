@@ -6414,6 +6414,153 @@ class Game {
       }
     }
   }
+
+  update() {
+    this.timer += 1;
+    this.gained_time_timer -= 1;
+
+    if (this.time_remaining > 0) {
+      this.time_remaining -= 1;
+    }
+
+    // Update all objects
+    for (let obj of ([this.player]).concat(this.doors).concat(this.animations).concat(this.gems).concat(this.enemies).concat(this.ghost_players)) {
+      if (obj != null) {
+        obj.update();
+      }
+    }
+
+    // Remove expired enemies, dash trails, gems and animations
+    this.enemies = this.enemies.filter((enemy) => (enemy.top < HEIGHT));
+    this.animations = this.animations.filter((anim) => (!anim.finished()));
+    this.gems = this.gems.filter((gem) => (!gem.collected));
+
+    // Check stuff to do with opening exit door and exiting level (but not if we're on the main menu)
+    if (this.player != null) {
+      if (this.exit_open) {
+        // Check for the player leaving the level
+        if (this.player.centerx >= WIDTH) {
+          this.next_level();
+        }
+      }
+
+      else if (this.gems.length === 0) {
+        // All gems collected, open the exit door
+        this.exit_open = true;
+        for (let door of this.doors) {
+          door.open();
+        }
+      }
+    }
+  }
+
+  draw() {
+    // Draw appropriate background for this level
+    screen.blit(this.background_image, [0, this.background_y_offset]);
+
+    // Draw level tiles
+    let tileset_w = images[this.tileset_image].width,
+        tileset_grid_w = Math.floor(tileset_w / GRID_BLOCK_SIZE),
+        row, x,
+        tileset_grid_y, tileset_grid_x;
+    for (let row_y = 0; row_y < this.grid.length; row_y++) {
+      row = this.grid[row_y];
+      x = 0;
+      for (let tile of row) {
+        if (tile >= 0) {
+          // Get sprite from tileset based on ID
+          tileset_grid_y = Math.floor(tile / tileset_grid_w);
+          tileset_grid_x = tile % tileset_grid_w;
+          // Have to use screen.surface.blit instead of screen.blit as the latter is a Pygame Zero method which
+          // passes through to the Pygame version but doesn't support the optional area parameter
+          screen.blit(this.tileset_image, new Rect(tileset_grid_x * GRID_BLOCK_SIZE, tileset_grid_y * GRID_BLOCK_SIZE, GRID_BLOCK_SIZE, GRID_BLOCK_SIZE),
+                      new Rect(x, row_y * GRID_BLOCK_SIZE, GRID_BLOCK_SIZE, GRID_BLOCK_SIZE));
+        }
+        x += GRID_BLOCK_SIZE;
+      }
+    }
+
+    // Draw all objects, in this order
+    for (let obj of this.ghost_players.concat(this.doors).concat(this.animations).concat([this.player]).concat(this.gems).concat(this.enemies)) {
+      if (obj != null) {
+        obj.draw();
+      }
+    }
+
+    // DEBUG - draw block rects
+    if (DEBUG_SHOW_BLOCK_COLLISION_RECTS) {
+      for (let rect of this.block_rects) {
+        screen.draw.rect(rect, [255, 255, 255]);
+      }
+    }
+
+    this.draw_ui();
+  }
+
+  draw_ui() {
+    // Display level text and background
+    screen.draw.filled_rect(new Rect(0, 500, WIDTH, 50), [0, 54, 255]);
+    screen.blit("text_area_frame", [0, 500]);
+    draw_text(this.level_text, Math.floor(WIDTH / 2), 508, TextAlign.CENTRE);
+
+    // Show background sprite for time remaining
+    screen.blit("status_back", [Math.floor(WIDTH / 2) - Math.floor(297 / 2), 0]);
+
+    // Show time remaining
+    // Use bright font if player has just gained time
+    draw_text(`${ (this.time_remaining / 60).toFixed(1) }`, Math.floor(WIDTH / 2), 10, TextAlign.CENTRE, (this.gained_time_timer < 0) ? "font" : "fontbr");
+
+    if (DEBUG_SHOW_FRAME_NUMBER) {
+      draw_text(game.timer.toFixed(), Math.floor(WIDTH / 2), 0, TextAlign.CENTRE);
+    }
+  }
+
+  gain_time(time, x, y) {
+    game.time_remaining += time * 60;
+    game.animations.push(new Animator([x, y], "timer_plus_" + ((time === 0.5) ? "half" : time.toFixed()) + "_{0}", 14, 4, ANCHOR_CENTRE, 5, 34));
+    game.animations.push(new Animator([x, y], "pickup_{0}", 8, 4));
+    this.gained_time_timer = 20;
+  }
+
+  position_blocked(rect) {
+    // Check collision with block tiles
+    for (let block_rect of this.block_rects) {
+      if (rect.colliderect(block_rect)) {
+        // print(" blocked")
+        return true;
+      }
+    }
+
+    // Check collision with door
+    for (let door of this.doors) {
+      if ((!door.is_fully_open()) && door.colliderect(rect)) {
+        return true;
+      }
+    }
+
+    // Don't allow going off left side of screen, or above vertical boundary
+    // We do need to allow player to go off right side of screen so they can go
+    // through the exit door
+    if ((rect.left <= 0) || (rect.top < LEVEL_Y_BOUNDARY)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  play_sound(name, count = 1) {
+    // Some sounds have multiple varieties. If count > 1, we'll randomly choose one from those
+    // We don't play any sounds if there is no player (e.g. if we're on the menu)
+    if (this.player != null) {
+      // Pygame Zero allows you to write things like 'sounds.explosion.play()'
+      // This automatically loads and plays a file named 'explosion.wav' (or .ogg) from the sounds folder (if
+      // such a file exists)
+      // But what if you have files named 'explosion0.ogg' to 'explosion5.ogg' and want to randomly choose
+      // one of them to play? You can generate a string such as 'explosion3', but to use such a string
+      // to access an attribute of Pygame Zero's sounds object, we must use Python's built-in function getattr
+      sounds[name+getRandomInteger(0, count)].play();
+    }
+  }
 }
 
 window.addEventListener('load', (event) => {
