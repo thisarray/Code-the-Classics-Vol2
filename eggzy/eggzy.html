@@ -6563,6 +6563,55 @@ class Game {
   }
 }
 
+function get_char_image_and_width(char, font) {
+  // Return width of given character. ord() gives the Unicode code for the given character.
+  if (char === " ") {
+    return [null, 22];
+  }
+  else {
+    let image;
+    if (SPECIAL_FONT_SYMBOLS_INVERSE.has(char)) {
+      image = SPECIAL_FONT_SYMBOLS_INVERSE.get(char);
+    }
+    else {
+      // Format character code to always be 3 digits, with zeroes on the left - e.g. 65 becomes 065
+      image = `${ font }${ char.charCodeAt(0).toFixed().padStart(3, '0') }`;
+    }
+    return [image, images[image].width];
+  }
+}
+
+function text_width(text, font) {
+  let total = 0;
+  for (let c of text) {
+    total += get_char_image_and_width(c, font)[1];
+  }
+  return total;
+}
+
+const TextAlign = Object.freeze({
+  LEFT: 0,
+  CENTRE: 1,
+  RIGHT: 2
+});
+
+function draw_text(text, x, y, align = TextAlign.LEFT, font = "font") {
+  if (align === TextAlign.CENTRE) {
+    x -= Math.floor(text_width(text, font) / 2);
+  }
+  else if (align === TextAlign.RIGHT) {
+    x -= text_width(text, font);
+  }
+
+  for (let char of text) {
+    let [name, width] = get_char_image_and_width(char, font);
+    if (name != null) {
+      screen.blit(name, [x, y]);
+    }
+    x += width;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
