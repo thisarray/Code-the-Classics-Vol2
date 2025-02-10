@@ -6644,6 +6644,27 @@ function update_controls() {
   }
 }
 
+function save_replays(replays) {
+  // We'll save one replay per line, with entries separated by commas
+  let result = [],
+      line;
+  for (replay of replays) {
+    line = "";
+    for (entry of replay) {
+      // Each entry consists of a position (X and Y in a tuple), level number and sprite
+      // We'll separate the items using commas and the entries using semicolons. It doesn't matter what
+      // the symbols are as long as they don't occur within the data
+      // Open the replays file to see what it looks like!
+      line += `${ Math.trunc(entry[0][0]) },${ Math.trunc(entry[0][1]) },${ entry[1] },${ entry[2] };`;
+    }
+
+    // Write the string for the current replay to the file, removing the trailing symbol from the end, and
+    // adding a new line on the end
+    result.push(line.substring(0, line.length - 1));
+  }
+  localStorage.setItem(REPLAY_FILENAME, result.join("\n"));
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
