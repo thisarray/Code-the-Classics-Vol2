@@ -6612,6 +6612,38 @@ function draw_text(text, x, y, align = TextAlign.LEFT, font = "font") {
   }
 }
 
+const State = Object.freeze({
+  TITLE: 1,
+  CONTROLS: 2,
+  PLAY: 3,
+  GAME_OVER: 4
+});
+
+let keyboard_controls, joystick_controls, state, game, high_score, game_over_state_timer, all_replays, total_frames;
+
+function get_joystick_if_exists() {
+  return (Joystick.get_count() > 0) ? new Joystick(0) : null;
+}
+
+function setup_joystick_controls() {
+  // We call this on startup, and keep calling it if no controller is present,
+  // so a controller can be connected while the game is open
+  Joystick.init();
+  let joystick = get_joystick_if_exists();
+  joystick_controls = (joystick != null) ? new JoystickControls(joystick) : null;
+}
+
+function update_controls() {
+  keyboard_controls.update();
+  // Allow a controller to be connected while the game is open
+  if (joystick_controls == null) {
+    setup_joystick_controls();
+  }
+  if (joystick_controls != null) {
+    joystick_controls.update();
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
