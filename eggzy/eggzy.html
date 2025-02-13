@@ -6665,6 +6665,42 @@ function save_replays(replays) {
   localStorage.setItem(REPLAY_FILENAME, result.join("\n"));
 }
 
+function load_replays() {
+  // Returns list of replays and high score
+  let replays = [],
+      file = localStorage.getItem(REPLAY_FILENAME),
+      current_replay, elements,
+      score;
+  if (file != null) {
+    for (line of file.split("\n")) {
+      current_replay = [];
+
+      // Remove the newline symbol from the end of the line
+
+      // Split the string on semicolon to get a list of all entries for this replay
+
+      for (let entry of line.split(";")) {
+        // Within each entry, split on comma and convert each element to the correct type
+        elements = entry.split(",");
+
+        current_replay.push([[parseFloat(elements[0]), parseFloat(elements[1])], parseInt(elements[2], 10), elements[3]]);
+      }
+
+      replays.push(current_replay);
+    }
+  }
+
+  // The high score is stored as the total number of frames of data in the replay with the longest length
+  if (replays.length === 0) {
+    score = 0;
+  }
+  else {
+    score = replays.slice().sort((a, b) => (b.length - a.length))[0].length;
+  }
+
+  return [replays, score];
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
