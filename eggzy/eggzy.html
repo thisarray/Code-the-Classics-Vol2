@@ -6701,6 +6701,92 @@ function load_replays() {
   return [replays, score];
 }
 
+// Pygame Zero calls the update and draw functions each frame
+
+function update() {
+  // Run in slow motion if DEBUG_SLOWMO is higher than 1
+  total_frames += 1;
+  if ((total_frames % DEBUG_SLOWMO) !== 0) {
+    return;
+  }
+
+  update_controls();
+
+  function button_pressed_controls(button_num) {
+    // Local function for detecting button 0 being pressed on either keyboard or controller, returns the controls
+    // object which was used to press it, or None if button was not pressed
+    for (let controls of [keyboard_controls, joystick_controls]) {
+      // Check for fire button being pressed on each controls object
+      // joystick_controls will be None if there no controller was connected on game startup,
+      // so must check for that
+      if ((controls != null) && controls.button_pressed(button_num)) {
+        return controls;
+      }
+    }
+    return null;
+  }
+
+  if (state === State.TITLE) {
+    // Check for player starting game with either keyboard or controller
+    if (button_pressed_controls(0) != null) {
+      state = State.CONTROLS;
+    }
+  }
+
+  else if (state === State.CONTROLS) {
+    // Check for start game
+    let controls = button_pressed_controls(0);
+    if (controls != null) {
+      // Switch to play state, and create a new Game object, passing it a new Player object to use
+      state = State.PLAY;
+      game = new Game(new Player(controls), all_replays);
+      play_music("ingame_theme", 0.2);
+    }
+  }
+
+  else if (state === State.PLAY) {
+    if (game.time_remaining <= 0) {
+      game.play_sound("gameover");
+      state = State.GAME_OVER;
+      game_over_state_timer = 0;
+
+      // Add the replay data for this game to all_replays
+      all_replays.push(game.player.replay_data);
+
+      // Ensure that all_replays never has more than 10 replays, otherwise there could be performance issues
+      if (all_replays.length > MAX_REPLAYS) {
+        // Sort replays by length, longest first
+        all_replays.sort((a, b) => (b.length - a.length));
+
+        // Recreate the list, consisting of only the first 10
+        all_replays = all_replays.slice(0, MAX_REPLAYS);
+      }
+
+      save_replays(all_replays);
+    }
+    else {
+      game.update();
+    }
+  }
+
+  else if (state === State.GAME_OVER) {
+    // Don't allow the player to press a button to go back to the main menu until one second has passed
+    // This prevents the issue of accidentally skipping the game over screen because the player was just starting
+    // to press the jump button as the time ran out
+    game_over_state_timer += 1;
+    if ((game_over_state_timer > 60) && (button_pressed_controls(0) != null)) {
+      // Update high score variable at this point
+      if (game.timer > high_score) {
+        high_score = game.timer;
+      }
+
+      // Switch to title screen state
+      state = State.TITLE;
+      play_music("title_theme");
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
