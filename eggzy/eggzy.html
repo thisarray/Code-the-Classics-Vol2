@@ -6787,6 +6787,56 @@ function update() {
   }
 }
 
+function draw() {
+  if (state === State.TITLE) {
+    // Draw title screen
+    screen.blit("title", [0, 0]);
+    screen.blit("press_to_start", [0, 0]);
+
+    // Draw "start" animation, which has 11 frames numbered 0 to 10
+    screen.blit("start" + (Math.floor(total_frames / 6) % 11), [Math.floor(WIDTH / 2) - 150, 360]);
+  }
+
+  else if (state === State.CONTROLS) {
+    screen.fill([0, 0, 0]);
+    screen.blit("controls", [0, 0]);
+  }
+
+  else if (state === State.PLAY) {
+    game.draw();
+  }
+
+  else if (state === State.GAME_OVER) {
+    screen.fill([0, 54, 255]);
+
+    // Display "Game Over" images
+    // 625 is the width of the game over images
+    screen.blit(`gameover${ Math.floor(total_frames / 5) % 14 }`, [Math.floor(WIDTH / 2) - Math.floor(625 / 2), 100]);
+
+    let seconds = Math.trunc(game.timer / 60);
+    if (seconds >= 60) {
+      screen.blit("survived_for_mins_seconds", [0, 0]);
+      draw_text(`${ Math.floor(seconds / 60) }`, 180, 270, TextAlign.RIGHT, "fontlrg");
+      draw_text(`${ seconds % 60 }`, 470, 270, TextAlign.CENTRE, "fontlrg");
+    }
+    else {
+      screen.blit("survived_for_seconds", [0, 0]);
+      draw_text(`${ seconds }`, 300, 310, TextAlign.RIGHT, "fontlrg");
+    }
+
+    if (game.timer > high_score) {
+      // Show "NEW RECORD!"
+      // 575 is the width of the new record images
+      screen.blit(`newrecord${ Math.floor(total_frames / 5) % 8 }`, [Math.floor(WIDTH / 2) - Math.floor(575 / 2), 380]);
+    }
+  }
+}
+
+function play_music(name, volume = 0.3) {
+  music.play(name);
+  music.set_volume(volume);
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
