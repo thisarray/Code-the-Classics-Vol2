@@ -6837,6 +6837,33 @@ function play_music(name, volume = 0.3) {
   music.set_volume(volume);
 }
 
+/*
+##############################################################################
+*/
+
+function reset() {
+  // Set up sound system and start music
+  play_music("title_theme");
+
+  // Dictionary mapping tileset image filename to the loaded images, will be filled in as we load levels
+  let tileset_images = new Map();
+
+  // Set up controls
+  keyboard_controls = new KeyboardControls();
+  setup_joystick_controls();
+
+  [all_replays, high_score] = load_replays();
+
+  // Set the initial game state
+  state = State.TITLE;
+  game = null;
+
+  // How long have we been in the game over state?
+  game_over_state_timer = 0;
+
+  total_frames = 0;
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
