@@ -4314,6 +4314,86 @@ Vecta.prototype.toString = function () {
   return `[${ this.x }, ${ this.y }]`;
 }
 
+const HEALTH_STAMINA_BAR_WIDTH = 235;
+const HEALTH_STAMINA_BAR_HEIGHT = 26;
+
+const INTRO_ENABLED = true;
+
+const FLYING_KICK_VEL_X = 3;
+const FLYING_KICK_VEL_Y = -8;
+
+const JUMP_GRAVITY = 0.4;
+const THROWN_GRAVITY = 0.025;
+const WEAPON_GRAVITY = 0.5;
+
+const BARREL_THROW_VEL_X = 4;
+const BARREL_THROW_VEL_Y = 0;
+
+// For when player is thrown by boss
+const PLAYER_THROW_VEL_X = 5;
+const PLAYER_THROW_VEL_Y = 0.5;
+
+// By default, the effect of an attack on the opponent's stamina is damage * 100
+// Some attacks have an additional stamina damage multiplier
+const BASE_STAMINA_DAMAGE_MULTIPLIER = 100;
+
+// If stamina goes below zero, player can be knocked over more easily and minimum interval between attacks
+// is longer
+const MIN_STAMINA = -100;
+
+const DEBUG_LOGGING_ENABLED = false;
+const DEBUG_SHOW_SCROLL_POS = false;
+const DEBUG_SHOW_BOUNDARY = false;
+const DEBUG_SHOW_ATTACKS = false;
+const DEBUG_SHOW_TARGET_POS = false;
+const DEBUG_SHOW_ANCHOR_POINTS = false;
+const DEBUG_SHOW_HIT_AREA_WIDTH = false;
+const DEBUG_SHOW_LOGS = false;
+const DEBUG_SHOW_HEALTH_AND_STAMINA = false;
+const DEBUG_PROFILING = false;
+
+// These symbols substitute for the controller button images when displaying text.
+// The symbols representing these images must be ones that aren't actually used themselves, e.g. we don't use the
+// percent sign in text
+const SPECIAL_FONT_SYMBOLS = '%';
+
+// Create a version of SPECIAL_FONT_SYMBOLS where the keys and values are swapped
+const SPECIAL_FONT_SYMBOLS_INVERSE = 'xb_a';
+
+const debug_drawcalls = [];
+
+WIDTH = 800;
+HEIGHT = 480;
+TITLE = "Beat Streets";
+
+const MIN_WALK_Y = 310;
+
+const ENEMY_APPROACH_PLAYER_DISTANCE = 85;
+const ENEMY_APPROACH_PLAYER_DISTANCE_SCOOTERBOY = 140;
+const ENEMY_APPROACH_PLAYER_DISTANCE_BARREL = 180;
+
+const ANCHOR_CENTRE = ["center", "center"];
+const ANCHOR_CENTRE_BOTTOM = ["center", "bottom"];
+
+const BACKGROUND_TILE_SPACING = 290;
+
+// 1st row of TILE_DEMO+_3.png
+const BACKGROUND_TILES = ["wall_end1", "wall_fill1", "wall_fill5", "wall_fill2", "alley1", "wall_end6", "wall_fill7",
+                          "wall_fill5", "alley2", "wall_end3", "wall_fill3", "wall_fill4", "wall_fill8", "alley5",
+                          "wall_end2", "alley3", "wall_end4", "wall_fill6",
+//row 2
+                          "alley6", "wall_end8", "wall_fill4", "alley7", "wall_end5", "alley8", "set_pc_a1", "set_pc_a2",
+                          "alley9", "set_pc_b1", "set_pc_b2", "set_pc_b3", "wall_end3", "wall_fill3", "alley8", "set_pc_a1",
+                          "set_pc_a2", "wall_fill2",
+//3
+                          "con_start2", "con_end1a", "con_end2", "con_start2", "con_end1", "con_fill1", "con_end2a",
+                          "con_start2", "con_end1a", "con_fill1a", "con_end2", "set_pc_c1", "set_pc_c2", "set_pc_c3",
+                          "con_start1", "con_end1", "con_fill1", "con_fill2", "con_fill1a", "con_fill2a",
+//4
+                          "wall_end1", "alley10", "steps_end1a", "steps_fill1a", "steps_fill2a", "steps_end2a",
+                          "flats_alley1", "steps_end1", "steps_end2", "flats_alley1",  "flats_end1a", "steps_fill2",
+                          "steps_fill1", "flats_end2a", "flats_alley2", "set_pc_d1", "set_pc_d2", "set_pc_d3", "steps_end2a"];
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
