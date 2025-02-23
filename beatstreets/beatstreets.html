@@ -4394,6 +4394,50 @@ const BACKGROUND_TILES = ["wall_end1", "wall_fill1", "wall_fill5", "wall_fill2",
                           "flats_alley1", "steps_end1", "steps_end2", "flats_alley1",  "flats_end1a", "steps_fill2",
                           "steps_fill1", "flats_end2a", "flats_alley2", "set_pc_d1", "set_pc_d2", "set_pc_d3", "steps_end2a"];
 
+
+// Utility functions
+
+function clamp(value, min_val, max_val) {
+  // Clamp a value within a given range
+  return Math.min(Math.max(value, min_val), max_val);
+}
+
+function remap(old_val, old_min, old_max, new_min, new_max) {
+  // todo explain
+  return ((((new_max - new_min) * (old_val - old_min)) / (old_max - old_min)) + new_min);
+}
+
+function remap_clamp(old_val, old_min, old_max, new_min, new_max) {
+  // todo explain
+  // These first two lines are in case new_min and new_max are inverted
+  let lower_limit = Math.min(new_min, new_max),
+      upper_limit = Math.max(new_min, new_max);
+  return Math.min(upper_limit, Math.max(lower_limit, remap(old_val, old_min, old_max, new_min, new_max)));
+}
+
+function sign(x) {
+  // Returns 1, 0 or -1 depending on whether number is positive, zero or negative
+  if (x === 0) {
+    return 0;
+  }
+  else {
+    return (x < 0) ? -1 : 1;
+  }
+}
+
+function move_towards(n, target, speed) {
+  // Returns new value, and the direction of travel (-1, 0 or 1)
+  if (n < target) {
+    return [Math.min(n + speed, target), 1];
+  }
+  else if (n > target) {
+    return [Math.max(n - speed, target), -1];
+  }
+  else {
+    return [n, 0];
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
