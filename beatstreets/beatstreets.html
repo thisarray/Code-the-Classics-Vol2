@@ -4438,6 +4438,121 @@ function move_towards(n, target, speed) {
   }
 }
 
+/*
+ * ABC = abstract base class - a class which is only there to serve as a base class, not to be instantiated directly
+ */
+class Controls {
+  static NUM_BUTTONS = 4;
+
+  constructor() {
+    this.button_previously_down = (new Array(Controls.NUM_BUTTONS)).fill(false);
+    this.is_button_pressed = (new Array(Controls.NUM_BUTTONS)).fill(false);
+  }
+
+  update() {
+    // Call each frame to update button status
+    for (let button = 0; button < Controls.NUM_BUTTONS; button++) {
+      let button_down = this.button_down(button);
+      this.is_button_pressed[button] = button_down && (!this.button_previously_down[button]);
+      this.button_previously_down[button] = button_down;
+    }
+  }
+
+  get_x() {
+    // Overridden by subclasses
+  }
+
+  get_y() {
+    // Overridden by subclasses
+  }
+
+  button_down(button) {
+    // Overridden by subclasses
+  }
+
+  button_pressed(button) {
+    return this.is_button_pressed[button];
+  }
+}
+
+class KeyboardControls extends Controls {
+  get_x() {
+    if (keyboard[keys.LEFT]) {
+      return -1;
+    }
+    else if (keyboard[keys.RIGHT]) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
+  get_y() {
+    if (keyboard[keys.UP]) {
+      return -1;
+    }
+    else if (keyboard[keys.DOWN]) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
+  button_down(button) {
+    if (button === 0) {
+      return keyboard[keys.SPACE] || keyboard[keys.Z] || keyboard[keys.LCTRL];   // punch
+    }
+    else if (button === 1) {
+      return keyboard[keys.X] || keyboard[keys.LALT];      // kick
+    }
+    else if (button === 2) {
+      return keyboard[keys.C] || keyboard[keys.LSHIFT];    // elbow
+    }
+    else if (button === 3) {
+      return keyboard[keys.A];   // flying kick
+    }
+  }
+}
+
+class JoystickControls extends Controls {
+  constructor(joystick) {
+    super();
+    this.joystick = joystick;
+  }
+
+  get_axis(axis_num) {
+    let axis_value = this.joystick.get_axis(axis_num);
+    if (Math.abs(axis_value) < 0.6) {
+      // Dead-zone
+      return 0;
+    }
+    else {
+      // digital movement
+      return (axis_value > 0) ? 1 : -1;
+    }
+  }
+
+  get_x() {
+    return this.get_axis(0);
+  }
+
+  get_y() {
+    return this.get_axis(1);
+  }
+
+  button_down(button) {
+    // Before checking button, check to make sure that the controller actually has enough buttons
+    // There are some weird devices out there which could cause a crash if this check were not present
+    if (this.joystick.get_numbuttons() <= button) {
+      console.log("Warning: main controller does not have enough buttons!");
+      return false;
+    }
+    return this.joystick.get_button(button);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
