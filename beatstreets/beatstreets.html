@@ -4553,6 +4553,31 @@ class JoystickControls extends Controls {
   }
 }
 
+class Attack {
+  constructor(sprite = null, strength = null, anim_time = null, frame_time = 5, frames = 0, hit_frames = null,
+              recovery_time = 0, reach = 80, throwable = false, grab = false, combo_next = null, flyingkick = false,
+              stamina_cost = 10, rear_attack = false, stamina_damage_multiplier = 1, stun_time_multiplier = 1, initial_sound = null, hit_sound = null) {
+    this.sprite = sprite;
+    this.strength = strength;
+    this.recovery_time = recovery_time;  // Can't attack for this many frames after attack animation finishes
+    this.anim_time = anim_time;      // Frames for which animation plays, this allows us to stay on the last frame longer than previous frames
+    this.frame_time = frame_time;    // Frames for which each animation frame plays
+    this.frames = frames;            // Number of frames in animation
+    this.hit_frames = hit_frames;    // frames on which an opponent can be hit by this attack
+    this.reach = reach;              // Opponent must be closer than this for attack to hit
+    this.throwable = throwable;      // Is this an attack where we throw something, such as a barrel or the player?
+    this.grab = grab;                // Is this the attack where the boss grabs the player and throws him?
+    this.combo_next = combo_next;
+    this.flying_kick = flyingkick;
+    this.stamina_cost = stamina_cost;
+    this.rear_attack = rear_attack;
+    this.stamina_damage_multiplier = stamina_damage_multiplier;  // Does this attack do additional damage to the opponent's stamina?
+    this.stun_time_multiplier = stun_time_multiplier;
+    this.initial_sound = initial_sound;
+    this.hit_sound = hit_sound;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
