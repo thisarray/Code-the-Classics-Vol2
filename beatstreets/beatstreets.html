@@ -4578,6 +4578,40 @@ class Attack {
   }
 }
 
+/*
+ * Load attack data from file
+ */
+const ATTACKS = new Map();
+let attacks_file = JSON.parse(document.querySelector('#attacks').textContent);
+for (const key of Object.getOwnPropertyNames(attacks_file)) {
+  // Turn values in the dictionary into constructor parameters of the Attack class
+  let arguments = [null, null, null, 5, 0, [], 0, 80, false, false, [], false, 10, false, 1, 1, null, null];
+  for (let [i, name] of [
+    [0, 'sprite'],
+    [1, 'strength'],
+    [2, 'anim_time'],
+    [3, 'frame_time'],
+    [4, 'frames'],
+    [5, 'hit_frames'],
+    [6, 'recovery_time'],
+    [7, 'reach'],
+    [8, 'throw'],
+    [9, 'grab'],
+    [10, 'combo_next'],
+    [11, 'flyingkick'],
+    [12, 'stamina_cost'],
+    [13, 'rear_attack'],
+    [14, 'stamina_damage_multiplier'],
+    [15, 'stun_time_multiplier'],
+    [16, 'initial_sound'],
+    [17, 'hit_sound']]) {
+    if (name in attacks_file[key]) {
+      arguments[i] = attacks_file[key][name];
+    }
+  }
+  ATTACKS.set(key, new Attack(...arguments));
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
