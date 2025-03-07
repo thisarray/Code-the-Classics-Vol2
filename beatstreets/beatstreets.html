@@ -4612,6 +4612,66 @@ for (const key of Object.getOwnPropertyNames(attacks_file)) {
   ATTACKS.set(key, new Attack(...arguments));
 }
 
+/*
+ * The ScrollHeightActor class extends Pygame Zero's Actor class by providing the attribute 'vpos', which stores the object's
+ * current position using Pygame's Vector2 class. All code should change or read the position via vpos, as opposed to
+ * Actor's x/y or pos attributes. When the object is drawn, we set self.pos (equivalent to setting both self.x and
+ * self.y) based on vpos, but taking scrolling into account.
+ * It also includes the attribute height_above_ground which allows an actor to be considered to be in the air. This
+ * should be taken into account when determining draw order, as a fighter who is jumping will be further up the screen
+ * on the Y axis than if they were on the ground, but it's their Y position in relation to the ground which should
+ * determine whether they're drawn behind or in front of other actors. todo reword
+ */
+class ScrollHeightActor extends Actor {
+  constructor(img, pos, anchor = null, separate_shadow = false) {
+    super(img);
+    if (anchor != null) {
+      this.anchor = anchor;
+    }
+    this.pos = pos;
+    this.vpos = new Vecta(pos);
+    this.height_above_ground = 0;
+    if (separate_shadow) {
+      this.shadow_actor = new Actor("blank");
+      this.shadow_actor.anchor = anchor;
+      this.shadow_actor.pos = pos;
+    }
+    else {
+      this.shadow_actor = null;
+    }
+  }
+
+  // We draw with the supplied Vector2 offset to enable scrolling
+  draw(offset) {
+    // Draw shadow first, if we are using a separate shadow sprite (most have the shadow as part of the sprite
+    // but for player it is separate)
+    if (this.shadow_actor != null) {
+      this.shadow_actor.pos = [this.vpos.x - offset.x, this.vpos.y - offset.y];
+      this.shadow_actor.name = (this.name === "blank") ? "blank" : this.name + "_shadow";
+      this.shadow_actor.draw();
+    }
+
+    // Set Actor's screen pos
+    this.pos = [this.vpos.x - offset.x, this.vpos.y - offset.y - this.height_above_ground];
+    super.draw();
+    if (DEBUG_SHOW_ANCHOR_POINTS) {
+      screen.draw.circle(this.pos, 5, [255, 255, 255]);
+    }
+  }
+
+  on_screen() {
+    // Use self.x rather than self.vpos.x to get actual screen position rather than world position
+    // Note that self.x only updates when the actor is drawn, so if vpos.x is updated during update causing the
+    // actor to move off-screen, the value returned by this method will not update until the following frame
+    return ((0 < this.posx) && (this.posx < WIDTH));
+  }
+
+  get_draw_order_offset() {
+    // See Player and Stick classes for explanation
+    return 0;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
