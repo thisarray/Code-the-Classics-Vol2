@@ -4641,7 +4641,9 @@ class ScrollHeightActor extends Actor {
     }
   }
 
-  // We draw with the supplied Vector2 offset to enable scrolling
+  /*
+   * We draw with the supplied Vector2 offset to enable scrolling
+   */
   draw(offset) {
     // Draw shadow first, if we are using a separate shadow sprite (most have the shadow as part of the sprite
     // but for player it is separate)
@@ -4669,6 +4671,341 @@ class ScrollHeightActor extends Actor {
   get_draw_order_offset() {
     // See Player and Stick classes for explanation
     return 0;
+  }
+}
+
+/*
+ * Inherits from both ScrollActor and ABC (abstract base class)
+ */
+class Fighter extends ScrollHeightActor {
+  static WEAPON_HOLD_HEIGHT = 100;
+
+  static FallingState = Object.freeze({
+    STANDING: 0,
+    FALLING: 1,
+    GETTING_UP: 2,
+    GRABBED: 3,
+    THROWN: 4
+  });
+
+  log(str) {
+    if (DEBUG_LOGGING_ENABLED) {
+      let l = `${ game.timer } ${ str } ${ this.vpos }`;
+      console.log(l);
+      this.logs.push(l);
+    }
+  }
+
+  constructor(pos, anchor, speed, sprite, health, anim_update_rate = 8, stamina = 500, half_hit_area = null, lives = 1, colour_variant = null, separate_shadow = false, hit_sound = null) {
+    super("blank", pos, anchor, separate_shadow);
+
+    // Speed is a Vector2 containing x and y speed
+    this.speed = speed;
+
+    // e.g. "hero" or "enemy"
+    this.sprite = sprite;
+
+    this.anim_update_rate = anim_update_rate;
+
+    this.facing_x = 1;
+
+    // Updates each game frame, then is translated into an animation frame number depending on the animation
+    // being played
+    this.frame = 0;
+
+    // Last attack is current attack if attack_timer is above zero
+    this.last_attack = null;
+
+    // Above zero = currently attacking, zero or below = time since last attack
+    this.attack_timer = 0;
+
+    // Are we knocked down or in the process of being knocked down?
+    this.falling_state = Fighter.FallingState.STANDING;
+
+    // Are we currently walking? Used to determine whether to use standing or walking animation
+    this.walking = false;
+
+    this.vel = new Vecta(0, 0);  // Velocity X used when falling or being pushed backwards or for flying kick, velocity Y for jumping
+
+    this.pickup_animation = null;
+
+    this.hit_timer = 0;      // if above 0, we've just been hit and are doing the animation where we recoil from that
+    this.hit_frame = 0;
+
+    this.stamina = stamina;
+    this.max_stamina = stamina;
+
+    // Determines whether an opponent's attack will hit us, based on the distance between us and the attack's reach
+    // Larger number for the portal, because the portal is physically bigger
+    if (half_hit_area == null) {
+      this.half_hit_area = new Vecta(25, 20);
+    }
+    else {
+      this.half_hit_area = half_hit_area;
+    }
+
+    this.health = health;
+    this.start_health = health;
+    this.lives = lives;
+
+    // Used for enemies with multiple colour variants - appended to sprite name
+    this.colour_variant = colour_variant;
+
+    this.hit_sound = hit_sound;
+
+    this.weapon = null;
+
+    // Used for animation where Scooterboy enemy is knocked off his scooter
+    this.just_knocked_off_scooter = false;
+
+    this.use_die_animation = false;
+
+    this.logs = [];
+  }
+
+  update() {
+    this.attack_timer -= 1;
+
+    // Apply gravity and velocity if in air
+    if ((this.height_above_ground > 0) || (this.vel.y !== 0)) {
+      this.vpos.x += this.vel.x;
+      this.vel.y += (this.falling_state === Fighter.FallingState.THROWN) ? THROWN_GRAVITY : JUMP_GRAVITY;
+      this.height_above_ground -= this.vel.y;
+      this.apply_movement_boundaries(this.vel.x, 0);
+      if (this.height_above_ground < 0) {
+        this.height_above_ground = 0;
+        this.vel.x = 0;
+        this.vel.y = 0;
+
+        // Don't do the been hit animation after landing (from flying kick or from being thrown)
+        this.hit_timer = 0;
+      }
+    }
+
+    // Update logic and animation based on current situation - falling, getting up, hit, pickup animation, or normal
+    // walking/standing/attacking
+
+    // Check for falling and dying
+    // Portals don't fall when they die, so the logic for them dying is within their class
+    if (this.falling_state === Fighter.FallingState.FALLING) {
+      // Get pushed backwards
+      this.vpos.x += this.vel.x;
+      this.vel.x = move_towards(this.vel.x, 0, 0.5)[0];
+
+      this.apply_movement_boundaries(this.vel.x, 0);
+
+      this.frame += 1;
+
+      if (this.frame > 120) {
+        // If we're not yet out of health, get up and reset stamina
+        if (this.health > 0) {
+          this.falling_state = Fighter.FallingState.GETTING_UP;
+          this.frame = 0;
+          this.stamina = this.max_stamina;
+        }
+        else {
+          // If we're out of health, flash on and off for a short while, then lose a life
+          if (this.frame > 240) {
+            this.lives -= 1;
+
+            // If we still have lives left, get up
+            if (this.lives > 0) {
+              this.health = this.start_health;
+              this.falling_state = Fighter.FallingState.GETTING_UP;
+              this.frame = 0;
+              this.stamina = this.max_stamina;
+              this.use_die_animation = false;
+            }
+            else {
+              this.died();
+            }
+          }
+        }
+      }
+    }
+
+    else if (this.falling_state === Fighter.FallingState.GETTING_UP) {
+      this.frame += 1;
+      this.vpos.x += 0.1 * this.facing_x;     // Move forward slightly as we get up
+      if (this.frame > 20) {
+        this.falling_state = Fighter.FallingState.STANDING;
+        this.frame = 0;
+      }
+    }
+
+    else if (this.falling_state === Fighter.FallingState.THROWN) {
+      this.frame += 1;
+      if (this.height_above_ground <= 0) {
+        this.falling_state = Fighter.FallingState.FALLING;
+        this.frame = 80;
+      }
+    }
+
+    else if (this.hit_timer > 0) {
+      // Playing the 'hit' animation, briefly stunned
+      this.hit_timer -= 1;
+    }
+
+    else if (this.pickup_animation != null) {
+      // Doing animation for picking up a weapon
+      this.frame += 1;
+      if (this.frame > 30) {
+        this.pickup_animation = null;
+      }
+    }
+
+    else if (this.override_walking()) {
+      // If this is the case, we're in some kind of special state, managed by a subclass, which means we shouldn't
+      // do the usual walking/attacking behaviour below - e.g. Scooterboy riding scooter
+    }
+
+    else if (this.falling_state === Fighter.FallingState.STANDING) {
+      // Standing, walking or attacking
+
+      // Recover stamina over time
+      if (this.stamina < this.max_stamina) {
+        this.stamina += 1;
+      }
+
+      // Update position of held weapon
+      // The weapon actor is invisible while being held as we switch to a different fighter sprite using the
+      // weapon, but we update weapon pos so that if we drop the weapon, it reappears as a distinct sprite in the
+      // correct location
+      if (this.weapon != null) {
+        this.weapon.vpos = this.vpos.add(new Vecta(this.facing_x * 20, 0));
+      }
+
+      // Are we ready to attack or pick up/drop a weapon?
+      // If we're out of stamina, recovery time will be longer
+      let last_attack_recovery_time = (this.last_attack == null) ? 0 : this.last_attack.recovery_time;
+      if (this.stamina <= 0) {
+        last_attack_recovery_time *= 3;
+      }
+      if (this.attack_timer <= -last_attack_recovery_time) {
+        // Not currently attacking, do we want to start attacking?
+
+        // Before deciding if we want to attack - do we instead want to pick up or drop a weapon?
+        if (this.weapon == null) {
+          // Find weapons within reach
+          let nearby_weapons = game.weapons.filter((weapon) => (weapon.vpos.subtract(this.vpos).length() < 50));
+          if (nearby_weapons.length > 0) {
+            if (this.determine_pick_up_weapon()) {
+              // Sort nearby weapons by distance. length_squared is used to order them instead of
+              // length as it is more efficient
+              nearby_weapons.sort((a, b) => (a.vpos.subtract(this.vpos).length_squared() - b.vpos.subtract(this.vpos).length_squared()));
+              for (let weapon of nearby_weapons) {
+                if (weapon.can_be_picked_up()) {
+                  this.pickup_animation = weapon.weaponName;
+                  this.frame = 0;
+                  this.weapon = weapon;
+                  weapon.pick_up(Fighter.WEAPON_HOLD_HEIGHT);
+                  break;
+                }
+              }
+            }
+          }
+        }
+        else {
+          // Drop weapon?
+          if (this.determine_drop_weapon()) {
+            this.drop_weapon();
+          }
+        }
+
+        // Attack? Only allow if we didn't just start picking up a weapon!
+        if (this.pickup_animation == null) {
+          let attack = this.determine_attack();
+          if (attack != null) {
+            this.log("Attack " + attack.sprite);
+            this.last_attack = attack;
+            this.attack_timer = attack.anim_time;
+            this.stamina -= attack.stamina_cost;
+            this.stamina = Math.max(this.stamina, MIN_STAMINA);
+            this.frame = 0;
+
+            if (attack.initial_sound != null) {
+              // * = unpack the elements of the tuple (sound to play, and number of variations) into
+              // arguments to pass to play_sound
+              game.play_sound(...attack.initial_sound);
+            }
+
+            // Is this a flying kick?
+            if (attack.flying_kick) {
+              this.vel.x = FLYING_KICK_VEL_X * this.facing_x;
+              this.vel.y = FLYING_KICK_VEL_Y;
+            }
+
+            // Grab player?
+            if (attack.grab) {
+              game.player.grabbed();
+            }
+          }
+        }
+      }
+
+      // Update movement and animation, and pick up a weapon if desired
+      // Must check attack_timer again as an attack may only just have started during the previous block of code
+      if (this.attack_timer <= 0) {
+        // Not attacking
+        // Update facing_x. If get_desired_facing returns None, leave facing_x as it is
+        let desired_facing = this.get_desired_facing();
+        if (desired_facing != null) {
+          this.facing_x = desired_facing;
+        }
+
+        let target = this.get_move_target();
+        if ((target.x !== this.vpos.x) || (target.y !== this.vpos.y)) {
+          this.walking = true;
+
+          let [x, dx] = move_towards(this.vpos.x, target.x, this.speed.x);
+          this.vpos.x = x;
+          let [y, dy] = move_towards(this.vpos.y, target.y, this.speed.y);
+          this.vpos.y = y;
+
+          this.apply_movement_boundaries(dx, dy);
+
+          this.frame += 1;
+        }
+
+        else {
+          // No movement, reset frame to standing
+          this.walking = false;
+          this.frame = 7;  // Resetting frame to 7 rather than zero fixes an issue where it looks weird if you only walk for a fraction of a second
+        }
+      }
+      else {
+        // Currently attacking
+        this.frame += 1;
+
+        let frame = this.get_attack_frame();
+
+        // If current frame of attack is a hit frame, inflict damage to enemies
+        if (this.last_attack.hit_frames.includes(frame)) {
+          // Is this a throw attack?
+          if (this.last_attack.throwable) {
+            // If the current attack is a grab attack, that means we're the boss throwing the player
+            if (this.last_attack.grab) {
+              // Throw the player, if we haven't already done that on a previous frame
+              if (game.player.falling_state === Fighter.FallingState.GRABBED) {
+                game.player.hit(this, this.last_attack);
+                game.player.thrown(this.facing_x);
+              }
+            }
+
+            // Otherwise it's a normal throw of a barrel - make sure we still have the weapon, might have
+            // released it on a previous frame!
+            else if (this.weapon != null) {
+              this.weapon.throw(this.facing_x, this);
+              this.weapon = null;
+            }
+          }
+
+          // Call attack regardless of whether this is a throw attack, this fixes an issue where the barrel
+          // doesn't hit opponents because the position it's in when it's released is already past them
+          this.attack(this.last_attack);
+        }
+      }
+    }
   }
 }
 
