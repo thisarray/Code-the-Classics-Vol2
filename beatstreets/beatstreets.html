@@ -5007,6 +5007,151 @@ class Fighter extends ScrollHeightActor {
       }
     }
   }
+
+  attack(attack) {
+    // See if there is an opponent directly in front of us who we can hit (or behind us if it's a rear attack
+    // such as elbow)
+    if (attack.strength > 0) {
+      // Loop through all opponents to see which (if any) this attack should hit
+      for (let opponent of this.get_opponents()) {
+        let vec = opponent.vpos.subtract(this.vpos),
+            facing_correct = sign(this.facing_x) === sign(vec.x);
+        if (attack.rear_attack) {
+          facing_correct = !facing_correct;
+        }
+
+        // Should attack hit this opponent?
+        if ((Math.abs(vec.y) < opponent.half_hit_area.y) && facing_correct && (Math.abs(vec.x) < (attack.reach + opponent.half_hit_area.x))) {
+          opponent.hit(this, attack);
+
+          // If we're using a weapon, it may have broken as a result of being used
+          if ((this.weapon != null) && this.weapon.is_broken()) {
+            this.drop_weapon();
+          }
+        }
+      }
+
+      if (DEBUG_SHOW_ATTACKS) {
+        let attack_facing = this.facing_x * (attack.rear_attack ? -1 : 1),
+            debug_rect = new Rect(this.posx - ((attack_facing === -1) ? attack.reach : 0), this.posy - 5, attack.reach, 10);
+        debug_drawcalls.push(function () {
+          screen.draw.filled_rect(debug_rect, [255, 0, 0]);
+        });
+      }
+    }
+  }
+
+  hit(hitter, attack) {
+    // Hitter can be another fighter, or a weapon such as a barrel
+    // Can't be hit if we're falling/getting up
+    if ((this.falling_state === Fighter.FallingState.STANDING) || (this.falling_state === Fighter.FallingState.GRABBED)) {
+      // Can't be hit if we're already in the hit animation
+      if (this.hit_timer <= 0) {
+        this.stamina -= attack.strength * BASE_STAMINA_DAMAGE_MULTIPLIER * attack.stamina_damage_multiplier;
+        this.stamina = Math.max(this.stamina, MIN_STAMINA);
+        this.health -= attack.strength;
+
+        // Hit timer ensures we can't receive damage again until it's counted down, and stuns the fighter
+        // Stronger attacks stun for longer
+        this.hit_timer = attack.strength * 8 * attack.stun_time_multiplier;
+        this.hit_frame = getRandomInteger(0, 2);
+
+        // Stop our attack if we're in the middle of one - unless it's a flying kick, in which case continue.
+        // Code elsewhere will ensure we don't do the 'been hit' animation at the end of a flying kick
+        if ((this.attack_timer > 0) && ((this.last_attack != null) && (!this.last_attack.flying_kick))) {
+          this.attack_timer = 0;
+        }
+
+        // Drop weapon
+        if (this.weapon != null) {
+          this.drop_weapon();
+        }
+
+        if (attack.hit_sound != null) {
+          // * = unpack the elements of the tuple (sound to play, and number of variations) into
+          // arguments to pass to play_sound
+          game.play_sound(...attack.hit_sound);
+        }
+
+        if (this.hit_sound != null) {
+          // Sound for me being hit (only used by portal)
+          game.play_sound(this.hit_sound);
+        }
+
+        // Check for being knocked down due to being out of health or stamina
+        // Portals can't fall
+        if (((this.stamina <= 0) || (this.health <= 0)) && (!(this instanceof EnemyPortal))) {
+          this.falling_state = Fighter.FallingState.FALLING;
+          this.frame = 0;
+          this.hit_timer = 0;
+
+          // If we're knocked down due to being out of stamina, and we're close to death, just die already
+          if (this.health < 3) {
+            this.health = 0;
+            this.use_die_animation = (getRandomInteger(0, 2) === 0);    // Use die animation 50% of the time
+          }
+        }
+
+        // If the attacker was using a weapon, tell the weapon that it was used
+        // Must check that hitter is a Fighter, as it might be a barrel!
+        if ((hitter instanceof Fighter) && (hitter.weapon != null)) {
+          hitter.weapon.used();
+        }
+      }
+
+      // Always face towards hitter
+      // First check to make sure that hitter and I aren't at the same X position
+      if (hitter.vpos.x !== this.vpos.x) {
+        this.facing_x = sign(hitter.vpos.x - this.vpos.x);
+
+        if ((this.falling_state === Fighter.FallingState.FALLING) && (!this.use_die_animation)) {
+          // Get knocked backwards
+          this.vel.x += -this.facing_x * 10;
+        }
+      }
+    }
+  }
+
+  died() {
+    // Called when out of lives, can be overridden in cases where subclasses need to know that - e.g.
+    // EnemyHoodie may drop stick on death
+  }
+
+  draw(offset) {
+    // Determine sprite to use based on our current action
+    this.name = this.determine_sprite();
+
+    super.draw(offset);
+
+    if (DEBUG_SHOW_HEALTH_AND_STAMINA) {
+      let text = `HP: ${ this.health }\nSTM: ${ this.stamina }`;
+      screen.draw.text(text, {
+        fontsize: 24,
+        center: [this.posx, this.posy - 200],
+        color: "#FFFFFF",
+        align: "center"
+      });
+    }
+
+    if (DEBUG_SHOW_HIT_AREA_WIDTH) {
+      screen.draw.rect(new Rect(this.posx - this.half_hit_area.x, this.posy - this.half_hit_area.y, this.half_hit_area.x * 2, this.half_hit_area.y * 2), [255, 255, 255]);
+    }
+
+    if (DEBUG_SHOW_LOGS) {
+      let y = this.posy,
+          logs = this.logs.slice();
+      logs.reverse();
+      for (let l of logs) {
+        screen.draw.text(l, {
+          fontsize: 14,
+          center: [this.posx, y],
+          color: "#FFFFFF",
+          align: "center"
+        });
+        y += 10;
+      }
+    }
+  }
 }
 
 window.addEventListener('load', (event) => {
