@@ -5300,6 +5300,45 @@ class Fighter extends ScrollHeightActor {
     this.vpos.x += dir_x * 50;
     this.height_above_ground = 45;
   }
+
+  apply_movement_boundaries(dx, dy) {
+    // A fighter outside the boundary can walk in a direction which will help them get inside the boundary, but not
+    // in the direction that will take them further out of it
+    if ((dx < 0) && (this.vpos.x < game.boundary.left)) {
+      this.vpos.x = game.boundary.left;
+    }
+    else if ((dx > 0) && (this.vpos.x > game.boundary.right)) {
+      this.vpos.x = game.boundary.right;
+    }
+    if ((dy < 0) && (this.vpos.y < game.boundary.top)) {
+      this.vpos.y = game.boundary.top;
+    }
+    else if ((dy > 0) && (this.vpos.y > game.boundary.bottom)) {
+      this.vpos.y = game.boundary.bottom;
+    }
+  }
+
+  /*
+   * Every class that inherits from Fighter must implement each of the following abstract methods
+   */
+
+  determine_attack() {
+  }
+
+  determine_pick_up_weapon() {
+  }
+
+  determine_drop_weapon() {
+  }
+
+  get_opponents() {
+  }
+
+  get_move_target() {
+  }
+
+  get_desired_facing() {
+  }
 }
 
 window.addEventListener('load', (event) => {
