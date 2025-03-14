@@ -5341,6 +5341,112 @@ class Fighter extends ScrollHeightActor {
   }
 }
 
+class Player extends Fighter {
+  constructor(controls) {
+    // Anchor point just above bottom of sprite
+    super([400, 400], ["center", 256], new Vecta(3, 2), "hero", 30, 8, 500, null, 3, null, true);
+    this.controls = controls;
+    this.extra_life_timer = 0;
+  }
+
+  update() {
+    super.update();
+
+    this.extra_life_timer -= 1;
+
+    // Check for collecting powerups
+    for (let powerup of game.powerups) {
+      if (powerup.vpos.subtract(this.vpos).length() < 30) {
+        powerup.collect(this);
+      }
+    }
+  }
+
+  draw(offset) {
+    super.draw(offset);
+    // screen.draw.text(f"{self.vpos}", (0,0))
+    // screen.draw.text(f"{self.vpos}", self.pos)
+  }
+
+  determine_attack() {
+    // Do we have a weapon?
+    if (this.weapon != null) {
+      // Ensure we cannot attack during the pickup animation
+      if ((this.pickup_animation == null) && this.controls.button_pressed(0)) {
+        return ATTACKS.get(this.weapon.weaponName);
+      }
+    }
+
+    else if (this.controls.button_pressed(0)) {
+      // in combo?
+      if ((this.last_attack != null) && (this.last_attack.combo_next.length > 0) && (this.attack_timer >= -30)) {
+        // Get next attack in combo
+        // 0 here represents button 0, ideally this code should be made more general, but in practice
+        // the only combo we actually have is where you press button 0 three times to do a sequence of punches
+        // ending in an uppercut
+        if (this.last_attack.combo_next.length > 0) {
+          return ATTACKS.get(this.last_attack.combo_next[0]);
+        }
+      }
+
+      // Not in combo, just return default attack
+      return ATTACKS.get("punch");
+    }
+
+    else if (this.controls.button_pressed(1)) {
+      return [ATTACKS.get("kick"), ATTACKS.get("highkick")][getRandomInteger(0, 2)];
+    }
+
+    else if (this.controls.button_pressed(2)) {
+      return ATTACKS.get("elbow");
+    }
+
+    else if (this.controls.button_pressed(3)) {
+      return ATTACKS.get("flyingkick");
+    }
+
+    return null;
+  }
+
+  determine_pick_up_weapon() {
+    return this.controls.button_pressed(0);
+  }
+
+  determine_drop_weapon() {
+    return ((this.weapon != null) && this.controls.button_pressed(1));
+  }
+
+  get_opponents() {
+    return game.enemies;
+  }
+
+  get_move_target() {
+    // Our target position is our current position offset based on control inputs and speed
+    return this.vpos.add(new Vecta(this.controls.get_x() * this.speed.x, this.controls.get_y() * this.speed.y));
+  }
+
+  get_desired_facing() {
+    let dx = this.controls.get_x();
+    if (dx !== 0) {
+      this.facing_x = sign(dx);
+    }
+    else {
+      // Keep facing same direction as before if no X input
+      return this.facing_x;
+    }
+  }
+
+  get_draw_order_offset() {
+    // Consider player to be in front of another object with the same Y pos
+    return 1;
+  }
+
+  gain_extra_life() {
+    this.lives += 1;
+    this.extra_life_timer = 30;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
