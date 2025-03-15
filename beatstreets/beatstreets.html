@@ -5447,6 +5447,209 @@ class Player extends Fighter {
   }
 }
 
+class Enemy extends Fighter {
+  /*
+   * State is an inner class - a class within a class, so its name doesn't clash with the global class State
+   */
+  static State = Object.freeze({
+    APPROACH_PLAYER: 0,
+    GO_TO_POS: 1,
+    GO_TO_WEAPON: 2,
+    PAUSE: 3,
+    KNOCKED_DOWN: 4,
+    RIDING_SCOOTER: 5,
+    PORTAL: 6,
+    PORTAL_EXPLODE: 7
+  });
+
+  constructor(pos, name, attacks, start_timer,
+              speed = null,
+              health = 15,
+              stamina = 500,
+              approach_player_distance = ENEMY_APPROACH_PLAYER_DISTANCE,
+              anchor_y = 256,
+              half_hit_area = null,
+              colour_variant = null,
+              hit_sound = null,
+              score = 10) {
+    if (speed == null) {
+      speed = new Vecta(1, 1);
+    }
+    if (half_hit_area == null) {
+      half_hit_area = new Vecta(25, 20);
+    }
+    // Slower animation speed than Hero
+    super(pos, ["center", anchor_y], speed, name, health, 14, stamina, half_hit_area, 1, colour_variant, false, hit_sound);
+
+    // Target is a Vector2 instance
+    // Must make a copy of the value, not a copy of the reference
+    this.target = new Vecta(this.vpos);
+
+    this.target_weapon = null;
+
+    // Enemies don't try to target player until their start timer drops to zero
+    // e.g. on starting a new stage we might not want them to start targeting the player until they have
+    // scrolled onto the screen
+    this.state = Enemy.State.PAUSE;
+    this.state_timer = start_timer;
+
+    this.attacks = attacks;
+    this.approach_player_distance = approach_player_distance;
+    this.score = score;
+  }
+
+  spawned() {
+    // Called when the enemy is added into the game (when its stage is reached)
+  }
+
+  update() {
+    if (this.state === Enemy.State.APPROACH_PLAYER) {
+      let player = game.player,
+          x_offset;
+
+      // If player is attacking and we are quite close, chance (each frame) of backing up a little
+      if ((player.attack_timer > 0)
+          && (Math.abs(this.vpos.y - player.vpos.y) < 20)
+          && (Math.abs(this.vpos.x - player.vpos.x) < 200)
+          && (getRandomInteger(0, 501) === 0)) {
+        this.log("Back away from attack");
+        this.target.x = this.vpos.x - (this.facing_x * 90);
+        this.state = Enemy.State.GO_TO_POS;
+      }
+      else {
+        // Head towards player
+        // If we are holding a barrel, use a larger X offset so we throw from a distance
+        if (this.weapon instanceof Barrel) {
+          x_offset = ENEMY_APPROACH_PLAYER_DISTANCE_BARREL;
+        }
+        else {
+          x_offset = this.approach_player_distance;
+        }
+        this.target.x = player.vpos.x + (x_offset * sign(this.vpos.x - player.vpos.x));
+        this.target.y = player.vpos.y;
+      }
+    }
+
+    else if (this.state === Enemy.State.GO_TO_POS) {
+      // In this state we just check to see if we've reached the target position, if so we make a new decision
+      if ((this.target.x === this.vpos.x) && (this.target.y === this.vpos.y)) {
+        this.make_decision();
+      }
+    }
+
+    else if (this.state === Enemy.State.GO_TO_WEAPON) {
+      if ((!this.target_weapon.can_be_picked_up()) || (!this.target_weapon.on_screen())) {
+        // Weapon no longer available, make a new decision
+        this.target_weapon = null;
+        this.make_decision();
+      }
+      else {
+        this.target = new Vecta(this.target_weapon.vpos);
+        if ((this.target.x === this.vpos.x) && (this.target.y === this.vpos.y)) {
+          // Arrived - pick up weapon and make new decision
+          this.log("Pick up weapon");
+          this.pickup_animation = this.target_weapon.weaponName;
+          this.frame = 0;
+          this.target_weapon.pick_up(Fighter.WEAPON_HOLD_HEIGHT);
+          this.weapon = this.target_weapon;
+          this.target_weapon = null;
+          this.make_decision();
+        }
+      }
+    }
+
+    else if (this.state === Enemy.State.PAUSE) {
+      this.state_timer -= 1;
+      if (this.state_timer < 0) {
+        this.make_decision();
+      }
+    }
+
+    else if (this.state === Enemy.State.KNOCKED_DOWN) {
+      // Check to see if we've got up again, if so switch state
+      if (this.falling_state === Fighter.FallingState.STANDING) {
+        this.make_decision();
+      }
+    }
+
+    // Update of RIDING_SCOOTER state is in EnemyScooterboy class
+
+    if ((this.state === Enemy.State.APPROACH_PLAYER)
+        || (this.state === Enemy.State.GO_TO_POS)
+        || (this.state === Enemy.State.GO_TO_WEAPON)) {
+      // Ensure that target position is within the level boundary
+      this.target.x = Math.max(this.target.x, game.boundary.left);
+      this.target.x = Math.min(this.target.x, game.boundary.right);
+      this.target.y = Math.max(this.target.y, game.boundary.top);
+      this.target.y = Math.min(this.target.y, game.boundary.bottom);
+
+      // Check to see if another enemy is already heading for the new target pos, or one very close to it.
+      // If so, make a new decision
+      if (game.enemies.filter((enemy) => ((enemy != this) && (enemy.target.subtract(this.target).length() < 20))).length > 0) {
+        this.log("Same target");
+        this.make_decision();
+      }
+    }
+
+    // Call through to Fighter class update
+    super.update();
+  }
+
+  draw(offset) {
+    super.draw(offset);
+
+    if (DEBUG_SHOW_TARGET_POS) {
+      screen.draw.line([this.vpos.x - offset.x, this.vpos.y - offset.y], [this.target.x - offset.x, this.target.y - offset.y], [255, 255, 255]);
+    }
+  }
+
+  determine_attack() {
+    // Allow attacking if we're in APPROACH_PLAYER state, aligned with player on Y axis, both I and player are
+    // standing up, and we're within the right range of distances on the X axis, finally a must pass a random chance
+    // check of 1 in 20
+    // If we're holding a barrel, can be within any distance on the X axis
+
+    // Unpack player pos into more convenient variables
+    let px = game.player.vpos.x,
+        py = game.player.vpos.y,
+
+        holding_barrel = this.weapon instanceof Barrel;
+
+    if ((this.state === Enemy.State.APPROACH_PLAYER)
+        && (game.player.falling_state === Fighter.FallingState.STANDING)
+        && (this.vpos.y === py)
+        && ((((this.approach_player_distance * 0.9) < Math.abs(this.vpos.x - px)) && (Math.abs(this.vpos.x - px) <= (this.approach_player_distance * 1.1))) ||
+            holding_barrel)
+        && (getRandomInteger(0, 20) === 0)) {
+      if (this.weapon != null) {
+        return ATTACKS.get(this.weapon.weaponName);
+      }
+      else {
+        let chosen_attack = ATTACKS.get(this.attacks[getRandomInteger(0, this.attacks.length)]);
+
+        // If the chosen attack is a grab, don't allow it if the player is currently doing a flying kick
+        if (chosen_attack.grab && (game.player.last_attack != null) && game.player.last_attack.flying_kick) {
+          return null;
+        }
+
+        return chosen_attack;
+      }
+    }
+  }
+
+  determine_pick_up_weapon() {
+    return false;
+  }
+
+  determine_drop_weapon() {
+    return false;
+  }
+
+  get_opponents() {
+    return [game.player];
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
