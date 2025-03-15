@@ -5648,6 +5648,127 @@ class Enemy extends Fighter {
   get_opponents() {
     return [game.player];
   }
+
+  get_move_target() {
+    // Move towards player
+    // Choose a location to walk to, depending on which side of the player we're on
+    // We aim for a position 1 pixel above the player on the Y axis, so that we draw behind them
+    // offset_x = 80 if self.vpos.x > game.player.vpos.x else -80
+    // return game.player.vpos + Vector2(offset_x, -1)
+    if (this.target == null) {
+      // If no target, just return our current position
+      return this.vpos;
+    }
+    else {
+      //return self.target.get_pos()
+      return this.target;
+    }
+  }
+
+  get_desired_facing() {
+    // Always face towards player, unless we're on a scooter
+    if (this.state === Enemy.State.RIDING_SCOOTER) {
+      return this.facing_x;
+    }
+    else {
+      return (this.vpos.x < game.player.vpos.x) ? 1 : -1;
+    }
+  }
+
+  hit(hitter, attack) {
+    if (this.state === Enemy.State.KNOCKED_DOWN) {
+      // Already knocked down
+      return;
+    }
+
+    super.hit(hitter, attack);
+
+    // If we're riding a scooter, then getting hit will always cause us to fall, regardless of stamina
+    if (this.state === Enemy.State.RIDING_SCOOTER) {
+      this.falling_state = Fighter.FallingState.FALLING;
+      this.frame = 0;
+      this.hit_timer = 0;
+      this.just_knocked_off_scooter = true;
+    }
+
+    if (this.falling_state === Fighter.FallingState.FALLING) {
+      // Set state as knocked down
+      this.state = Enemy.State.KNOCKED_DOWN;
+      this.log("Knocked down");
+    }
+  }
+
+  make_decision() {
+    let player = game.player;
+
+    // If we're not going for a weapon:
+    // If we're the only enemy, always move in to attack
+    if (game.enemies.length === 1) {
+      this.log("Only enemy, go to player");
+      this.state = Enemy.State.APPROACH_PLAYER;
+    }
+    else {
+      // 7/10 chance of going directly to a point where we can attack the player, unless there's another enemy
+      // already heading there in which case flank
+      // 3/10 chance of going to a random point slightly further from the player
+      // 1/10 chance of pausing for a short time
+
+      let r = getRandomInteger(0, 10);
+      if (r < 7) {
+        // Check to see if another enemy on the same X side of the player is already heading to attack them
+        // If so, flank instead
+        if (game.enemies.filter((enemy) => ((enemy != this)
+                                            && (enemy.state === Enemy.State.APPROACH_PLAYER)
+                                            && (sign(enemy.vpos.x - player.vpos.x) === sign(this.vpos.x - player.vpos.x)))).length > 0) {
+          // Go to opposite side of player, at a Y position offset from them but on the same Y side that
+          // we're on now (e.g. if we're below, stay below). If Y pos is same, choose Y side randomly.
+          this.log("Begin flanking (same target)");
+          this.state = Enemy.State.GO_TO_POS;
+          this.target.x = player.vpos.x - (sign(this.vpos.x - player.vpos.x) * 50);
+          this.target.y = player.vpos.y + (sign(this.vpos.y - player.vpos.y) * 50);
+          if (this.target.y === player.vpos.y) {
+            this.target.y = player.vpos.y + ([-1, 1][getRandomInteger(0, 2)] * 50);
+          }
+        }
+        else {
+          // Go to player
+          this.log("Go to player");
+          this.state = Enemy.State.APPROACH_PLAYER;
+        }
+      }
+
+      else if (r < 9) {
+        // Go to a random point at a moderate distance from the player
+        // Stick to same half of screen on X axis
+        this.log("Go to distance from player");
+        let x_side = sign(this.vpos.x - player.vpos.x),
+            x1, x2, x, y;
+        if (x_side === 0) {
+          x_side = [1, -1][getRandomInteger(0, 2)];
+        }
+        x1 = Math.trunc(player.vpos.x + (150 * x_side));
+        x2 = Math.trunc(player.vpos.x + (400 * x_side));
+        x = getRandomInteger(Math.min(x1, x2), Math.max(x1, x2) + 1);
+        y = getRandomInteger(game.boundary.top, game.boundary.bottom + 1);
+        this.target = new Vecta(x, y);
+        this.state = Enemy.State.GO_TO_POS;
+      }
+
+      else {
+        // Pause
+        this.log("Pause");
+        this.state_timer = getRandomInteger(50, 101);
+        this.state = Enemy.State.PAUSE;
+      }
+    }
+  }
+}
+
+class EnemyVax extends Enemy {
+  constructor(pos, start_timer = 20) {
+    super(pos, "vax", ["vax_lpunch", "vax_rpunch", "vax_pound"], start_timer,
+          null, 15, 500, ENEMY_APPROACH_PLAYER_DISTANCE, 256, null, getRandomInteger(0, 3), null, 20);
+  }
 }
 
 window.addEventListener('load', (event) => {
