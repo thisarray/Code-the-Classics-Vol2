@@ -5771,6 +5771,22 @@ class EnemyVax extends Enemy {
   }
 }
 
+class EnemyHoodie extends Enemy {
+  constructor(pos, start_timer = 20) {
+    super(pos, "hoodie", ["hoodie_lpunch", "hoodie_rpunch", "hoodie_special"], start_timer,
+          new Vecta(1.2, 1), 12, 500, ENEMY_APPROACH_PLAYER_DISTANCE, 256, null, getRandomInteger(0, 3), null, 20);
+  }
+
+  died() {
+    super.died();
+
+    // Chance of dropping a stick
+    if (getRandomInteger(0, 3) === 0) {
+      game.weapons.push(new Stick([this.vpos.x, this.vpos.y]));
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
