@@ -5787,6 +5787,54 @@ class EnemyHoodie extends Enemy {
   }
 }
 
+class EnemyScooterboy extends Enemy {
+  static SCOOTER_SPEED_SLOW = 4;
+  static SCOOTER_SPEED_FAST = 12;
+  static SCOOTER_ACCELERATION = 0.2;
+
+  constructor(pos, start_timer = 20) {
+    super(pos, "scooterboy", ["scooterboy_attack1"], start_timer,
+          null, 15, 500, ENEMY_APPROACH_PLAYER_DISTANCE_SCOOTERBOY, 256, null, getRandomInteger(0, 3), null, 30);
+    this.state = Enemy.State.RIDING_SCOOTER;
+    this.scooter_speed = EnemyScooterboy.SCOOTER_SPEED_SLOW;
+    this.scooter_target_speed = this.scooter_speed;
+    this.scooter_sound_channel = null;
+  }
+
+  spawned() {
+    super.spawned();
+    if (this.scooter_sound_channel == null) {
+      this.scooter_sound_channel = game.get_sound("scooter_slow");
+    }
+    if (this.scooter_sound_channel != null) {
+      this.scooter_sound_channel.play(-1, 0.200);
+    }
+  }
+
+  make_decision() {
+    // Scooterboy stays on scooter until knocked off
+    if (this.state !== Enemy.State.RIDING_SCOOTER) {
+      super.make_decision();
+    }
+  }
+
+  determine_sprite() {
+    // Riding scooter is a state unique to Scooterboy, so it is dealt with here
+    if (this.state === Enemy.State.RIDING_SCOOTER) {
+      let facing_id = (this.facing_x === 1) ? 1 : 0,
+          frame = 0;
+      if (this.scooter_speed < this.scooter_target_speed) {
+        // Currently speeding up
+        frame = Math.min(Math.floor(this.frame / 5), 2);
+      }
+      return `${ this.sprite }_ride_${ facing_id }_${ frame }_${ this.colour_variant }`;
+    }
+    else {
+      return super.determine_sprite();
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
