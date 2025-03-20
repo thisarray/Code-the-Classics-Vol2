@@ -5833,6 +5833,100 @@ class EnemyScooterboy extends Enemy {
       return super.determine_sprite();
     }
   }
+
+  update() {
+    if (this.state === Enemy.State.RIDING_SCOOTER) {
+      let player = game.player,
+
+          // Change volume independently on left and right speakers
+          left_volume = remap_clamp(Math.abs(this.vpos.x - player.vpos.x + 500), 0, 1000, 1, 0),
+          right_volume = remap_clamp(Math.abs(this.vpos.x - player.vpos.x - 500), 0, 1000, 1, 0);
+      if (this.scooter_sound_channel != null) {
+        this.scooter_sound_channel.set_volume(Math.max(left_volume, right_volume));
+      }
+
+      // Currently accelerating/decelerating?
+      if (this.scooter_speed !== this.scooter_target_speed) {
+        this.scooter_speed = move_towards(this.scooter_speed, this.scooter_target_speed, EnemyScooterboy.SCOOTER_ACCELERATION)[0];
+        this.frame += 1;
+      }
+      else if (this.on_screen() && (getRandomInteger(0, 31) === 0)) {
+        // If on screen, random chance of accelerating
+        this.scooter_target_speed = EnemyScooterboy.SCOOTER_SPEED_FAST;
+        if (this.scooter_sound_channel != null) {
+          this.scooter_sound_channel.stop();
+          this.scooter_sound_channel = game.get_sound("scooter_accelerate", 6);
+          this.scooter_sound_channel.play(0, 0.200);
+        }
+        this.frame = 0;
+      }
+
+      // Move forward
+      this.target.x = this.vpos.x + (this.facing_x * this.scooter_speed);
+      this.vpos.x = this.target.x;
+
+      // Turn around if we've gone off the edge of the screen
+      // We check self.x which is the actual screen position as opposed to the position in the scrolling level
+      if (((this.facing_x > 0) && (this.posx > (WIDTH + 200))) || ((this.facing_x < 0) && (this.posx < -200))) {
+        this.facing_x = -this.facing_x;
+        this.target.y = player.vpos.y;
+
+        // If player is standing, move to the same Y position as player, otherwise choose a random Y position
+        // which is not close to the player Y position (to avoid player getting stunlocked)
+        if (game.player.falling_state === Fighter.FallingState.STANDING) {
+          this.vpos.y = this.target.y;
+        }
+        else {
+          while (Math.abs(this.vpos.y - this.target.y) < 40) {
+            this.vpos.y = getRandomInteger(MIN_WALK_Y, HEIGHT);
+          }
+        }
+
+        // Also slow down if at high speed
+        this.scooter_target_speed = EnemyScooterboy.SCOOTER_SPEED_SLOW;
+        this.scooter_speed = this.scooter_target_speed;
+
+        // Go back to slow sound
+        if (this.scooter_sound_channel != null) {
+          this.scooter_sound_channel.stop();
+          this.scooter_sound_channel = game.get_sound("scooter_slow");
+          this.scooter_sound_channel.play(-1, 0.200);
+        }
+      }
+
+      // Check to see if we hit the player
+      if ((player.falling_state === Fighter.FallingState.STANDING)
+          && (Math.abs(player.vpos.y - this.vpos.y) < 30)
+          && (Math.abs(this.vpos.x - player.vpos.x) < 60)
+          && (player.height_above_ground < 20)) {
+        player.hit(this, ATTACKS.get("scooter_hit"));
+      }
+    }
+
+    else if (this.just_knocked_off_scooter && (this.scooter_sound_channel != null)) {
+      this.scooter_sound_channel.stop();
+    }
+
+    super.update();
+  }
+
+  override_walking() {
+    return (this.state === Enemy.State.RIDING_SCOOTER);
+  }
+
+  died() {
+    super.died();
+
+    // Low chance of dropping a chain
+    if (getRandomInteger(0, 20) === 0) {
+      game.weapons.push(new Chain([this.vpos.x, this.vpos.y]));
+    }
+
+    // Stop scooter sound - only needed for when we're skipping stages in debug mode
+    if (this.scooter_sound_channel != null) {
+      this.scooter_sound_channel.stop();
+    }
+  }
 }
 
 window.addEventListener('load', (event) => {
