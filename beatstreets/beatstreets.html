@@ -5929,6 +5929,37 @@ class EnemyScooterboy extends Enemy {
   }
 }
 
+class EnemyBoss extends Enemy {
+  constructor(pos, start_timer = 20) {
+    super(pos, "boss", ["boss_lpunch", "boss_rpunch", "boss_kick", "boss_grab_player"], start_timer,
+          new Vecta(0.9, 0.8), 25, 1000, ENEMY_APPROACH_PLAYER_DISTANCE, 280, new Vecta(30, 20), getRandomInteger(0, 3), null, 75);
+  }
+
+  make_decision() {
+    // Boss can pick up a barrel, if they're not currently holding one
+    // Look for a barrel we can walk to. Barrel must not be held by anyone else and must be on the screen
+    if (this.weapon == null) {
+      let available_barrels = game.weapons.filter((weapon) => ((weapon instanceof Barrel) && weapon.can_be_picked_up() && weapon.on_screen()));
+      if (available_barrels.length > 0) {
+        // Find a weapon to go to
+        for (let weapon of available_barrels) {
+          // Don't go to a barrel if another enemy is already going to it
+          if (game.enemies.filter((enemy) => ((enemy != this) && (enemy.target_weapon == weapon))).length === 0) {
+            // This weapon is OK to go for
+            this.log("Go to weapon");
+            this.state = Enemy.State.GO_TO_WEAPON;
+            this.target_weapon = weapon;
+            return;
+          }
+        }
+      }
+    }
+
+    // If we didn't enter the GO_TO_WEAPON state, call the parent method
+    super.make_decision();
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
