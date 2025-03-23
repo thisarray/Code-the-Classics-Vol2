@@ -5960,6 +5960,126 @@ class EnemyBoss extends Enemy {
   }
 }
 
+class EnemyPortal extends Enemy {
+  static GENERATE_ANIMATION_FRAMES = 6;
+  static GENERATE_ANIMATION_DIVISOR = 16;
+  static GENERATE_ANIMATION_TIME = EnemyPortal.GENERATE_ANIMATION_FRAMES * EnemyPortal.GENERATE_ANIMATION_DIVISOR;
+
+  constructor(pos, enemies, spawn_interval, spawn_interval_change = 0, max_spawn_interval = 600, max_enemies = 5, start_timer = 90) {
+    // Hittable area is larger for portals
+    super(pos, "portal", [], start_timer,
+          null, 15, 500, ENEMY_APPROACH_PLAYER_DISTANCE, 340, new Vecta(50, 50), null, "portal_hit", 10);
+    this.enemies = enemies;
+    this.spawn_interval = spawn_interval;
+    this.spawn_timer = spawn_interval;
+    this.spawn_interval_change = spawn_interval_change;
+    this.max_spawn_interval = max_spawn_interval;
+    this.max_enemies = max_enemies;
+    this.spawning_enemy = null;
+    this.spawn_facing = 0;
+  }
+
+  spawned() {
+    super.spawned();
+    game.play_sound("portal_appear");
+  }
+
+  make_decision() {
+    // Like all enemies, portals start in the PAUSE state until their start_timer expires
+    this.state = Enemy.State.PORTAL;
+  }
+
+  determine_sprite() {
+    if ((this.state === Enemy.State.PAUSE) && (Math.floor(this.frame / 8) < 4)) {
+      return "portal_grow_" + Math.min(Math.floor(this.frame / 8), 3);
+    }
+    else if (this.state === Enemy.State.PORTAL_EXPLODE) {
+      return "portal_destroyed_" + Math.min(Math.floor(this.frame / 6), 7);
+    }
+    else if (this.spawning_enemy != null) {
+      // 3 frames of neutral generate animation, then 3 frames of animation for generating specific enemy
+      let frame = Math.floor(this.frame / EnemyPortal.GENERATE_ANIMATION_DIVISOR);
+      if (frame < 3) {
+        return "portal_generate_" + frame;
+      }
+      else {
+        frame = Math.min(frame - 3, 2);
+        return `portal_generate_${ this.spawning_enemy.sprite }_${ this.spawn_facing }_${ frame }_${ this.spawning_enemy.colour_variant }`;
+      }
+    }
+
+    else if (this.hit_timer > 0) {
+      return "portal_hit_0";
+    }
+    else {
+      return "portal_idle_" + (Math.floor(this.frame / 8) % 8);
+    }
+  }
+
+  update() {
+    this.frame += 1;
+
+    if (this.state === Enemy.State.PORTAL) {
+      if (this.health <= 0) {
+        this.state = Enemy.State.PORTAL_EXPLODE;
+        this.frame = 0;
+        game.play_sound("portal_destroyed");
+      }
+
+      else {
+        this.spawn_timer -= 1;
+        if ((this.spawn_timer <= 0) && (this.spawning_enemy != null)) {
+          // Animation complete, actually put the enemy in the level
+          game.spawn_enemy(this.spawning_enemy);
+
+          this.spawning_enemy = null;
+
+          // Reset spawn timer, depending on spawn_interval_change we may spawn less frequently as time goes on
+          this.spawn_interval += this.spawn_interval_change;
+          this.spawn_interval = Math.min(this.spawn_interval, this.max_spawn_interval);
+          this.spawn_timer = this.spawn_interval;
+        }
+
+        else if ((this.spawning_enemy == null) && (this.spawn_timer <= EnemyPortal.GENERATE_ANIMATION_TIME)) {
+          if (game.enemies.length >= this.max_enemies) {
+            // Too many enemies to spawn at the moment, try again in one second
+            this.spawn_timer = 60;
+          }
+          else {
+            // Randomly choose an enemy to spawn from our enemies list
+            let chosen_enemy = this.enemies[getRandomInteger(0, this.enemies.length)];
+
+            // Choose direction for spawned enemy to face (0/1 = left/right)
+            this.spawn_Facing = (this.vpos.x > game.player.vpos.x) ? 0 : 1;
+
+            // Instantiate the enemy, but it won't appear in the level until the animation is complete
+            this.spawning_enemy = new chosen_enemy([this.vpos.x, this.vpos.y]);
+
+            // Reset frame for spawning animation
+            this.frame = 0;
+
+            game.play_sound("portal_enemy_spawn");
+          }
+        }
+      }
+    }
+
+    else if (this.state === Enemy.State.PORTAL_EXPLODE) {
+      if (this.frame > 50) {
+        this.lives -= 1;
+        this.died();
+      }
+    }
+
+    super.update();
+  }
+
+  override_walking() {
+    // A portal never walks
+    return true;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
