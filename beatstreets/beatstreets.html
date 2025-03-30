@@ -6080,6 +6080,31 @@ class EnemyPortal extends Enemy {
   }
 }
 
+/*
+ * This is the scooter on its own, with the rider having been knocked off
+ */
+class Scooter extends ScrollHeightActor {
+  constructor(pos, facing_x, colour_variant) {
+    super("blank", pos, ["center", 256]);
+    this.facing_x = facing_x;
+    this.colour_variant = colour_variant;
+    this.vel_x = -facing_x * 8;
+    this.frame = 0;
+    game.play_sound("scooter_fall");
+  }
+
+  update() {
+    this.frame += 1;
+    this.vpos.x += this.vel_x;
+    this.vel_x *= 0.94;
+    this.name = `scooterboy_bike_${ (this.facing_x > 0) ? 1 : 0 }_${ Math.min(Math.floor(this.frame / 30), 2) }_${ this.colour_variant }`;
+  }
+
+  get_draw_order_offset() {
+    return -1;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
