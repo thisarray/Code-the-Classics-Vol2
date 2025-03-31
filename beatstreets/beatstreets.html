@@ -6154,6 +6154,31 @@ class Weapon extends ScrollHeightActor {
       }
     }
   }
+
+  can_be_picked_up() {
+    return ((!this.held) && (this.height_above_ground === 0));
+  }
+
+  pick_up(hold_height) {
+    console.assert(!this.held);
+    this.held = true;
+    this.height_above_ground = hold_height;   // for when we are dropped
+    this.vel = new Vecta(0, 0);
+    this.name = "blank";
+  }
+
+  dropped() {
+    // Subclass has the responsibility of setting image to the correct sprite
+    console.assert(this.held);
+    this.held = false;
+  }
+
+  used() {
+  }
+
+  is_broken() {
+    return false;
+  }
 }
 
 window.addEventListener('load', (event) => {
