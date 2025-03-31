@@ -6105,6 +6105,57 @@ class Scooter extends ScrollHeightActor {
   }
 }
 
+class Weapon extends ScrollHeightActor {
+  constructor(name, sprite, pos, end_pickup_frame, anchor = ANCHOR_CENTRE, bounciness = 0, ground_friction = 0.5, air_friction = 0.996, separate_shadow = false) {
+    super(sprite, pos, anchor, separate_shadow);
+    this.weaponName = name;
+    this.end_pickup_frame = end_pickup_frame;
+    this.held = false;
+    this.vel = new Vecta(0, 0);
+    this.bounciness = bounciness;
+    this.ground_friction = ground_friction;
+    this.air_friction = air_friction;
+  }
+
+  update() {
+    if (!this.held) {
+      // If not held, check whether we're above the ground, or if we're moving
+      if ((this.height_above_ground > 0) || (this.vel.y !== 0)) {
+        // Fall to ground
+        this.vel.y += WEAPON_GRAVITY;
+        if (this.vel.y > this.height_above_ground) {
+          // Bounce if we have bounciness, but stop bouncing if Y velocity is low
+          if ((this.bounciness > 0) && (this.vel.y > 1)) {
+            // eg bounciness 1, height_above_ground 10, vel y 15, bounce amount should be 5
+            this.height_above_ground = Math.abs(this.height_above_ground - this.vel.y) * this.bounciness;
+            this.vel.y = -this.vel.y * this.bounciness;
+            //print(f"{self.vel.y=}, {self.height_above_ground=}")
+          }
+          else {
+            this.height_above_ground = 0;
+            this.vel.y = 0;
+          }
+        }
+        else {
+          // Didn't bounce - apply velocity to Y pos
+          this.height_above_ground -= this.vel.y;
+        }
+
+        console.assert(this.height_above_ground >= 0);
+      }
+
+      this.vpos.x += this.vel.x;
+
+      // Friction on X axis, varies depending on whether we're on the ground or in the air
+      let friction = (this.height_above_ground === 0) ? this.ground_friction : this.air_friction;
+      this.vel.x *= friction;
+      if (Math.abs(this.vel.x) < 0.05) {
+        this.vel.x = 0;
+      }
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
