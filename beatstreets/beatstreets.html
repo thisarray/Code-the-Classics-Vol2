@@ -6181,6 +6181,78 @@ class Weapon extends ScrollHeightActor {
   }
 }
 
+class Barrel extends Weapon {
+  constructor(pos) {
+    super("barrel", "barrel_upright", pos, 2, ["center", 190], 0.75, 0.96, 0.996, true);
+    this.last_thrower = null;
+    this.frame = 0;
+  }
+
+  update() {
+    // Call parent update
+    super.update();
+
+    // If moving, look for people to bash into
+    // Won't collide if it can be picked up (if it is moving slowly enough)
+    if ((!this.held) && (!this.can_be_picked_up()) && (this.vel.x !== 0)) {
+      for (let fighter of ([game.player]).concat(game.enemies)) {
+        // Won't collide with the person who threw it
+        // Won't collide with a fighter who is falling (incl. lying on the ground)
+        // Must be within 30 pixels on X axis
+        // Must be within 30 pixels on Y axis (vpos.y doesn't take height above ground into account, so this
+        // is effectively the character's 'depth' in the level)
+        // Must hit within the height of the character, taking into account height_above_ground for both the
+        // barrel and fighter. The fighter may be able to jump over the barrel. The Y anchor of fighter sprites
+        // is at the feet and the Y anchor of the barrel is at its centre.
+        // The barrel isn't able to bounce above the head of a fighter (unless we added a really short fighter),
+        // so we don't need to check that
+        const BARREL_HEIGHT = 40;
+        let fighter_bottom_height = fighter.height_above_ground,
+            barrel_bottom_height = this.height_above_ground - Math.floor(BARREL_HEIGHT / 2),
+            barrel_top_height = barrel_bottom_height + BARREL_HEIGHT;
+
+        if ((fighter != this.last_thrower)
+            && (fighter.falling_state === Fighter.FallingState.STANDING)
+            && (Math.abs(fighter.vpos.y - this.vpos.y) < 30)
+            && (Math.abs(this.vpos.x - fighter.vpos.x) < 30)
+            && (fighter_bottom_height < barrel_top_height)) {
+          fighter.hit(this, ATTACKS.get("barrel"));
+        }
+      }
+
+      // Update rolling animation
+      this.frame += 1;
+      this.name = `barrel_roll_${ (this.vel.x > 0) ? 1 : 0 }_${ Math.floor(this.frame / 14) % 4 }`;
+    }
+  }
+
+  throw(dir_x, thrower) {
+    this.dropped();
+    this.vel.x = dir_x * BARREL_THROW_VEL_X;
+    this.vel.y = BARREL_THROW_VEL_Y;
+    this.last_thrower = thrower;
+
+    // Shift position for throw animation
+    this.vpos.x += dir_x * 104;
+    //self.height_above_ground += 54
+  }
+
+  dropped() {
+    super.dropped();
+    this.name = "barrel_roll_0_0";
+  }
+
+  can_be_picked_up() {
+    return (super.can_be_picked_up() && (this.vel.length() < 1));
+  }
+
+  get_draw_order_offset() {
+    // Consider barrel to be in front of another object with the same Y pos
+    // (including player which has draw offset of 1)
+    return 2;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
