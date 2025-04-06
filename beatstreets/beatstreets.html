@@ -6253,6 +6253,39 @@ class Barrel extends Weapon {
   }
 }
 
+class BreakableWeapon extends Weapon {
+  constructor(pos, name, durability) {
+    super(name, name, pos, 1, ["center", "center"]);
+    this.break_counter = durability;
+  }
+
+  dropped() {
+    super.dropped();
+    this.name = this.weaponName;
+  }
+
+  get_draw_order_offset() {
+    // Used for stick/chain on ground. Default draw order means it is sometimes drawn on top of a character standing on
+    // it, but changing Y anchor point also has some undesirable effects
+    return -50;
+  }
+
+  used() {
+    this.break_counter -= 1;
+    if (this.break_counter === 0) {
+      this.on_break();
+    }
+  }
+
+  is_broken() {
+    return (this.break_counter <= 0);
+  }
+
+  on_break() {
+    // Can't call this break as that's a keyword in Python!
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
