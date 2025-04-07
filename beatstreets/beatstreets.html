@@ -6296,6 +6296,16 @@ class Stick extends BreakableWeapon {
   }
 }
 
+class Chain extends BreakableWeapon {
+  constructor(pos) {
+    super(pos, "chain", getRandomInteger(18, 26));
+  }
+
+  on_break() {
+    game.play_sound("chain_break");
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
