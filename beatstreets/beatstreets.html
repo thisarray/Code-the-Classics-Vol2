@@ -6306,6 +6306,24 @@ class Chain extends BreakableWeapon {
   }
 }
 
+class Powerup extends ScrollHeightActor {
+  constructor(image, pos) {
+    /*
+     * Note: Fixed the swapped arguments
+     * The original Python code swapped image and pos here and in the subclasses, cancelling the error.
+     */
+    super(image, pos);
+    this.collected = false;
+  }
+
+  update() {
+  }
+
+  collect(collector) {
+    this.collected = true;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
