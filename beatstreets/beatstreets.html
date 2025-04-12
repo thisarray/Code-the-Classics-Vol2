@@ -6324,6 +6324,25 @@ class Powerup extends ScrollHeightActor {
   }
 }
 
+class HealthPowerup extends Powerup {
+  constructor(pos) {
+    /*
+     * Note: Fixed the swapped arguments
+     * The original Python code swapped image and pos here and in the subclasses, cancelling the error.
+     */
+    super("health_pickup", pos);
+  }
+
+  collect(collector) {
+    super.collect(collector);
+
+    // Add 20 health to the player who collected us, but don't go over their max health
+    collector.health = Math.min(collector.health + 20, collector.start_health);
+
+    game.play_sound("health", 1);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
