@@ -6343,6 +6343,31 @@ class HealthPowerup extends Powerup {
   }
 }
 
+class ExtraLifePowerup extends Powerup {
+  constructor(pos) {
+    /*
+     * Note: Fixed the swapped arguments
+     * The original Python code swapped image and pos here and in the subclasses, cancelling the error.
+     */
+    super("ingame_life9", pos);
+    this.timer = 0;
+  }
+
+  update() {
+    super.update();
+    this.timer += 1;
+    this.name = "ingame_life" + (Math.floor(this.timer / 2) % 10);
+  }
+
+  collect(collector) {
+    super.collect(collector);
+
+    collector.gain_extra_life();
+
+    game.play_sound("health", 1);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
