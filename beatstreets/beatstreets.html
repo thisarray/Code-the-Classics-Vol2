@@ -6541,6 +6541,55 @@ function setup_stages() {
                         [new Barrel([11800, 380])],
                         [new HealthPowerup([12000, MIN_WALK_Y]),
                          new HealthPowerup([12500, MIN_WALK_Y])]));
+
+  STAGES.push(new Stage([new EnemyPortal([12900, 340], [EnemyBoss], 240, 20, 300, 4),
+                         new EnemyHoodie([13200, 320]),
+                         new EnemyHoodie([13200, 330]),
+                         new EnemyVax([13400, 360])],
+                        12600));
+
+  STAGES.push(new Stage([new EnemyPortal([13600, 320], [EnemyVax], 230, 20, 300, 10),
+                         new EnemyPortal([13600, 435], [EnemyHoodie], 240, 20, 300, 10),
+                         new EnemyPortal([14000, 320], [EnemyScooterboy], 250, 30, 300, 10),
+                         new EnemyPortal([14000, 435], [EnemyBoss], 260, 30, 300, 10)],
+                        13400));
+
+  STAGES.push(new Stage([new EnemyPortal([14900, 320], [EnemyVax], 220, 20, 300, 8),
+                         new EnemyPortal([14900, 435], [EnemyHoodie], 230, 20, 300, 8),
+                         new EnemyPortal([15300, 320], [EnemyScooterboy], 240, 20, 300, 8),
+                         new EnemyPortal([15300, 435], [EnemyBoss], 250, 20, 300, 8)],
+                        14700,
+                        [],
+                        [new HealthPowerup([14650, 350])]));
+
+  STAGES.push(new Stage([new EnemyPortal([15800, 350], [EnemyVax, EnemyHoodie, EnemyScooterboy], 60, 20, 300, 8)],
+                        15400,
+                        [],
+                        [new HealthPowerup([16000, MIN_WALK_Y])]));
+
+  STAGES.push(new Stage([new EnemyVax([17600, 300]),
+                         new EnemyVax([17900, 320]),
+                         new EnemyVax([17600, 340]),
+                         new EnemyVax([17900, 360]),
+                         new EnemyVax([17600, 380]),
+                         new EnemyVax([17900, 400]),
+                         new EnemyVax([17600, 420])],
+                        16600,
+                        [new Barrel([17000, 380])],
+                        [new HealthPowerup([17000, MIN_WALK_Y])]));
+
+  STAGES.push(new Stage([new EnemyBoss([17800, MIN_WALK_Y]),
+                         new EnemyScooterboy([18500, 380]),
+                         new EnemyScooterboy([18600, 380]),
+                         new EnemyScooterboy([18700, 380]),
+                         new EnemyScooterboy([18800, 380]),
+                         new EnemyScooterboy([19000, 380])],
+                        17400,
+                        [new Stick([18000, 340])]));
+
+  STAGES.push(new Stage([new EnemyBoss([18800, 320]),
+                         new EnemyPortal([18900, 390], [EnemyVax, EnemyHoodie], 30, 5, 600, 10, 400)],
+                        18500));
 }
 
 window.addEventListener('load', (event) => {
