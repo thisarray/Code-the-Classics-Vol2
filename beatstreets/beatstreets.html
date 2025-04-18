@@ -6590,6 +6590,30 @@ function setup_stages() {
   STAGES.push(new Stage([new EnemyBoss([18800, 320]),
                          new EnemyPortal([18900, 390], [EnemyVax, EnemyHoodie], 30, 5, 600, 10, 400)],
                         18500));
+
+  STAGES.push(new Stage([new EnemyScooterboy([19900, 340])],
+                        19300,
+                        [new Barrel([19400, 340])],
+                        [new HealthPowerup([19600, MIN_WALK_Y])]));
+
+  // Final battles
+
+  STAGES.push(new Stage([new EnemyHoodie([20900, 380], 500),
+                         new EnemyBoss([21500, 330]),
+                         new EnemyBoss([21500, 350]),
+                         new EnemyBoss([21500, 370]),
+                         new EnemyBoss([21500, 390]),
+                         new EnemyBoss([18200, 320]),
+                         new EnemyBoss([17800, 390])],
+                        20500,
+                        [],
+                        [new ExtraLifePowerup([20900, MIN_WALK_Y])]));
+
+  STAGES.push(new Stage([new EnemyPortal([20700, 315], [EnemyVax, EnemyHoodie], 60, 5, 600, 20, 600),
+                         new EnemyPortal([20700, 440], [EnemyHoodie], 60, 10, 600, 20, 600),
+                         new EnemyPortal([21100, 315], [EnemyScooterboy], 60, 15, 600, 20, 600),
+                         new EnemyPortal([21100, 440], [EnemyBoss], 60, 20, 600, 20, 600)],
+                        20500));
 }
 
 window.addEventListener('load', (event) => {
