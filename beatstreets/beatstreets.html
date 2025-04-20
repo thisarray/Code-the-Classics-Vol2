@@ -6804,6 +6804,89 @@ class Game {
       console.log(`update: ${ updateMeasure.duration }`);
     }
   }
+
+  draw() {
+    // Draw background
+    this.draw_background();
+
+    // Draw all objects, lowest on screen first
+    // Y pos used is modified by result of get_draw_order_offset, for certain cases where we need more nuance than
+    // just "lowest on screen first"
+    performance.mark('draw_objs_start');
+    let all_objs = ([this.player]).concat(this.enemies).concat(this.weapons).concat(this.scooters).concat(this.powerups);
+    all_objs.sort((a, b) => ((a.vpos.y + a.get_draw_order_offset()) - (b.vpos.y + b.get_draw_order_offset())));
+    for (let obj of all_objs) {
+      if (obj != null) {
+        obj.draw(this.scroll_offset);
+      }
+    }
+    if (DEBUG_PROFILING) {
+      performance.mark('draw_objs_end');
+      let drawMeasure = performance.measure('draw_objs_duration', 'draw_objs_start', 'draw_objs_end');
+      console.log(`objs: ${ drawMeasure.duration }`);
+    }
+
+    performance.mark('draw_icons_start');
+
+    // If player can scroll the level, show flashing arrow
+    if ((this.scroll_offset.x < this.max_scroll_offset_x) && ((Math.floor(this.timer / 30) % 2) === 0)) {
+      screen.blit("arrow", [WIDTH - 450, 120]);
+    }
+
+    this.draw_ui();
+
+    if (DEBUG_PROFILING) {
+      performance.mark('draw_icons_end');
+      let drawMeasure = performance.measure('draw_icons_duration', 'draw_icons_start', 'draw_icons_end');
+      console.log(`icons: ${ drawMeasure.duration }`);
+      performance.mark('draw_rest_start');
+    }
+
+    // During the intro we show a black background, immediately after the intro we fade it away
+    // Draw a black image with gradually decreasing opacity
+    // An alpha value of 255 is fully opaque, 0 is fully transparent
+    if (this.text_active || (this.timer < 255)) {
+      let alpha = Math.max(0, 255 - this.timer);
+      if (this.text_active) {
+        alpha = 255;
+      }
+      else {
+        alpha = Math.max(0, 255 - this.timer);
+      }
+      screen.draw.filled_rect(new Rect(0, 0, WIDTH, HEIGHT), [0, 0, 0, alpha]);
+    }
+
+    // Show intro text
+    if (this.text_active) {
+      draw_text(this.displayed_text, 50, 50);
+    }
+
+    // Debug
+    if (DEBUG_SHOW_SCROLL_POS) {
+      screen.draw.text(`${ this.scroll_offset } ${ this.max_scroll_offset_x }`, {
+        pos: [0, 25]
+      });
+      screen.draw.text(this.boundary.left.toFixed(), {
+        pos: [0, 45]
+      });
+    }
+
+    if (DEBUG_SHOW_BOUNDARY) {
+      screen.draw.rect(new Rect(this.boundary.left - this.scroll_offset.x, this.boundary.top, this.boundary.width, this.boundary.height), [255, 255, 255]);
+    }
+
+    // If there are any debug draw calls, execute them - used by DEBUG_SHOW_ATTACKS
+    for (let func of debug_drawcalls) {
+      func();
+    }
+
+    if (DEBUG_PROFILING) {
+      // Show profiler timing for everything not in another category
+      performance.mark('draw_rest_end');
+      let drawMeasure = performance.measure('draw_rest_duration', 'draw_rest_start', 'draw_rest_end');
+      console.log(`rest: ${ drawMeasure.duration }`);
+    }
+  }
 }
 
 window.addEventListener('load', (event) => {
