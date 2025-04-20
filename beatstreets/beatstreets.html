@@ -6616,6 +6616,196 @@ function setup_stages() {
                         20500));
 }
 
+class Game {
+  constructor(controls = null) {
+    this.player = new Player(controls);
+
+    this.enemies = [];
+    this.weapons = [];
+    this.scooters = [];
+    this.powerups = [];
+
+    this.stage_index = -1;
+    this.timer = 0;
+    this.score = 0;
+
+    this.scroll_offset = new Vecta(0, 0);
+    this.max_scroll_offset_x = 0;
+    this.scrolling = false;
+
+    this.boundary = new Rect(0, MIN_WALK_Y, WIDTH - 1, HEIGHT - MIN_WALK_Y);
+
+    setup_stages();
+
+    // Set up intro text, selecting randomly from one of several stolen items
+    let stolen_items = ["A SHIPMENT OF RASPBERRY\nPIS",
+                        "YOUR COPY OF CODE THE\nCLASSICS VOL 2",
+                        "THE COMPLETE WORKS OF\nSHAKESPEARE",
+                        "THE BLOCKCHAIN",
+                        "THE WORLD'S ENTIRE SUPPLY\nOF COVID VACCINES",
+                        "ALL OF YOUR SAVED GAME\nFILES",
+                        "YOUR DOG'S FLEA MEDICINE"];
+
+    this.text_active = INTRO_ENABLED;
+    this.intro_text = "THE NOTORIOUS CRIME BOSS\nEBEN UPTON HAS STOLEN\n";
+    this.intro_text += stolen_items[getRandomInteger(0, stolen_items.length)];
+    this.intro_text += "\n\n\nFIGHT TO RECLAIM WHAT\nHAS BEEN TAKEN!";
+    this.outro_text = "FOLLOWING THE DEFEAT OF\n";
+    this.outro_text += "THE EVIL GANG, HUMANITY\n";
+    this.outro_text += "ENTERED A NEW GOLDEN AGE\n";
+    this.outro_text += "IN WHICH CRIME BECAME A\n";
+    this.outro_text += "THING OF THE PAST. THE\n";
+    this.outro_text += "WORD ITSELF WAS SOON\n";
+    this.outro_text += "FORGOTTEN AND EVERYONE\n";
+    this.outro_text += "HAD A BIG PARTY IN YOUR\n";
+    this.outro_text += "HONOUR.\n";
+    this.outro_text += "\nNICE JOB!";
+    this.current_text = this.intro_text;
+    this.displayed_text = "";
+  }
+
+  next_stage() {
+    // A stage is over when we've scrolled to its max_scroll_x and there are no enemies left
+    // Enemies are created when we start scrolling (or here, if no scrolling is to take place or is already taking place)
+    this.stage_index += 1;
+    if (this.stage_index < STAGES.length) {
+      let stage = STAGES[this.stage_index];
+      this.max_scroll_offset_x = stage.max_scroll_x;
+      if (this.scrolling || (this.max_scroll_offset_x <= this.scroll_offset.x)) {
+        console.log("No scrolling or already scrolling - create stage objects");
+        this.create_stage_objects(stage);
+      }
+    }
+    else {
+      // If stage_index has reached len(STAGES), we go into the outro state (like intro text, but with different text)
+      // After that, check_won() will return True and the game state code will pick up on this and end the game
+      if (!this.text_active) {
+        this.text_active = true;
+        this.current_text = this.outro_text;
+        this.displayed_text = "";
+        this.timer = 0;
+      }
+    }
+  }
+
+  check_won() {
+    // Have we been through all stages, and has the outro text finished?
+    return ((this.stage_index >= STAGES.length) && (!this.text_active));
+  }
+
+  create_stage_objects(stage) {
+    // Copy the enemies list from the stage, and tell them that they've been spawned
+    this.enemies = stage.enemies.slice();
+    for (let enemy of this.enemies) {
+      enemy.spawned();
+    }
+
+    // Add the weapons and powerups from the stage to the game
+    this.weapons = this.weapons.concat(stage.weapons);
+    this.powerups = this.powerups.concat(stage.powerups);
+  }
+
+  spawn_enemy(enemy) {
+    // Called by Portal
+    this.enemies.push(enemy);
+    enemy.spawned();
+  }
+
+  update() {
+    if (DEBUG_PROFILING) {
+      performance.mark('update_start');
+    }
+
+    this.timer += 1;
+
+    if (this.text_active) {
+      // Every 6 frames, update the displayed text to display an extra character, and make a sound if the
+      // new character is visible (as opposed to a space or new line)
+      if (((this.timer % 6) === 0) && (this.displayed_text.length < this.current_text.length)) {
+        this.displayed_text = this.current_text.substring(0, Math.min(Math.floor(this.timer / 6), this.current_text.length));
+        if (this.displayed_text.charAt(this.displayed_text.length - 1).trim().length > 0) {
+          this.play_sound("teletype");
+        }
+      }
+
+      // Allow player to skip/leave text
+      for (let button = 0; button < 4; button++) {
+        if (this.player.controls.button_pressed(button)) {
+          this.text_active = false;
+          this.timer = 0;
+        }
+      }
+
+      return;
+    }
+
+    if (DEBUG_SHOW_ATTACKS) {
+      debug_drawcalls.splice(0, debug_drawcalls.length);
+    }
+
+    // Update all objects
+    for (let obj of ([this.player]).concat(this.enemies).concat(this.weapons).concat(this.scooters).concat(this.powerups)) {
+      obj.update();
+    }
+
+    if (this.scrolling) {
+      if (this.scroll_offset.x < this.max_scroll_offset_x) {
+        // How far are we from reaching the new max scroll offset?
+        let diff = this.max_scroll_offset_x - this.scroll_offset.x,
+        // Scroll at 1-4px per frame depending on player's distance from right edge
+            scroll_speed = this.player.x / (WIDTH / 4);
+        scroll_speed = Math.min(diff, scroll_speed);
+        this.scroll_offset.x += scroll_speed;
+        this.boundary.left = this.scroll_offset.x;  // as boundary is a rectangle, moving boundary.left moves the entire rectangle
+      }
+      else {
+        // Scrolling is complete
+        this.scrolling = false;
+      }
+    }
+    else {
+      // Start scrolling if player is near right hand edge of screen and max_scroll_offset_x allows to to scroll
+      if (((this.player.vpos.x - this.scroll_offset.x) > (WIDTH - 300)) && (this.scroll_offset.x < this.max_scroll_offset_x)) {
+        this.scrolling = true;
+
+        // When we start scrolling, create enemies for the current stage
+        if (this.stage_index < STAGES.length) {
+          console.log("Started scrolling - create stage objects");
+          this.create_stage_objects(STAGES[this.stage_index]);
+        }
+      }
+    }
+
+    // Remove expired enemies and gain score
+    for (let enemy of this.enemies) {
+      if (enemy.lives <= 0) {
+        this.score += enemy.score;
+      }
+    }
+    this.enemies = this.enemies.filter((enemy) => (enemy.lives > 0));
+
+    // Remove expired scooters
+    this.scooters = this.scooters.filter((scooter) => (scooter.frame < 200));
+
+    // Remove broken weapons and ones which are off the left of the screen
+    this.weapons = this.weapons.filter((weapon) => ((!weapon.is_broken()) && (weapon.posx > -200)));
+
+    // Remove collected powerups, and ones off the left of the screen
+    this.powerups = this.powerups.filter((powerup) => ((!powerup.collected) && (powerup.posx > -200)));
+
+    // If no enemies and we've fully scrolled to the current stage's max_scroll_x, start the next stage
+    if ((this.enemies.length === 0) && (this.scroll_offset.x === this.max_scroll_offset_x)) {
+      this.next_stage();
+    }
+
+    if (DEBUG_PROFILING) {
+      performance.mark('update_end');
+      let updateMeasure = performance.measure('update_duration', 'update_start', 'update_end');
+      console.log(`update: ${ updateMeasure.duration }`);
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
