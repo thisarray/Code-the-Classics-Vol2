@@ -6887,6 +6887,106 @@ class Game {
       console.log(`rest: ${ drawMeasure.duration }`);
     }
   }
+
+  draw_ui() {
+    // Show status bar and player health, stamina and lives
+    // Have to use the actual Pygame blit rather than Pygame Zero version so that we can specify which area of the
+    // source image to copy
+    let health_bar_w = Math.trunc((game.player.health / game.player.start_health) * HEALTH_STAMINA_BAR_WIDTH),
+        stamina_bar_w = Math.trunc((game.player.stamina / game.player.max_stamina) * HEALTH_STAMINA_BAR_WIDTH);
+    /*
+     * The following calls use scaling and tilesets of blit() that is not in Pygame Zero.
+     * I used it to be true to the original Python code.
+     * To be true to Pygame Zero instead, health and stamina can be displayed using Rect objects.
+     */
+    screen.blit("health", new Rect(0, 0, health_bar_w, HEALTH_STAMINA_BAR_HEIGHT), new Rect(48, 11, health_bar_w, HEALTH_STAMINA_BAR_HEIGHT));
+    screen.blit("stamina", new Rect(0, 0, stamina_bar_w, HEALTH_STAMINA_BAR_HEIGHT), new Rect(517, 11, health_bar_w, HEALTH_STAMINA_BAR_HEIGHT));
+
+    screen.blit("status", [0, 0]);
+
+    for (let i = 0; i < game.player.lives; i++) {
+      let sprite_idx = Math.min(9, Math.floor((30 - game.player.extra_life_timer) / 3));
+      if ((game.player.extra_life_timer <= 0) || (i < (game.player.lives - 1))) {
+        sprite_idx = 9;
+      }
+      else {
+        sprite_idx = Math.min(9, Math.floor((30 - game.player.extra_life_timer) / 3));
+      }
+
+      screen.blit("status_life" + sprite_idx, [(i * 46) - 55, -35]);
+    }
+
+    // Show score
+    draw_text(`${ this.score.toFixed().padStart(4, '0') }`, Math.floor(WIDTH / 2), 0, true);
+  }
+
+  draw_background() {
+    // Draw two copies of road background
+    performance.mark('draw_road_start');
+    let road1_x = -(this.scroll_offset.x % WIDTH),
+        road2_x = road1_x + WIDTH,
+        pos;
+    screen.blit("road", [road1_x, 0]);
+    screen.blit("road", [road2_x, 0]);
+    if (DEBUG_PROFILING) {
+      performance.mark('draw_road_end');
+      let drawMeasure = performance.measure('draw_road_duration', 'draw_road_start', 'draw_road_end');
+      console.log("road " + drawMeasure.duration);
+    }
+
+    // Set initial position for background tiles
+    // Due to isometric nature of background, each background tile includes a transparent part - the second line
+    // skips that part for the first tile
+    pos = new Vecta(-this.scroll_offset.x, -this.scroll_offset.y);
+    pos.x -= BACKGROUND_TILE_SPACING;
+
+    // Draw background tiles
+    performance.mark('draw_bg_start');
+    for (let tile of BACKGROUND_TILES) {
+      // Don't bother drawing tile if it's off the left of the screen
+      if ((pos.x + 417) >= 0) {
+        screen.blit(tile, [pos.x, pos.y]);
+        pos.x += BACKGROUND_TILE_SPACING;
+        if (pos.x >= WIDTH) {
+          // Stop once we've reached or gone past the right edge of the screen
+          break;
+        }
+      }
+      else {
+        pos.x += BACKGROUND_TILE_SPACING;
+      }
+    }
+    if (DEBUG_PROFILING) {
+      performance.mark('draw_bg_end');
+      let drawMeasure = performance.measure('draw_bg_duration', 'draw_bg_start', 'draw_bg_end');
+      console.log("bg " + drawMeasure.duration);
+    }
+  }
+
+  shutdown() {
+    // When game is over, we need to tell enemies to die, since that's how the scooter engine sound effect gets
+    // turned off
+    for (let enemy of this.enemies) {
+      enemy.died();
+    }
+  }
+
+  get_sound(name, count = 1) {
+    if (this.player != null) {
+      return sounds[name+getRandomInteger(0, count)];
+    }
+  }
+
+  play_sound(name, count = 1) {
+    // Some sounds have multiple varieties. If count > 1, we'll randomly choose one from those
+    // We don't play any sounds if there is no player (e.g. if we're on the menu)
+    if (this.player != null) {
+      let sound = this.get_sound(name, count);
+      if (sound != null) {
+        sound.play();
+      }
+    }
+  }
 }
 
 window.addEventListener('load', (event) => {
