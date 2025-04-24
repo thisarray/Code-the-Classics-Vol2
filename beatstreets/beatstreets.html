@@ -6989,6 +6989,58 @@ class Game {
   }
 }
 
+/*
+ * From Eggzy
+ */
+function get_char_image_and_width(char) {
+  // Return width of given character. ord() gives the ASCII/Unicode code for the given character.
+  if (char === " ") {
+    return [null, 22];
+  }
+  else {
+    let name;
+    if (char === SPECIAL_FONT_SYMBOLS) {
+      name = SPECIAL_FONT_SYMBOLS_INVERSE;
+    }
+    else {
+      name = "font0" + char.charCodeAt(0);
+    }
+    return [name, images[name].width];
+  }
+}
+
+function text_width(text) {
+  let total = 0;
+  for (let c of text) {
+    total += get_char_image_and_width(c)[1];
+  }
+  return total;
+}
+
+function draw_text(text, x, y, centre = false) {
+  // Note that the centre option does not work correctly for text with line breaks
+  if (centre) {
+    x -= Math.floor(text_width(text) / 2);
+  }
+
+  let start_x = x;
+
+  for (let char of text) {
+    if (char === "\n") {
+      // New line
+      y += 35;
+      x = start_x;
+    }
+    else {
+      let [name, width] = get_char_image_and_width(char);
+      if (name != null) {
+        screen.blit(name, [x, y]);
+      }
+      x += width;
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
