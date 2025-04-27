@@ -7069,6 +7069,72 @@ function update_controls() {
   }
 }
 
+const State = Object.freeze({
+  TITLE: 1,
+  CONTROLS: 2,
+  PLAY: 3,
+  GAME_OVER: 4
+});
+
+
+/*
+ * Pygame Zero calls the update and draw functions each frame
+ */
+
+function update() {
+  total_frames += 1;
+
+  update_controls();
+
+  function button_pressed_controls(button_num) {
+    // Local function for detecting button 0 being pressed on either keyboard or controller, returns the controls
+    // object which was used to press it, or None if button was not pressed
+    for (let controls of [keyboard_controls, joystick_controls]) {
+      // Check for fire button being pressed on each controls object
+      // joystick_controls will be None if there no controller was connected on game startup,
+      // so must check for that
+      if ((controls != null) && controls.button_pressed(button_num)) {
+        return controls;
+      }
+    }
+    return null;
+  }
+
+  if (state === State.TITLE) {
+    // Check for start game
+    if (button_pressed_controls(0) != null) {
+      state = State.CONTROLS;
+    }
+  }
+
+  else if (state === State.CONTROLS) {
+    // Check for player starting game with either keyboard or controller
+    let controls = button_pressed_controls(0);
+    if (controls != null) {
+      // Switch to play state, and create a new Game object, passing it the controls object which was used to start the game
+      state = State.PLAY;
+      game = new Game(controls);
+    }
+  }
+
+  else if (state === State.PLAY) {
+    game.update();
+    if ((game.player.lives <= 0) || game.check_won()) {
+      // Need to call game.shutdown to turn off scooter engine sound
+      game.shutdown();
+      state = State.GAME_OVER;
+    }
+  }
+
+  else if (state === State.GAME_OVER) {
+    if (button_pressed_controls(0) != null) {
+      // Go back into title screen mode
+      state = State.TITLE;
+      game = null;
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
