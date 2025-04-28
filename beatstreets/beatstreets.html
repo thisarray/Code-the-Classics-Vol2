@@ -7135,6 +7135,40 @@ function update() {
   }
 }
 
+function draw() {
+  if (state === State.TITLE) {
+    // Draw logo
+    let logoName = ((Math.floor(total_frames / 20) % 2) === 0) ? "title0" : "title1",
+        logo_img = images[logoName];
+    screen.blit(logoName, [Math.floor(WIDTH / 2) - Math.floor(logo_img.width / 2), Math.floor(HEIGHT / 2) - Math.floor(logo_img.height / 2)]);
+
+    draw_text(`PRESS ${ SPECIAL_FONT_SYMBOLS } OR Z`, Math.floor(WIDTH / 2), HEIGHT - 50, true);
+  }
+
+  else if (state === State.CONTROLS) {
+    screen.fill([0, 0, 0]);
+    screen.blit("menu_controls", [0, 0]);
+  }
+
+  else if (state === State.PLAY) {
+    game.draw();
+  }
+
+  else if (state === State.GAME_OVER) {
+    // Draw game over screen
+    // Did player win or lose?
+    let imgName, img;
+    if (game.check_won()) {
+      imgName = "status_win";
+    }
+    else {
+      imgName = "status_lose";
+    }
+    img = images[imgName];
+    screen.blit(imgName, [Math.floor(WIDTH / 2) - Math.floor(img.width / 2), Math.floor(HEIGHT / 2) - Math.floor(img.height / 2)]);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
