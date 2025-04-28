@@ -7169,6 +7169,26 @@ function draw() {
   }
 }
 
+/*
+##############################################################################
+*/
+
+function reset() {
+  // Set up sound system and start music
+  music.play("theme");
+  music.set_volume(0.3);
+
+  total_frames = 0;
+
+  // Set up controls
+  keyboard_controls = new KeyboardControls();
+  setup_joystick_controls();
+
+  // Set the initial game state
+  state = State.TITLE;
+  game = null;
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
