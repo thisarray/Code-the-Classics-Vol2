@@ -2163,6 +2163,22 @@ Vecta.prototype.toString = function () {
   return `[${ this.x }, ${ this.y }]`;
 }
 
+WIDTH = 960;
+HEIGHT = 540;
+TITLE = "Avenger";
+
+const LEVEL_WIDTH = 4096;
+const LEVEL_HEIGHT = 640;
+
+const WAVE_COMPLETE_SCREEN_DURATION = 320;
+
+const SHOW_DEBUG_LINES = false;
+
+// These positions are all relative to the terrain image, which is displayed with an offset from the top of the game world
+const HUMAN_START_POS = [[204, 410], [489, 209], [865, 374], [1262, 405], [1937, 263], [2193, 278], [2601, 405], [2846, 347], [3317, 193], [3646, 233]];
+
+const TERRAIN_OFFSET_Y = 160;
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
