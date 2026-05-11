@@ -2179,6 +2179,46 @@ const HUMAN_START_POS = [[204, 410], [489, 209], [865, 374], [1262, 405], [1937,
 
 const TERRAIN_OFFSET_Y = 160;
 
+// Utility functions
+
+function sign(x) {
+  // Returns 1, 0 or -1 depending on whether number is positive, zero or negative
+  if (x === 0) {
+    return 0;
+  }
+  else {
+    return (x < 0) ? -1 : 1;
+  }
+}
+
+function remap(old_val, old_min, old_max, new_min, new_max) {
+  // Remap a number from one range to a different range
+  // e.g. remapping 5 from source range of 0 to 10, to destination range of 0 to 100, becomes 50
+  return ((((new_max - new_min) * (old_val - old_min)) / (old_max - old_min)) + new_min);
+}
+
+function remap_clamp(old_val, old_min, old_max, new_min, new_max) {
+  // Like remap, but constrains the resulting value so that it can't be outside the new range
+  // These first two lines are in case new_min and new_max are inverted
+  let lower_limit = Math.min(new_min, new_max),
+      upper_limit = Math.max(new_min, new_max);
+  return Math.min(upper_limit, Math.max(lower_limit, remap(old_val, old_min, old_max, new_min, new_max)));
+}
+
+// For animations which should run from the first frame to the last frame and then backwards through those frames
+// before repeating
+function forward_backward_animation_frame(frame, num_frames) {
+  // With 4 frames, the repeating sequence should be 0, 1, 2, 3, 2, 1
+  if (num_frames < 2) {
+    return 0;
+  }
+  frame %= ((num_frames * 2) - 2);
+  if (frame >= num_frames) {
+    frame = ((num_frames - 1) * 2) - frame;
+  }
+  return frame;
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
