@@ -2365,6 +2365,32 @@ class WrapActor extends Actor {
   }
 }
 
+/*
+ * A bullet fired by an enemy
+ */
+class Bullet extends WrapActor {
+  constructor(pos, velocity) {
+    super("blank", pos);
+    this.velocity = velocity;
+    let distance = (new Vecta(pos)).subtract(new Vecta(game.player.pos)).length(),
+        volume = remap_clamp(distance, 400, 2500, 1, 0);
+    game.play_sound("enemy_laser", 1, volume);
+  }
+
+  update() {
+    super.update();
+
+    this.pos = [this.posx + this.velocity.x, this.posy + this.velocity.y];
+
+    // Update sprite animation
+    this.name = "bullet" + (Math.floor(game.timer / 4) % 2);
+
+    // Return True or False depending on whether we want the bullet to be destroyed, either when it's hit something,
+    // or because it's gone too far from the player.
+    return game.player.hit_test(this.pos) || ((this.posx < (game.player.posx - WIDTH)) || (this.posx > (game.player.posx + WIDTH)));
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
