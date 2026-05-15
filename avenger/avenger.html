@@ -2328,6 +2328,43 @@ class JoystickControls extends Controls {
   }
 }
 
+/*
+ * This class encapsulates the concept of an object in a scrolling game world that wraps around at the edges
+ */
+class WrapActor extends Actor {
+  constructor(image, pos) {
+    super(image);
+    this.pos = pos;
+  }
+
+  update() {
+    // If the actor goes off the left or right edge of the game world, relative to the player,
+    // wrap it back round to the other side
+    while ((this.posx - game.player.posx) < (-LEVEL_WIDTH / 2)) {
+      this.relocate(LEVEL_WIDTH);
+    }
+    while ((this.posx - game.player.posx) > (LEVEL_WIDTH / 2)) {
+      this.relocate(-LEVEL_WIDTH);
+    }
+  }
+
+  draw(offset_x, offset_y) {
+    // offset_x/y are for scrolling
+    // Before drawing the sprite, we adjust the actor's position to take account of scrolling,
+    // moving it into screen space
+    this.pos = [this.posx + offset_x, this.posy + offset_y];
+
+    super.draw();
+
+    // After drawing, we shift the actor's position back into world space
+    this.pos = [this.posx - offset_x, this.posy - offset_y];
+  }
+
+  relocate(delta) {
+    this.posx += delta;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
