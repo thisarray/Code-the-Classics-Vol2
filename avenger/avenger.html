@@ -2391,6 +2391,48 @@ class Bullet extends WrapActor {
   }
 }
 
+/*
+ * A laser fired by the player
+ */
+class Laser extends WrapActor {
+  constructor(x, y, vel_x) {
+    let facing_idx = (vel_x > 0) ? 0 : 1;
+    super(`laser_${ facing_idx }_0`, [x + vel_x, y]);
+    this.vel_x = vel_x;
+    this.anim_timer = 0;
+    game.play_sound("player_shoot");
+  }
+
+  update() {
+    super.update();
+
+    // Update position
+    this.posx += this.vel_x;
+
+    // Update sprite
+    this.anim_timer += 1;
+    let facing_idx = (this.vel_x > 0) ? 0 : 1,
+    // For Laser and Bullet, the update methods return True or False depending on whether we want them to be
+    // destroyed. This is either because they've hit something, or because they've gone too far from the player.
+        too_far = Math.abs(this.posx - game.player.posx) > 800,
+        collisions = 0;
+    this.name = `laser_${ facing_idx }_${ Math.min(1, Math.floor(this.anim_timer / 8)) }`;
+
+    // This list comprehension calls laser_hit_test with this laser's position for each enemy and human in the level.
+    // We end up with a list of boolean (True or False) values. By getting the sum of the resulting list, we can
+    // tell how many collisions occurred. This works because when converting a boolean to an integer in Python,
+    // True is equivalent to 1 and False is equivalent to 0.
+    // This will also kill any enemy of human that collides with the laser
+    for (let obj of game.enemies.concat(game.humans)) {
+      if (obj.laser_hit_test(this.pos)) {
+        collisions += 1;
+      }
+    }
+
+    return too_far || (collisions > 0);
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
