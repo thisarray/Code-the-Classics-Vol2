@@ -2531,6 +2531,194 @@ class Player extends WrapActor {
       return false;
     }
   }
+
+  update() {
+    // Decrease all timer values by 1
+    for (let i = 0; i < this.timers.length; i++) {
+      this.timers[i]--;
+    }
+
+    // If we're currently exploding, don't do any of the normal behaviour, just set our sprite to the appropriate
+    // frame, then randomise our position when the timer runs out
+    if (this.timers[Player.Timer.EXPLODE] > 0) {
+      // Work out animation frame and set sprite image
+      this.name = "ship_explode" + Math.floor((Player.EXPLODE_FRAMES - this.timers[Player.Timer.EXPLODE]) / Player.EXPLODE_ANIM_SPEED);
+
+      // No thrust sprite while exploding
+      this.thrust_sprite.name = "blank";
+
+      // Respawn in new location if timer is about to run out, unless we're out of lives
+      if ((this.timers[Player.Timer.EXPLODE] === 1) && (this.lives > 0)) {
+        this.respawn();
+      }
+    }
+
+    else if (this.lives === 0) {
+      // If we're not exploding but out of lives, hide the sprite and don't do anything else
+      this.name = "blank";
+      this.thrust_sprite.name = "blank";
+    }
+
+    else {
+      // Not exploding or dead
+      let x_input = this.controls.get_x(),
+          y_input = this.controls.get_y(),
+
+          move = new Vecta(x_input, y_input);
+
+      this.tilt_y = y_input;
+
+      if (x_input !== 0) {
+        this.facing_x = sign(x_input);
+      }
+
+      // Only apply movement force on X axis if player facing the same direction they're trying to accelerate in,
+      // and the ship has fully animated to that facing direction
+      if (((this.frame % 8) !== 0) || (sign(this.facing_x) !== sign(move.x))) {
+        move.x = 0;
+      }
+
+      this.velocity = new Vecta((this.velocity.x * Player.DRAG.x) + (move.x * Player.FORCE.x),
+                                (this.velocity.y * Player.DRAG.y) + (move.y * Player.FORCE.y));
+
+      // Apply velocity to position
+      this.pos = [this.posx + this.velocity.x, this.posy + this.velocity.y];
+
+      // Limit Y position
+      this.posy = Math.max(0, Math.min(LEVEL_HEIGHT, this.posy));
+
+      // Update radar blip position
+      this.blip.pos = game.radar.radar_pos(this.pos);
+
+      // Check to see if we can pick up a falling human
+      if (this.carried_human == null) {
+        for (let human of game.humans) {
+          if (human.can_be_picked_up_by_player() && ((new Vecta(human.pos)).subtract(new Vecta(this.pos)).length() < 40)) {
+            human.picked_up(this);
+            this.carried_human = human;
+            break;
+          }
+        }
+      }
+      else {
+        // If we're carrying a human, update their position and check if are they in a place where they can be
+        // safely deposited on the ground
+        this.carried_human.pos = [this.pos[0], this.pos[1] + 50];
+        if (this.carried_human.terrain_check()) {
+          this.carried_human.dropped();
+          this.carried_human = null;
+          game.play_sound("rescue_prisoner");
+        }
+      }
+
+      // The last part of this method deals with deciding which sprite to display, and if we're on an appropriate
+      // animation frame, also checks to see if the player wants to fire
+
+      // Ship sprites start with either "ship" or "hurt"
+      // Frames 0 and 8 are the ship facing right and left. There are variations for these frames for the ship
+      // tilting up and down - e.g. ship0d, used when moving down
+      // Frames 1 to 7 and 9 to 15 are for when the ship flips over to change its facing direction. These do not
+      // have tilted up/down variations.
+      let target = (this.facing_x < 0) ? 8 : 0;
+
+      if (this.frame === target) {
+        // If we're on our target frame, and we haven't fired too recently, we're allowed to fire
+        if (this.controls.button_down(0) && (this.timers[Player.Timer.FIRE] <= 0)) {
+          this.timers[Player.Timer.FIRE] = 10;
+          // Create a laser with the appropriate offset from the player
+          let laser_vel_x = this.velocity.x + (20 * this.facing_x),
+              laser_x = this.posx + (40 * this.facing_x),
+              laser_y = this.posy + this.get_laser_fire_y_offset();
+          game.lasers.push(new Laser(laser_x, laser_y, laser_vel_x));
+        }
+      }
+      else {
+        // If we're not on our target frame, animate towards it every three game frames
+        if (this.timers[Player.Timer.ANIM] <= 0) {
+          this.timers[Player.Timer.ANIM] = 3;
+          //  We always animate forward through the frames, wrapping back to zero when we hit 16
+          this.frame = (this.frame + 1) % 16;
+        }
+      }
+
+      // Fade thrust sound in or out depending on whether we're thrusting
+      // ship must be fully facing in the direction player is trying to move in, for the thrust to occur
+      if (this.thrust_sound != null) {
+        if ((move.x !== 0) && (this.frame === target) && (!this.thrust_sound_playing)) {
+          this.thrust_sound.set_volume(0.3);
+          this.thrust_sound.play(-1, 0.200);  // Loop indefinitely, fade in
+          this.thrust_sound_playing = true;
+        }
+        else if (((move.x === 0) || (this.frame !== target)) && this.thrust_sound_playing) {
+          this.thrust_sound.fadeout(0.200);
+          this.thrust_sound_playing = false;
+        }
+      }
+
+      let anim_type = (this.timers[Player.Timer.HURT] <= 0) ? "ship" : "hurt",
+          tilt = "";
+      if (((this.frame % 8) === 0) && (this.tilt_y !== 0)) {
+        tilt = (this.tilt_y < 0) ? "u" : "d";
+      }
+
+      // Set sprite
+      this.name = anim_type + this.frame + tilt;
+
+      // Set thrust sprite
+      if (((this.frame % 8) !== 0) || (move.x === 0)) {
+        this.thrust_sprite.name = "blank";
+      }
+      else {
+        let direction = (move.x > 0) ? 0 : 1,
+            frame = Math.floor(game.timer / 3) % 2,
+            x_offset = 66,
+            y_offset = -3;
+        this.thrust_sprite.name = `boost_${ direction }_${ frame }`;
+        this.thrust_sprite.pos = [this.posx + (x_offset * -move.x), this.posy + y_offset];
+      }
+    }
+  }
+
+  respawn() {
+    // Restore shields
+    this.shields = 5;
+
+    // Try several random positions and assign a score to each one, choosing the one which is furthest from
+    // any one enemy on the X axis
+    let best_score = 0,
+        random_pos, all_distances, score;
+    function wrap_distance(x1, x2) {
+      // Return the distance between two X positions, taking the wrapping nature of the level
+      // into account
+      x1 = modulo(x1, LEVEL_WIDTH);
+      x2 = modulo(x2, LEVEL_WIDTH);
+      let dist = Math.abs(x1 - x2);  // distance without wrapping
+      if (dist < (LEVEL_WIDTH / 2)) {
+        return dist;
+      }
+      else {
+        return LEVEL_WIDTH - dist;
+      }
+    }
+    for (let i = 0; i < 20; i++) {
+      random_pos = new Vecta(getRandom(0, LEVEL_WIDTH - 1), getRandom(150, 300));
+      if (game.enemies.length === 0) {
+        // If there are no enemies, just go with the first random position
+        this.pos = [random_pos.x, random_pos.y];
+        break;
+      }
+      else {
+        // If there are enemies, score the random position based on how far away the closest
+        // enemy is on the X axis - the further the better
+        all_distances = game.enemies.map((enemy) => wrap_distance(enemy.posx, random_pos.x));
+        score = Math.min(...all_distances);
+        if (score >= best_score) {
+          this.pos = [random_pos.x, random_pos.y];
+          best_score = score;
+        }
+      }
+    }
+  }
 }
 
 window.addEventListener('load', (event) => {
