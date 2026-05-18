@@ -2433,6 +2433,106 @@ class Laser extends WrapActor {
   }
 }
 
+class Player extends WrapActor {
+  // Drag for X and Y axes - closer to 1 = less drag, higher top speed
+  static DRAG = new Vecta(0.98, 0.9);
+
+  // Force for X and Y axes - higher numbers = more acceleration, higher top speed
+  static FORCE = new Vecta(0.2, 0.5);
+
+  // Number of frames for which the player ship plays its explode animation
+  static EXPLODE_ANIM_SPEED = 4;
+  static EXPLODE_FRAMES = 18 * Player.EXPLODE_ANIM_SPEED;
+
+  static Timer = Object.freeze({
+    HURT: 0,
+    FIRE: 1,
+    ANIM: 2,
+    EXPLODE: 3
+  });
+
+  constructor(controls) {
+    super("blank", [WIDTH / 2, LEVEL_HEIGHT / 2]);
+
+    this.controls = controls;
+
+    this.velocity = new Vecta(0, 0);
+
+    this.lives = 5;
+    this.shields = 5;
+    this.extra_life_tokens = 0;
+    this.facing_x = 1;
+    this.tilt_y = 0;
+
+    // We store and update the timers as a list of four numbers, the indices corresponding to the values in the
+    // Timer enum above
+    this.timers = [0, 0, 0, 0];
+
+    this.frame = 0;
+
+    this.carried_human = null;
+
+    // Our radar blip
+    this.blip = new Actor("dot_white");
+
+    // Thrust sprite
+    this.thrust_sprite = new WrapActor("blank", [0, 0]);
+
+    // Load thrust sound. This is not played with Game.play_sound as it requires custom behaviour - looping and
+    // fading in/out. Enclosed in a try/except section to deal with the case where the sound file can't be loaded,
+    // which can occur if there is no sound hardware or sound is disabled
+    this.thrust_sound = sounds['thrust0'];
+    this.thrust_sound_playing = false;
+  }
+
+  hit_test(pos) {
+    // Check if the given position falls within the bounds of the player sprite
+
+    // If we're dead or in the explode animation, always return false
+    if ((this.lives === 0) || (this.timers[Player.Timer.EXPLODE] > 0)) {
+      return false;
+    }
+
+    // As the sprite's rectangle is bigger than the actual visible part of the sprite (see e.g. ship0.png),
+    // instead of calling self.colliderect, we just check to see whether the given position is within 40 pixels
+    // of the centre of the sprite on the X axis, and within 15 pixels of the centre on the Y axis
+    if ((Math.abs(pos[0] - this.posx) < 40) && (Math.abs(pos[1] - this.posy) < 15)) {
+      // If there's a collision, set the 'hurt' timer so that we glow to indicate damage, and decrease shields
+      // by 1
+      this.timers[Player.Timer.HURT] = 60;
+      this.shields -= 1;
+
+      game.play_sound("player_hit");
+
+      if (this.shields === 0) {
+        // Lose a life
+        this.lives -= 1;
+
+        // If it's game over and we're playing the thrust sound, stop it
+        if ((this.lives === 0) && this.thrust_sound_playing) {
+          this.thrust_sound.fadeout(0.200);
+          this.thrust_sound_playing = false;
+        }
+
+        // Explode, later we will respawn in a random position
+        game.play_sound("player_explode");
+        this.timers[Player.Timer.EXPLODE] = Player.EXPLODE_FRAMES;
+
+        // Any human we're carrying when we lose a life will be dropped
+        if (this.carried_human != null) {
+          this.carried_human.dropped();
+          this.carried_human = null;
+        }
+      }
+
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
