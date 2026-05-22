@@ -2719,6 +2719,66 @@ class Player extends WrapActor {
       }
     }
   }
+
+  flash(offset_x, offset_y) {
+    // Displays a flash sprite at the point where a laser turret fires. Only allowed if we're on an appropriate
+    // animation frame, and if we've just fired within the last few frames
+    // offset_x/y are for scrolling
+    if (((this.frame % 8) === 0) && (this.timers[Player.Timer.FIRE] > 5)) {
+      // flash0 is for when the ship is facing right (frame 0), flash1 for facing left (frame 8), so by doing
+      // an integer division of self.frame by 8 we get the correct flash frame number
+      let sprite = "flash" + Math.floor(this.frame / 8),
+          x = this.posx + offset_x - 25,
+          y = this.posy + offset_y - 13 + this.get_laser_fire_y_offset();
+      screen.blit(sprite, [x, y]);
+    }
+  }
+
+  get_laser_fire_y_offset() {
+    // The starting Y position of the laser should vary by a few pixels depending on how the ship is tilted
+    // We can achieve this using a list of three values and then indexing into that list using the ship's
+    // tilt_y (which will be either -1, 0 or 1)
+    return [-1, 3, 2][this.tilt_y+1];
+  }
+
+  draw(offset_x, offset_y) {
+    // Draw the sprite with the given offset to account for scrolling, and with laser firing flash if required
+
+    // Depending on the tilt of the ship, we draw the laser firing flash either before or after the ship itself
+    // This is because the laser is fired from the underside of the ship, if the ship was tilting down and we
+    // displayed the laser after the ship, it would display through the ship.
+    if (this.tilt_y === 1) {
+      this.flash(offset_x, offset_y);
+    }
+
+    // Call the WrapActor draw method
+    super.draw(offset_x, offset_y);
+
+    // Draw thrust sprite (blip is done in Game.draw_ui)
+    this.thrust_sprite.draw(offset_x, offset_y);
+
+    if (this.tile_y !== 1) {
+      this.flash(offset_x, offset_y);
+    }
+  }
+
+  is_carrying_human() {
+    return (this.carried_human != null);
+  }
+
+  level_ended(shield_restore_amount, humans_saved) {
+    this.shields = Math.min(this.shields + shield_restore_amount, 5);
+
+    // Earn an extra life token if all humans were saved
+    if (humans_saved === 10) {
+      this.extra_life_tokens += 1;
+      // Get an extra life if we get 3 life tokens
+      if (this.extra_life_tokens >= 3) {
+        this.lives += 1;
+        this.extra_life_tokens -= 3;
+      }
+    }
+  }
 }
 
 window.addEventListener('load', (event) => {
