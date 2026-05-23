@@ -2781,6 +2781,35 @@ class Player extends WrapActor {
   }
 }
 
+
+class Radar extends Actor {
+  constructor() {
+    super("radar");
+    this.anchor = ['center', 'top'];
+    this.pos = [WIDTH / 2, 4];
+  }
+
+  radar_pos(pos) {
+    // Converts a position in world space into a position on the radar in screen space
+    return [this.left + (modulo(Math.trunc(pos[0]), LEVEL_WIDTH) / 11.5), this.posy + Math.floor(Math.trunc(pos[1]) / 11)];
+  }
+}
+
+const EnemyState = Object.freeze({
+  START: 0,
+  ALIVE: 1,
+  EXPLODING: 2,
+  DEAD: 3
+});
+
+const EnemyType = Object.freeze({
+  LANDER: 0,
+  MUTANT: 1,
+  BAITER: 2,
+  POD: 3,
+  SWARMER: 4
+});
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
