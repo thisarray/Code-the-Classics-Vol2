@@ -2810,6 +2810,83 @@ const EnemyType = Object.freeze({
   SWARMER: 4
 });
 
+class Enemy extends WrapActor {
+  constructor(start_timer = 0, type = EnemyType.LANDER, pos = null, start_vel = null) {
+    // Varying start_timer allows the creation of enemies which wait a while before beginning their 'appear'
+    // animation, the default value of zero means the appear animation will start immediately.
+
+    // If no position has been supplied, generate a random position
+    if (pos == null) {
+      pos = [getRandomInteger(0, LEVEL_WIDTH), getRandomInteger(32, LEVEL_HEIGHT - 32 + 1)];
+    }
+
+    // Call Actor constructor
+    super("blank", pos);
+
+    this.type = type;
+
+    if (this.type === EnemyType.LANDER) {
+      this.max_speed = 5;
+      this.acceleration = 0.1;
+    }
+    else if (this.type === EnemyType.MUTANT) {
+      this.max_speed = 9;
+      this.acceleration = 0.5;
+    }
+    else if (this.type === EnemyType.BAITER) {
+      this.max_speed = 9;
+      this.acceleration = 0.01;
+    }
+    else if (this.type === EnemyType.POD) {
+      this.max_speed = 10;
+      this.acceleration = 0.03;
+    }
+    else if (this.type === EnemyType.SWARMER) {
+      this.max_speed = 8;
+      this.acceleration = 1;
+    }
+
+    // Select a target position which the enemy will oscillate around. If the enemy is within a particular
+    // distance of the player, this will be updated to a random offset from the player's current position, unless
+    // the target pos is already close to the player
+    this.target_pos = new Vecta(this.posx + getRandom(-100, 100), this.posy + getRandom(-100, 100));
+    this.update_target_timer = 0;
+
+    this.velocity = (start_vel != null) ? start_vel : new Vecta(0, 0);
+
+    // Most enemies start in 'start' state where they play an animation to appear. Swarmers just appear immediately
+    if (this.type === EnemyType.SWARMER) {
+      this.state = EnemyState.ALIVE;
+      this.state_timer = 0;
+    }
+    else {
+      this.state = EnemyState.START;
+      this.state_timer = start_timer;
+    }
+
+    // Enemies will sometimes pick up humans and carry them into the sky, turning them into mutants
+    this.target_human = null;
+    this.carrying = false;
+
+    // Counts down, allowed to shoot when zero or lower
+    this.bullet_timer = getRandomInteger(30, 91);
+
+    // This is only used for baiter enemies, which fire in a fixed pattern of ever-increasing angles
+    this.fire_angle = 0;
+
+    // Create our radar blip
+    this.blip = new Actor("dot_red");
+
+    this.anim_timer = getRandomInteger(0, 48);
+  }
+
+  relocate(delta) {
+    super.relocate(delta);
+
+    this.target_pos = this.target_pos.add(new Vecta(delta, 0));
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
