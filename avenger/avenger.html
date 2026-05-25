@@ -2885,6 +2885,291 @@ class Enemy extends WrapActor {
 
     this.target_pos = this.target_pos.add(new Vecta(delta, 0));
   }
+
+  laser_hit_test(pos) {
+    // Given a position, see if it falls within this sprite's rectangle (but only if we're in the alive state)
+    // Kill the enemy if it is touching this position
+    if (this.collidepoint(pos) && (this.state === EnemyState.ALIVE)) {
+      this.state = EnemyState.EXPLODING;
+      this.state_timer = 0;
+      this.anim_timer = 0;
+      if (this.target_human != null) {
+        if (this.carrying) {
+          this.target_human.dropped();
+        }
+        this.target_human = null;
+        this.carrying = false;
+      }
+      game.play_sound("enemy_explode", 6);
+
+      // If we're a pod, release several swarmers
+      if (this.type === EnemyType.POD) {
+        for (let i = 0; i < 3; i++) {
+          let start_vel = new Vecta(getRandom(-25, 25), getRandom(-25, 25));
+          game.enemies.push(new Enemy(0, EnemyType.SWARMER, pos, start_vel));
+        }
+      }
+
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  update() {
+    super.update();
+
+    if (this.state === EnemyState.START) {
+      this.state_timer += 1;
+      // When state timer hits 1, that means our appear animation has just started
+      if (this.state_timer === 1) {
+        if (this.type === EnemyType.MUTANT) {
+          game.play_sound("enemy_appear_mutant");
+        }
+        else if (this.type === EnemyType.LANDER) {
+          game.play_sound("enemy_appear_normal");
+        }
+        else if (this.type === EnemyType.BAITER) {
+          game.play_sound("enemy_appear_ufo");
+        }
+      }
+
+      // When state timer hits 33, we've finished the appear animation, so we switch to the alive state
+      if (this.state_timer === 33) {
+        this.state = EnemyState.ALIVE;
+      }
+
+      else if (this.state_timer >= 0) {
+        // Play appear animation
+        this.name = "appear" + Math.floor(this.state_timer / 3);
+      }
+    }
+
+
+    else if (this.state === EnemyState.ALIVE) {
+      // Enemy is alive
+      let max_speed = this.max_speed;
+
+      // If we're targeting or carrying a human, check to see if they were shot by the player
+      if ((this.target_human != null) && this.target_human.dead) {
+        this.target_human = null;
+        this.carrying = false;
+      }
+
+      // Should we start heading for a human to pick up?
+      if ((this.target_human == null) && (this.type === EnemyType.LANDER) && (getRandom(0, 1) < 0.001)) {
+        // Find a human who isn't currently being carried, and isn't being targeted by another enemy
+        let targeted_humans = game.enemies.filter((enemy) => (enemy.target_human != null)).map((enemy) => enemy.target_human),
+            available_humans = game.humans.filter((human) => ((!targeted_humans.includes(human)) && human.can_be_picked_up_by_enemy()));
+        if (available_humans.length > 0) {
+          // Choose nearest human - i.e. the human with the minimum distance
+          // We use length_squared in this case to get the distance, instead of length, because length_squared
+          // is faster, and we don't care about what the actual distance is, just which distance is shortest
+          available_humans.sort((a, b) => ((new Vecta(a.pos)).subtract(new Vecta(this.pos)).length_squared() - (new Vecta(b.pos)).subtract(new Vecta(this.pos)).length_squared()));
+          this.target_human = available_humans[0];
+        }
+      }
+
+      // Try to move towards a target position. This will either be the player position, a human we're about to
+      // pick up, the top of the sky (if we're carrying a human), or the previously determined target pos, which
+      // is initially an offset from the starting position
+      if (this.target_human != null) {
+        if (this.carrying) {
+          // Carrying a human into the sky - target pos will be our current pos on the X axis
+          // and close to the top of the screen on the Y axis
+          this.target_pos = new Vecta(this.pos[0], 64);
+          max_speed = 0.5;
+
+          // If we reach the top of the screen, turn the captured human into a mutant enemy
+          if (Math.abs(this.pos[1] - this.target_pos.y) < 10) {
+            game.enemies.push(new Enemy(0, EnemyType.MUTANT, this.target_human.pos));
+            this.target_human.die();
+            this.target_human = null;
+            this.carrying = false;
+          }
+        }
+        else {
+          // If we're going to a human, we initially go to a position above them, then go down to pick
+          // them up. If our position on the X axis is sufficiently different from the human's, we're in
+          // the first phase. As we get closer, we reduce our max speed to ensure we don't overshoot
+          let x_distance = Math.abs(this.posx - this.target_human.posx);
+          if (x_distance < 80) {
+            // Slow down as we approach the human so we don't overshoot
+            max_speed = 1;
+          }
+          if (x_distance > 100) {
+            // Set target pos to be above our target human's pos
+            this.target_pos = (new Vecta(this.target_human.pos)).subtract(new Vecta(0, 200));
+          }
+          else {
+            // Set target pos to our target human's pos. Start carrying them when we get within 55 pixels
+            this.target_pos = new Vecta(this.target_human.pos);
+            if ((new Vecta(this.pos)).subtract(this.target_pos).length() < 55) {
+              this.carrying = true;
+              this.target_human.picked_up(this);
+            }
+          }
+        }
+      }
+      else {
+        // No target human - go for our target position, and update target position every so often
+        this.update_target_timer -= 1;
+        if (this.update_target_timer <= 0) {
+          // Update target pos
+          this.update_target_timer = 60;
+
+          // Get player pos as a Vector2
+          let player_pos = new Vecta(game.player.pos),
+
+          // Landers go for the player if they're nearby, other enemies will always go for
+          // the player regardless of distance
+              max_player_distance = (this.type === EnemyType.LANDER) ? 500 : LEVEL_WIDTH,
+              x_range = (this.type === EnemyType.BAITER) ? 800 : 100,
+              y_range = (this.type === EnemyType.BAITER) ? 300 : 100;
+
+          if ((new Vecta(this.pos)).subtract(player_pos).length() < max_player_distance) {
+            // Go for the player
+            this.target_pos = player_pos;
+          }
+
+          // In either case, we add a random offset to our target position. Baiter enemies have quite a large
+          // random variation
+          this.target_pos = this.target_pos.add(new Vecta(getRandom(-x_range, x_range), getRandom(-y_range, y_range)));
+        }
+      }
+
+      // Get vector from our pos to target pos
+      // This is used to determine the force applied to our velocity, and also used later if we fire a bullet
+      let vec, force;
+      if (this.target_pos.subtract(new Vecta(this.pos)).length() > 0) {
+        // Get a unit vector (i.e. a vector of length 1) from our current pos in the direction of the target pos
+        vec = this.target_pos.subtract(new Vecta(this.pos)).normalize();
+      }
+      else {
+        // Can't call normalize() on a zero-length vector
+        vec = new Vecta(0, 0);
+      }
+
+      // The force we apply each frame will be a fraction of the unit vector (depending on accleration attribute)
+      force = vec.multiply(this.acceleration);
+
+      // If we're near the top or bottom of the game world, apply an additional force
+      // to push us away from the edge
+      if (this.posy < 64) {
+        force.y += 0.2;
+      }
+      if (this.posy > (LEVEL_HEIGHT - 64)) {
+        force.y -= 0.2;
+      }
+
+      // Apply force to velocity
+      this.velocity = this.velocity.add(force);
+
+      // Limit max speed
+      if (this.velocity.length() > max_speed) {
+        // If we're over our max speed, slow down gradually over several frames, rather than slowing
+        // down suddenly. This is most relevant when max speed drastically decreases when we pick up a human.
+        this.velocity.scale_to_length(Math.max(this.velocity.length() * 0.9, max_speed));
+      }
+
+      // Apply velocity to position
+      this.pos = [this.posx + this.velocity.x, this.posy + this.velocity.y];
+
+      // If carrying, update carried human pos
+      if (this.carrying) {
+        this.target_human.pos = [this.pos[0], this.pos[1] + 50];
+      }
+
+      // Count down bullet timer, if it's zero or lower and enemy is near player (but not too near!),
+      // fire a bullet
+      this.bullet_timer -= 1;
+      if (this.bullet_timer <= 0) {
+        if (this.type === EnemyType.BAITER) {
+          // Baiters have their own firing pattern and don't care about the position of the player
+          let velocity = (new Vecta(Math.cos(this.fire_angle), Math.sin(this.fire_angle))).multiply(3);
+          game.bullets.push(new Bullet(this.pos, velocity));
+          this.bullet_timer = 8;
+          this.fire_angle += 0.3;
+        }
+
+        else if (game.player.lives > 0) {
+          // Other enemy types only fire if the player is alive
+          let player_vec = (new Vecta(game.player.pos)).subtract(new Vecta(this.pos)),
+              player_distance = player_vec.length(),
+              velocity, upper_limit;
+          if ((100 < player_distance) && (player_distance < 300)) {
+            // Fire bullet at the player, with a bit of random inaccuracy. The bullet speed will average 6 pixels
+            // per frame, although due to the way the random inaccuracy is added, this will vary
+            // Normalise player_vec (vector from us to player) to a unit vector
+            player_vec.normalize_ip();
+            velocity = (new Vecta(player_vec.x + getRandom(-.5, .5), player_vec.y + getRandom(-.5, .5))).multiply(6);
+            game.bullets.push(new Bullet(this.pos, velocity));
+
+            // Non-baiter enemies fire at a random interval, with mutants firing more often
+            upper_limit = (this.type === EnemyType.MUTANT) ? 30 : 90;
+            this.bullet_timer = getRandomInteger(20, upper_limit + 1);
+          }
+        }
+      }
+
+      // Update sprite/animation
+      if (this.type === EnemyType.LANDER) {
+        // Frame 0 if not picking up a human
+        // Frame 1 if close to picking up a human
+        // Frame 2 if picked up a human
+        let frame = 0;
+        if (this.target_human != null) {
+          if (this.carrying) {
+            frame = 2;
+          }
+          else {
+            if ((new Vecta(this.pos)).subtract(new Vecta(this.target_human.pos)).length() < 90) {
+              frame = 1;
+            }
+          }
+        }
+        this.name = "lander" + frame;
+      }
+      else if (this.type === EnemyType.MUTANT) {
+        this.anim_timer += 1;
+        this.name = "mutant" + (Math.floor(this.anim_timer / 6) % 4);
+      }
+      else if (this.type === EnemyType.BAITER) {
+        this.anim_timer += 1;
+        this.name = "baiter" + (Math.floor(this.anim_timer / 3) % 8);
+      }
+      else if (this.type === EnemyType.POD) {
+        // Frames 0 to 2 = left, 3 to 5 = right
+        this.anim_timer += 1;
+        let frame = forward_backward_animation_frame(Math.floor(this.anim_timer / 6), 3);
+        if (this.velocity.x > 0) {
+          frame += 3;
+        }
+        this.name = "pod" + frame;
+      }
+      else if (this.type === EnemyType.SWARMER) {
+        this.anim_timer += 1;
+        this.name = "swarmer" + (Math.floor(this.anim_timer / 6) % 8);
+      }
+    }
+
+    else if (this.state === EnemyState.EXPLODING) {
+      // There are 10 frames of the 'explode' animation
+      // Update animation frame every 2 game frames. There are 10 frames of animation numbered from 0 to 9
+      this.anim_timer += 1;
+      let frame = Math.floor(this.anim_timer / 2);
+      this.name = "enemy_explode" + Math.min(9, frame);
+
+      if (frame === 10) {
+        // Animation finished, the enemy is now officially dead
+        this.state = EnemyState.DEAD;
+      }
+    }
+
+    // Update radar blip pos
+    this.blip.pos = game.radar.radar_pos(this.pos);
+  }
 }
 
 window.addEventListener('load', (event) => {
