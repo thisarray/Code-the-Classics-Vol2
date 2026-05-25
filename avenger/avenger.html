@@ -3170,6 +3170,18 @@ class Enemy extends WrapActor {
     // Update radar blip pos
     this.blip.pos = game.radar.radar_pos(this.pos);
   }
+
+
+  draw(offset_x, offset_y) {
+    super.draw(offset_x, offset_y);
+
+    // Debug
+    if (SHOW_DEBUG_LINES) {
+      screen.draw.line([this.posx + offset_x, this.posy + offset_y], [this.target_pos.x + offset_x, this.target_pos.y + offset_y], [255, 255, 255]);
+    }
+
+    //screen.draw.rect(Rect(self.left + offset_x, self.top + offset_y, self.width, self.height), (255,255,255))
+  }
 }
 
 window.addEventListener('load', (event) => {
