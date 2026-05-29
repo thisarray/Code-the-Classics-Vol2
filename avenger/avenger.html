@@ -3184,6 +3184,113 @@ class Enemy extends WrapActor {
   }
 }
 
+class Human extends WrapActor {
+  constructor(pos) {
+    super("blank", pos);
+
+    this.y_velocity = 0;
+
+    // Create our radar blip
+    this.blip = new Actor("dot_green");
+
+    this.anim_timer = 0;
+    this.waving = false;
+
+    this.dead = false;
+    this.exploding = false;
+
+    this.carrier = null;
+    this.falling = false;
+  }
+
+  laser_hit_test(pos) {
+    // Given a position, see if it falls within this sprite's rectangle
+    if ((!this.exploding) && this.collidepoint(pos)) {
+      this.die();
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  update() {
+    super.update();
+
+    this.anim_timer += 1;
+
+    let frame;
+    if (this.exploding) {
+      // Play explode animation
+      frame = Math.floor(this.anim_timer / 2);
+      if (frame >= 10) {
+        this.dead = true;
+      }
+      else {
+        // Switch to explosion sprites. We must store the current position and then re-set it after
+        // changing the anchor position, so that the new anchor position correctly affects the sprite position
+        let pos = this.pos.slice();
+        this.anchor = [175, 172];
+        this.name = "human_explode" + frame;
+        this.pos = pos;
+      }
+      return;
+    }
+
+    // If not being carried, check to see if we're on the ground. If not, fall.
+    if (this.carrier == null) {
+      this.falling = !this.terrain_check();
+      if ((!this.falling) && (this.y_velocity > 3)) {
+        this.die();
+      }
+
+      if (this.falling) {
+        this.y_velocity += 0.05;
+        this.y_velocity = Math.min(this.y_velocity, 4);
+        this.posy += this.y_velocity;
+      }
+    }
+
+    // Update radar blip pos
+    this.blip.pos = game.radar.radar_pos(this.pos);
+
+    // Set sprite image
+    // Animations need to run forwards and backwards (at least stand)
+    frame = Math.floor(this.anim_timer / 7);
+    let num_frames = 4,
+        sprite;
+    if (this.carrier == game.player) {
+      sprite = "saved";
+      num_frames = 1;
+    }
+    else if (this.carrier != null) {
+      sprite = "abducted";
+    }
+    else if (this.falling) {
+      sprite = "fall";
+      num_frames = 2;
+    }
+    else if (this.waving) {
+      sprite = "wave";
+      num_frames = 3;
+      if (this.anim_timer > 100) {
+        this.waving = false;
+      }
+    }
+    else {
+      sprite = "stand";
+      num_frames = 1;
+      // Sometimes start wave animation
+      if (getRandomInteger(0, 201) === 0) {
+        this.waving = true;
+        this.anim_timer = 0;
+      }
+    }
+
+    this.name = `human_${ sprite }${ forward_backward_animation_frame(frame, num_frames) }`;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
