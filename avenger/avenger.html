@@ -3289,6 +3289,27 @@ class Human extends WrapActor {
 
     this.name = `human_${ sprite }${ forward_backward_animation_frame(frame, num_frames) }`;
   }
+
+  can_be_picked_up_by_player() {
+    // Player can only pick up a human if they're falling
+    return (this.carrier == null) && this.falling && (!this.dead);
+  }
+
+  can_be_picked_up_by_enemy() {
+    // Enemies won't pick up a falling human
+    return (this.carrier == null) && (!this.falling) && (!this.dead);
+  }
+
+  picked_up(carrier) {
+    this.carrier = carrier;
+    this.falling = false;
+  }
+
+  dropped() {
+    this.carrier = null;
+    this.falling = !this.terrain_check();
+    this.y_velocity = 0;
+  }
 }
 
 window.addEventListener('load', (event) => {
