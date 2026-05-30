@@ -3310,6 +3310,37 @@ class Human extends WrapActor {
     this.falling = !this.terrain_check();
     this.y_velocity = 0;
   }
+
+  terrain_check() {
+    // To find out if we're on the ground, we need to work out where we're at on the terrain image
+    // Convert world pos to pixel pos on terrain image
+    let pos_terrain = [Math.trunc(modulo(this.posx, LEVEL_WIDTH)), Math.trunc(this.posy - TERRAIN_OFFSET_Y)],
+        mask_width = LEVEL_WIDTH,
+        mask_height = game.terrain_masks[0].height,
+        i = Math.floor(pos_terrain[0] / WIDTH),
+        x = pos_terrain[0] % WIDTH;
+    if ((0 <= pos_terrain[0]) && (pos_terrain[0] < mask_width) && (0 <= pos_terrain[1]) && (pos_terrain[1] < mask_height)) {
+      // Use the terrain mask to tell if there's an opaque pixel there
+      return (game.terrain_masks[i].getAt(x, pos_terrain[1])[3] > 0);
+    }
+
+    else if (pos_terrain[1] >= mask_height) {
+      // If we're somehow off the bottom of the terrain, treat that as being on the terrain, otherwise we'd fall
+      // off the bottom of the game world
+      return true;
+    }
+
+    else {
+      return false;
+    }
+  }
+
+  die() {
+    // Start explode animation, finished_dying will be set to True when it's done
+    this.exploding = true;
+    this.anim_timer = 0;
+    game.play_sound("prisoner_die");
+  }
 }
 
 window.addEventListener('load', (event) => {
