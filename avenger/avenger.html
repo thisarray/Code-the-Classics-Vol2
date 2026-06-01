@@ -3343,6 +3343,44 @@ class Human extends WrapActor {
   }
 }
 
+
+class Game {
+  constructor(player) {
+    this.player = player;
+
+    this.radar = new Radar();
+
+    this.enemies = [];
+    this.humans = [];
+    this.lasers = [];
+    this.bullets = [];
+    this.score = 0;
+
+    // Wave 1 is first wave, we start it at zero here because new_wave() increments self.wave
+    this.wave = 0;
+    this.wave_timer = 0;
+
+    this.timer = 0;
+
+    // Defines the point on the screen at which the player appears - 0 would mean they would be on the
+    // left-hand edge of the screen
+    this.player_camera_offset_x = WIDTH / 3;
+
+    // Since the terrain is bigger than the screen,
+    // break the terrain mask into screen WIDTH sections
+    this.terrain_masks = [];
+    for (let x = 0; x < LEVEL_WIDTH; x += WIDTH) {
+      screen.clear('transparent');
+      screen.blit('terrain', [-x, 0]);
+      this.terrain_masks.push(screen.getSurface(WIDTH, 480));
+    }
+
+    this.new_wave();
+
+    play_music("ambience");
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
