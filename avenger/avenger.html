@@ -3379,6 +3379,108 @@ class Game {
 
     play_music("ambience");
   }
+
+  new_wave() {
+    // Add 6 lander enemies to the list for the first wave, and an additional one lander for each subsequent wave
+    // From wave 4, add a pod enemy, and add an extra pod every two waves
+    // Every 5th wave has baiters and mutants at the start instead of pods/landers
+    // Every 10th wave has swarmers instead of mutants
+    this.wave += 1;
+    let num_landers = 4 + this.wave,
+        num_pods = -1 + Math.floor(this.wave / 2),
+        num_baiters = 0,
+        num_mutants = 0,
+        num_swarmers = 0;
+    if ((this.wave % 5) === 0) {
+      num_landers = 0;
+      num_pods = 0;
+      num_baiters = this.wave;
+      if ((this.wave % 10) === 0) {
+        num_swarmers = Math.floor(this.wave / 2);
+      }
+      else {
+        num_mutants = Math.floor(this.wave / 2);
+      }
+    }
+    for (let i = 0; i < num_landers; i++) {
+      this.enemies.push(new Enemy(-i * 20, EnemyType.LANDER));
+    }
+    for (let i = 0; i < num_pods; i++) {
+      this.enemies.push(new Enemy(-i * 50, EnemyType.POD));
+    }
+    for (let i = 0; i < num_baiters; i++) {
+      this.enemies.push(new Enemy(-i * 100, EnemyType.BAITER));
+    }
+    for (let i = 0; i < num_mutants; i++) {
+      this.enemies.push(new Enemy(-i * 10, EnemyType.MUTANT));
+    }
+    for (let i = 0; i < num_swarmers; i++) {
+      this.enemies.push(new Enemy(-i * 10, EnemyType.SWARMER));
+    }
+
+    // Create humans
+    this.humans = [];
+    for (let pos of HUMAN_START_POS) {
+      this.humans.push(new Human([pos[0], pos[1] + TERRAIN_OFFSET_Y]));
+    }
+
+    this.play_sound("new_wave");
+  }
+
+  update() {
+    // Wave timer starts at 0 at the beginning of the game, and counts up each frame
+    // At the end of a wave it's set to a negative number, indicating to display the "wave complete" message
+    // for that many frames before starting the next wave
+    this.wave_timer += 1;
+    if (this.wave_timer === 0) {
+      this.new_wave();
+    }
+
+    this.timer += 1;
+
+    // Make a baiter enemy every 30 seconds, if the player is alive
+    if ((this.wave_timer > 0) && ((this.wave_timer % (30 * 60)) === 0) && (this.player.lives > 0)) {
+      this.enemies.push(new Enemy(0, EnemyType.BAITER));
+    }
+
+    this.player.update();
+
+    // Update lasers and bullets, remove expired ones from the lists (update returns False when they want to expire)
+    this.lasers = this.lasers.filter((l) => (!l.update()));
+    this.bullets = this.bullets.filter((b) => (!b.update()));
+
+    for (let obj of this.enemies.concat(this.humans)) {
+      obj.update();
+    }
+
+    // Remove dead humans
+    this.humans = this.humans.filter((h) => (!h.dead));
+
+    // Remove dead enemies who have finished their explode animations
+    let prev_num_enemies = this.enemies.length,
+        difference;
+    this.enemies = this.enemies.filter((e) => (e.state !== EnemyState.DEAD));
+
+    // If there are fewer enemies this frame than there were last frame, gain score
+    difference = prev_num_enemies - this.enemies.length;
+    if (difference > 0) {
+      this.score += 150 * difference;
+    }
+
+    // Start next level if there are no enemies and no falling humans, and the player is not carrying a human
+    if ((this.wave_timer > 0)
+        && (this.enemies.length === 0)
+        && (this.humans.filter((human) => human.falling).length === 0)
+        && (!this.player.is_carrying_human())) {
+      this.wave_timer = -WAVE_COMPLETE_SCREEN_DURATION;
+
+      // Tell the player how many shields to restore and how many humans were saved, if they save
+      // all ten they get an extra life token
+      this.player.level_ended(this.get_shield_restore_amount(), this.get_humans_saved());
+
+      this.play_sound("wave_complete");
+    }
+  }
 }
 
 window.addEventListener('load', (event) => {
