@@ -3481,6 +3481,75 @@ class Game {
       this.play_sound("wave_complete");
     }
   }
+
+  draw() {
+    // Shift the target camera position based on which way the player is facing
+    let target_camera_offset_x, camera_offset_delta;
+    if (this.player.facing_x > 0) {
+      // Player ship facing right - camera positioned so that it's 1/3rd screen width from left
+      target_camera_offset_x = WIDTH / 3;
+    }
+    else {
+      // Facing left - ship at 2/3rds screen width from right
+      target_camera_offset_x = 2 * WIDTH / 3;
+    }
+
+    // Also shift camera target pos based on player velocity - look further ahead if moving fast
+    target_camera_offset_x -= this.player.velocity.x * 15;
+
+    // If target_camera_offset_x is different from the current camera offset, we want to transition to
+    // the new offset over a series of frames, not just snap to the new offset. We'll transition faster
+    // when the difference is bigger, but at a maximum of 8 pixels per frame
+    camera_offset_delta = Math.min(8, Math.max(-8, (target_camera_offset_x - this.player_camera_offset_x) / 20));
+
+    // Update player camera offset - math.floor ensures the result will always be a whole number
+    this.player_camera_offset_x = Math.floor(this.player_camera_offset_x + camera_offset_delta);
+
+    // Calculate where to display background, terrain and objects, based on player position and player camera offset
+    // If left of level was at the left hand edge of the screen, and then camera scrolled 100 pixels to the right,
+    // that means we want to display everything shifted 100 pixels to the left. Think of scrolling not as the
+    // camera moving, but everything in the game moving in the opposite direction
+    // Top won't go lower than -100, to prevent seeing off the bottom of the terrain
+    let left = -modulo(Math.trunc(this.player.posx - this.player_camera_offset_x), LEVEL_WIDTH),
+        top = Math.max(-Math.trunc(this.player.posy / 4), -100),
+
+    // Draw background five times - four because the level is four times wider than the background, and another
+    // for when we're near the right-hand side of the level, just before the level wraps around
+    // We divide the x/y values by 2 so that it moves slower than the foreground terrain - this is known
+    // as parallax scrolling
+        bg_width = images['background'].width,
+        offset_x, objects;
+    for (let i = 0; i < 5; i++) {
+      screen.blit('background', [Math.floor(left / 2) + (bg_width * i), Math.floor(top / 2)]);
+    }
+
+    // Draw terrain twice, second one is for when we're near the right-hand side of the level, just before
+    // the level wraps back around to the left
+    screen.blit('terrain', [left, top + TERRAIN_OFFSET_Y]);
+    screen.blit('terrain', [left + LEVEL_WIDTH, top + TERRAIN_OFFSET_Y]);
+
+    offset_x = -(this.player.posx - this.player_camera_offset_x);
+
+    // Draw all objects
+    // The order of drawing the player and the lasers that they fire varies depending on the tilt of the ship
+    // The laser is fired from the underside of the ship, unless the ship is tilting up the turret is
+    // obscured by the ship
+    objects = this.bullets.concat(this.humans).concat(this.enemies);
+    if (this.player.tilt_y === 1) {
+      objects = objects.concat(this.lasers);
+      objects.push(this.player);
+    }
+    else {
+      objects.push(this.player);
+      objects = objects.concat(this.lasers);
+    }
+    for (let obj of objects) {
+      // Pass through the offset for scrolling
+      obj.draw(offset_x, top);
+    }
+
+    this.draw_ui();
+  }
 }
 
 window.addEventListener('load', (event) => {
