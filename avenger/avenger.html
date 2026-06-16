@@ -3550,6 +3550,69 @@ class Game {
 
     this.draw_ui();
   }
+
+  draw_ui() {
+    // Draw user interface
+
+    // Draw radar background
+    this.radar.draw();
+
+    // Draw radar blips. We first set a clipping zone, which ensures no graphics can be drawn outside
+    // the boundaries of the radar. This ensures that the small circles of the radar blips don't extend
+    // beyond the radar when they are right on its edge
+
+    for (let enemy of this.enemies) {
+      if (enemy.state === EnemyState.ALIVE) {
+        enemy.blip.draw();
+      }
+    }
+
+    for (let human of this.humans) {
+      human.blip.draw();
+    }
+
+    this.player.blip.draw();
+
+    // Unset clipping zone, so we can again draw anywhere on the screen
+
+    // Show lives
+    for (let i = 0; i < this.player.lives; i++) {
+      screen.blit('life', [20 + (20 * i), 21]);
+    }
+
+    // Show shields
+    for (let i = 0; i < this.player.shields; i++) {
+      screen.blit('armor', [20 + (20 * i), 52]);
+    }
+
+    // Show extra life tokens
+    for (let i = 0; i < this.player.extra_life_tokens; i++) {
+      screen.blit(`token${ (Math.floor(this.timer / 6) + i) % 8 }`, [20 + (20 * i), 83]);
+    }
+
+    // Show score using the status font
+    let score_text = this.score.toFixed(),
+        score_width = text_width(score_text, "font_status"),
+        y;
+    draw_text(score_text, WIDTH - score_width - 20, 28, false, "font_status");
+
+    // Show wave end text if wave is ending
+    if (this.wave_timer < 0) {
+      y = Math.floor(HEIGHT / 2) - 140;
+      for (let line of this.get_wave_end_text()) {
+        draw_text(line, Math.floor(WIDTH / 2), y, true);
+        y += 65;
+      }
+    }
+
+    // Uncomment these lines to see some debug information
+    // screen.draw.text(f"{self.player_camera_offset_x=}", fontsize=26, topleft=(0, 0))
+    // screen.draw.text(f"{self.player.velocity=}", fontsize=26, topleft=(0, 20))
+    // screen.draw.text(f"{self.wave_timer=}", fontsize=26, topleft=(0, 40))
+    // screen.draw.text(f"{len(self.enemies)=}", fontsize=26, topleft=(0, 60))
+    // screen.draw.text(f"{self.player.pos=}", fontsize=26, topleft=(0, 80))
+    // screen.draw.text(f"{[f'{obj.pos[0]:.1f},{obj.pos[1]:.1f}' for obj in [self.player]+self.humans]}", fontsize=26, topleft=(0, 100))
+  }
 }
 
 window.addEventListener('load', (event) => {
