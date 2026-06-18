@@ -3613,6 +3613,42 @@ class Game {
     // screen.draw.text(f"{self.player.pos=}", fontsize=26, topleft=(0, 80))
     // screen.draw.text(f"{[f'{obj.pos[0]:.1f},{obj.pos[1]:.1f}' for obj in [self.player]+self.humans]}", fontsize=26, topleft=(0, 100))
   }
+
+  get_wave_end_text() {
+    // Return a list of strings where each string within the list is one line of the level end text.
+    // As wave_timer increases we display more lines of text
+    let humans_saved = this.get_humans_saved(),
+        i = Math.floor((this.wave_timer + WAVE_COMPLETE_SCREEN_DURATION) / Math.floor(WAVE_COMPLETE_SCREEN_DURATION / 4)),
+        lines = [`WAVE ${ this.wave } COMPLETE`],
+        num_shields_restored;
+    if (i >= 1) {
+      lines.push(`${ humans_saved } HUMAN${ (humans_saved === 1) ? '' : 'S' } SAVED`);
+    }
+    if (i >= 2) {
+      num_shields_restored = this.get_shield_restore_amount();
+      lines.push(`${ num_shields_restored } SHIELD${ (num_shields_restored === 1) ? '' : 'S' } RESTORED`);
+    }
+    if ((i >= 3) && (humans_saved === 10)) {
+      // If we saved 10 humans but have no extra life tokens, that must mean we just got 3 extra life tokens,
+      // which gains an extra life and resets the tokens to zero, therefore display that we got an extra life
+      if (this.player.extra_life_tokens === 0) {
+        lines.push("EXTRA LIFE");
+      }
+      else {
+        lines.push("LIFE TOKEN GAINED");
+      }
+    }
+    return lines;
+  }
+
+  get_shield_restore_amount() {
+    // Player gets 1 shield restored for every 2 humans saved
+    return Math.min(Math.floor(this.get_humans_saved() / 2), 5);
+  }
+
+  get_humans_saved() {
+    return this.humans.filter((human) => (!human.exploding)).length;
+  }
 }
 
 window.addEventListener('load', (event) => {
