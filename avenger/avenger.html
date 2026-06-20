@@ -3649,6 +3649,29 @@ class Game {
   get_humans_saved() {
     return this.humans.filter((human) => (!human.exploding)).length;
   }
+
+  play_sound(name, count = 1, volume = 1) {
+    // Some sounds have multiple varieties. If count > 1, we'll randomly choose one from those
+    // Don't bother playing the sound if the volume is 0 or less
+    // Also don't create the sound if it's game over and the player has been dead for a while
+    if ((volume <= 0) || ((this.player.lives === 0) && (this.player.timers[Player.Timer.HURT] < -1000))) {
+      return;
+    }
+    // Pygame Zero allows you to write things like 'sounds.explosion.play()'
+    // This automatically loads and plays a file named 'explosion.wav' (or .ogg) from the sounds folder (if
+    // such a file exists)
+    // But what if you have files named 'explosion0.ogg' to 'explosion5.ogg' and want to randomly choose
+    // one of them to play? You can generate a string such as 'explosion3', but to use such a string
+    // to access an attribute of Pygame Zero's sounds object, we must use Python's built-in function getattr
+    let fullname = name + getRandomInteger(0, count);
+    if (volume < 1) {
+      // For sounds where we want the volume to vary, we must create a separate instance of the sound object
+      // for each volume we play it at, otherwise setting the volume would change the volume of all currently
+      // playing instances of that sound
+      sounds[fullname].set_volume(volume);
+    }
+    sounds[fullname].play();
+  }
 }
 
 window.addEventListener('load', (event) => {
