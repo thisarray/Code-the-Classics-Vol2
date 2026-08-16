@@ -3674,6 +3674,39 @@ class Game {
   }
 }
 
+function get_char_image_and_width(char, font) {
+  // Return width of given character. ord() gives the ASCII/Unicode code for the given character.
+  if (char === " ") {
+    return [null, 22];
+  }
+  else {
+    let name = font + "0" + char.charCodeAt(0);
+    return [name, images[name].width];
+  }
+}
+
+function text_width(text, font = "font") {
+  let total = 0;
+  for (let c of text) {
+    total += get_char_image_and_width(c, font)[1];
+  }
+  return total;
+}
+
+function draw_text(text, x, y, centre = false, font = "font") {
+  if (centre) {
+    x -= Math.floor(text_width(text) / 2);
+  }
+
+  for (let char of text) {
+    let [name, width] = get_char_image_and_width(char, font);
+    if (name != null) {
+      screen.blit(name, [x, y]);
+    }
+    x += width;
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
