@@ -3739,6 +3739,61 @@ function update_controls() {
   }
 }
 
+// Pygame Zero calls the update and draw functions each frame
+
+function update() {
+  update_controls();
+
+  state_timer += 1;
+
+  if (state === State.TITLE) {
+    // Check for start game
+    for (let controls of [keyboard_controls, joystick_controls]) {
+      // Check for button 0 being pressed on each controls object
+      // joystick_controls will be None if there was no controller was connected on game startup,
+      // so must check for that
+      if ((controls != null) && controls.button_pressed(0)) {
+        // Switch to play state, and create a new Game object, passing it a new Player object to use
+        state = State.PLAY;
+        state_timer = 0;
+        game = new Game(new Player(controls));
+        break;
+      }
+    }
+  }
+
+  else if (state === State.PLAY) {
+    if (game.player.lives <= 0) {
+      state = State.GAME_OVER;
+      state_timer = 0;
+    }
+    else {
+      game.update();
+    }
+  }
+
+  else if (state === State.GAME_OVER) {
+    // The game carries on updating in the background of the game over screen
+    game.update();
+
+    // Don't allow the player to press a button to go back to the main menu until one second has passed
+    // This prevents the issue of accidentally skipping the game over screen because the player was just starting
+    // to press the fire button as the game ended
+    if (state_timer > 60) {
+      // Check for button 0 being pressed
+      for (let controls of [keyboard_controls, joystick_controls]) {
+        if ((controls != null) && controls.button_pressed(0)) {
+          // Switch to title screen state
+          state = State.TITLE;
+          state_timer = 0;
+          game = null;
+          play_music("menu_theme");
+        }
+      }
+    }
+  }
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
