@@ -3794,6 +3794,26 @@ function update() {
   }
 }
 
+function draw() {
+  if (state === State.TITLE) {
+    screen.blit('title', [0, 0]);
+    screen.blit(`start${ Math.floor(state_timer / 4) % 14 }`, [Math.floor(WIDTH / 2) - Math.floor(350 / 2), 450]);
+  }
+
+  else if (state === State.PLAY) {
+    game.draw();
+  }
+
+  else if (state === State.GAME_OVER) {
+    game.draw();
+    draw_text("GAME OVER", Math.floor(WIDTH / 2), Math.floor(HEIGHT / 2) - 100, true);
+  }
+}
+
+function play_music(name) {
+  music.play(name);
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
