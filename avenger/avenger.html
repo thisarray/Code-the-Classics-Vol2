@@ -3814,6 +3814,28 @@ function play_music(name) {
   music.play(name);
 }
 
+/*
+##############################################################################
+*/
+
+function reset() {
+  // Set up sound system and start music
+  play_music("menu_theme");
+
+  // Set up controls
+  keyboard_controls = new KeyboardControls();
+  setup_joystick_controls();
+
+  // Set the initial game state
+  state = State.TITLE;
+
+  // No game object to begin with
+  game = null;
+
+  // How long have we been in the current state?
+  state_timer = 0;
+}
+
 window.addEventListener('load', (event) => {
   screen.init();
 });
