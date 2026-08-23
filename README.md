@@ -2,6 +2,7 @@
 
 ## Example code, assets, and more from Code the Classics Volume II.
 
+- [Play Avenger in your browser.](https://thisarray.github.io/Code-the-Classics-Vol2/avenger/avenger.html)
 - [Play Beat Streets in your browser.](https://thisarray.github.io/Code-the-Classics-Vol2/beatstreets/beatstreets.html)
 - [Play Eggzy in your browser.](https://thisarray.github.io/Code-the-Classics-Vol2/eggzy/eggzy.html)
 - [Play Kinetix in your browser.](https://thisarray.github.io/Code-the-Classics-Vol2/kinetix/kinetix.html)
