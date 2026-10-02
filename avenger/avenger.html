@@ -3315,13 +3315,11 @@ class Human extends WrapActor {
     // To find out if we're on the ground, we need to work out where we're at on the terrain image
     // Convert world pos to pixel pos on terrain image
     let pos_terrain = [Math.trunc(modulo(this.posx, LEVEL_WIDTH)), Math.trunc(this.posy - TERRAIN_OFFSET_Y)],
-        mask_width = LEVEL_WIDTH,
-        mask_height = game.terrain_masks[0].height,
-        i = Math.floor(pos_terrain[0] / WIDTH),
-        x = pos_terrain[0] % WIDTH;
+        mask_width = game.terrain_mask.width,
+        mask_height = game.terrain_mask.height;
     if ((0 <= pos_terrain[0]) && (pos_terrain[0] < mask_width) && (0 <= pos_terrain[1]) && (pos_terrain[1] < mask_height)) {
       // Use the terrain mask to tell if there's an opaque pixel there
-      return (game.terrain_masks[i].getAt(x, pos_terrain[1])[3] > 0);
+      return (game.terrain_mask.getAt(pos_terrain[0], pos_terrain[1])[3] > 0);
     }
 
     else if (pos_terrain[1] >= mask_height) {
@@ -3366,14 +3364,7 @@ class Game {
     // left-hand edge of the screen
     this.player_camera_offset_x = WIDTH / 3;
 
-    // Since the terrain is bigger than the screen,
-    // break the terrain mask into screen WIDTH sections
-    this.terrain_masks = [];
-    for (let x = 0; x < LEVEL_WIDTH; x += WIDTH) {
-      screen.clear('transparent');
-      screen.blit('terrain', [-x, 0]);
-      this.terrain_masks.push(screen.getSurface(WIDTH, 480));
-    }
+    this.terrain_mask = Surface.fromImage('terrain');
 
     this.new_wave();
 
